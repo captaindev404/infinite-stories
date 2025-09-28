@@ -58,7 +58,7 @@ The app uses `AVAudioSession` with `.playback` category for MP3 playback, which 
 try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
 ```
 
-Audio is generated via OpenAI's gpt-4o-mini-tts model and stored as MP3 files.
+Audio is generated via OpenAI's tts-1-hd model and stored as MP3 files.
 
 ### Network Requests
 URLSession requests to AI APIs work automatically without user permission. iOS handles network connectivity transparently.

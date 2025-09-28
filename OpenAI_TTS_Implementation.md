@@ -22,14 +22,14 @@ The InfiniteStories app features a comprehensive audio-visual storytelling syste
 - **Advanced Controls**: Speed adjustment, seeking, and skip functionality
 
 **Core Audio Features:**
-- **OpenAI Integration**: Exclusive use of gpt-4o-mini-tts for high-quality audio
+- **OpenAI Integration**: Exclusive use of tts-1-hd for high-quality audio
 - **MP3 Generation**: Optimized audio file creation and management
 - **Background Playback**: Seamless audio continuation during app transitions
 - **Session Management**: Intelligent audio session and interruption handling
 
 ### 3. Enhanced AIService.swift
 **Multi-Modal AI Integration:**
-- **Audio Generation**: Uses gpt-4o-mini-tts model for premium quality speech
+- **Audio Generation**: Uses tts-1-hd model for premium quality speech
 - **Illustration Generation**: DALL-E 3 integration for story scene creation
 - **Content Enhancement**: GPT-4o for prompt optimization and story improvement
 - **Voice Optimization**: 7 specialized children's voices with context-aware instructions
@@ -75,7 +75,7 @@ https://api.openai.com/v1/audio/speech
 **Request Format:**
 ```json
 {
-  "model": "gpt-4o-mini-tts",  // Premium children's storytelling model
+  "model": "tts-1-hd",  // Premium children's storytelling model
   "input": "Story content with voice-specific instructions",
   "voice": "nova",            // Selected from 7 specialized voices
   "response_format": "mp3",    // Optimized audio format
@@ -162,7 +162,7 @@ enum AudioServiceError: Error {
 ## Rate Limiting & Performance Optimization
 
 ### OpenAI API Limits
-**Audio Generation (gpt-4o-mini-tts):**
+**Audio Generation (tts-1-hd):**
 - **Tier 1**: 3 requests per minute, 200 requests per day
 - **Tier 2**: 50 requests per minute, 10,000 requests per day
 - **Tier 3**: 500 requests per minute, 100,000 requests per day

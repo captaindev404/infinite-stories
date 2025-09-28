@@ -47,7 +47,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **AIService**: Centralized OpenAI API integration with enhanced scene extraction
   - **Story Generation**: GPT-4o model (temperature: 0.8, max tokens: 2000)
   - **Scene Extraction**: AI-powered story segmentation for illustration timing
-  - **Audio Synthesis**: gpt-4o-mini-tts model with 7 specialized children's voices
+  - **Audio Synthesis**: tts-1-hd model with 7 specialized children's voices
   - **Avatar Generation**: DALL-E 3 (1024x1024, standard quality) with prompt optimization
   - **Illustration Generation**: Multi-scene DALL-E integration with consistency
   - Multi-language support (English, Spanish, French, German, Italian)
@@ -233,7 +233,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 5. **Multi-Turn Image Generation**: NEW - Each illustration references the previous image for perfect visual consistency
 6. **Custom Events**: User-defined scenarios with AI enhancement, pictograms, and usage tracking
 7. **Multi-Language Support**: 5 languages with localized prompts and voices
-8. **Audio Generation**: High-quality MP3 synthesis via gpt-4o-mini-tts
+8. **Audio Generation**: High-quality MP3 synthesis via tts-1-hd
 9. **Story Editing**: In-app editing with automatic audio regeneration
 10. **Reading Journey**: Comprehensive statistics and progress tracking with charts
 11. **Advanced Audio Playback**: Full-featured player with lock screen controls and queue management
@@ -286,7 +286,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Scene segmentation for visual storytelling
   - Visual characteristic extraction for character consistency
 
-#### Audio Synthesis (gpt-4o-mini-tts)
+#### Audio Synthesis (tts-1-hd)
 - **Format**: MP3 exclusively (no fallback TTS)
 - **Voices**: 7 specialized children's storytelling voices
 - **Features**:
@@ -364,7 +364,7 @@ xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories \
 ### API Configuration
 1. Configure OpenAI API key in Settings view (stored in Keychain)
 2. OpenAI API is mandatory - no mock services or fallbacks
-3. Audio uses gpt-4o-mini-tts with voice-specific instructions
+3. Audio uses tts-1-hd with voice-specific instructions
 4. Multi-language support via prompt localization
 
 ## Key Technologies

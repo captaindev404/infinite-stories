@@ -1,7 +1,7 @@
 # Audio Service Update Summary
 
 ## Overview
-The InfiniteStories audio system has been completely modernized with OpenAI's gpt-4o-mini-tts API integration and enhanced with advanced audio-illustration synchronization capabilities. This update includes protocol-based architecture, visual storytelling integration, and comprehensive queue management for seamless user experience.
+The InfiniteStories audio system has been completely modernized with OpenAI's tts-1-hd API integration and enhanced with advanced audio-illustration synchronization capabilities. This update includes protocol-based architecture, visual storytelling integration, and comprehensive queue management for seamless user experience.
 
 ## Major Features Added
 
@@ -70,7 +70,7 @@ The InfiniteStories audio system has been completely modernized with OpenAI's gp
 - Fallback logic to older TTS models
 
 **Updated:**
-- `generateSpeech()` - now uses only gpt-4o-mini-tts model
+- `generateSpeech()` - now uses only tts-1-hd model
 - Renamed internal method to `generateSpeechWithModel()` for clarity
 - Kept voice-specific instructions for optimal storytelling
 
@@ -126,7 +126,7 @@ The InfiniteStories audio system has been completely modernized with OpenAI's gp
 ### Audio Quality & Generation
 1. **Consistency**: All audio is now high-quality MP3 from OpenAI's API
 2. **Simplicity**: Removed complex fallback logic and dual-mode handling
-3. **Audio Quality**: Using gpt-4o-mini-tts with voice-specific instructions for optimal children's storytelling
+3. **Audio Quality**: Using tts-1-hd with voice-specific instructions for optimal children's storytelling
 
 ### Visual Storytelling Integration
 4. **Synchronized Experience**: Real-time illustration display matched to audio timeline
@@ -204,7 +204,7 @@ When illustration generation or display fails:
 
 ### OpenAI Integration
 The app requires a valid OpenAI API key for:
-- **Audio Generation**: gpt-4o-mini-tts for high-quality speech synthesis
+- **Audio Generation**: tts-1-hd for high-quality speech synthesis
 - **Illustration Generation**: DALL-E 3 for story scene illustrations
 - **Content Enhancement**: GPT-4o for prompt optimization
 

@@ -29,7 +29,7 @@ InfiniteStories exclusively uses OpenAI's API for all AI-powered features. The a
 - **Story Generation**: GPT-4o model for creating personalized bedtime stories
 - **Scene Extraction**: NEW - GPT-4o for extracting illustration scenes from stories
 - **Illustration Generation**: NEW - DALL-E 3 for multiple story illustrations with visual consistency
-- **Audio Synthesis**: gpt-4o-mini-tts model for high-quality voice generation
+- **Audio Synthesis**: tts-1-hd model for high-quality voice generation
 - **Avatar Creation**: DALL-E 3 for generating hero illustrations
 - **Content Enhancement**: GPT-4o for custom event optimization
 - **Visual Consistency**: NEW - GPT-4o for extracting and maintaining hero appearance
@@ -76,7 +76,7 @@ struct SceneExtractionRequest {
 ```
 URL: https://api.openai.com/v1/audio/speech
 Method: POST
-Model: gpt-4o-mini-tts
+Model: tts-1-hd
 ```
 Used for:
 - Converting story text to MP3 audio files
@@ -142,7 +142,7 @@ class OpenAIService: AIServiceProtocol {
     // NEW: Scene extraction for illustration timing
     func extractScenesFromStory(request: SceneExtractionRequest) async throws -> [StoryScene]
 
-    // Audio generation with gpt-4o-mini-tts
+    // Audio generation with tts-1-hd
     func generateSpeech(text: String, voice: String, language: String) async throws -> Data
 
     // Enhanced avatar generation with content filtering
@@ -337,9 +337,9 @@ func retryWithBackoff<T>(
 
 #### Model Selection
 ```swift
-// Using gpt-4o-mini-tts with voice-specific instructions
+// Using tts-1-hd with voice-specific instructions
 let requestBody = [
-    "model": "gpt-4o-mini-tts",
+    "model": "tts-1-hd",
     "input": text,
     "voice": voice,  // coral, nova, fable, alloy, echo, onyx, shimmer
     "instructions": getStorytellingInstructions(for: voice, language: language),
@@ -1115,7 +1115,7 @@ struct APIUsageTracker {
         switch model {
         case "gpt-4o":
             return Double(tokens) * 0.00003  // $0.03 per 1K tokens
-        case "gpt-4o-mini-tts":
+        case "tts-1-hd":
             return Double(tokens) * 0.000015 // $0.015 per 1K tokens
         default:
             return 0
@@ -1126,7 +1126,7 @@ struct APIUsageTracker {
 
 ### Model Selection Strategy
 - **GPT-4o**: High-quality story generation (worth the cost)
-- **gpt-4o-mini-tts**: Efficient audio generation
+- **tts-1-hd**: Efficient audio generation
 - **DALL-E 3**: Standard quality for avatars (HD only when needed)
 
 ---
@@ -1459,7 +1459,7 @@ do {
 | Story Generation | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.02-0.03 | Per story |
 | Scene Extraction | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.01-0.02 | NEW: Per story |
 | Visual Profile Extraction | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.005-0.01 | NEW: Per hero (one-time) |
-| Audio Generation | gpt-4o-mini-tts | $0.015/1M chars | - | ~$0.01-0.02 | Per story |
+| Audio Generation | tts-1-hd | $0.015/1M chars | - | ~$0.01-0.02 | Per story |
 | Avatar Generation | DALL-E 3 | $0.04/image (standard) | - | $0.04 | Per hero (one-time) |
 | Story Illustrations | DALL-E 3 | $0.04/image (standard) | - | $0.12-0.32 | NEW: 3-8 images per story |
 | Content Filtering | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.002-0.005 | NEW: Per illustration |
@@ -1627,5 +1627,5 @@ For InfiniteStories implementation:
 
 *Last Updated: September 2025*
 *OpenAI API Version: v1*
-*Models: GPT-4o, gpt-4o-mini-tts, DALL-E 3*
+*Models: GPT-4o, tts-1-hd, DALL-E 3*
 *New Features: Scene Extraction, Visual Storytelling, Content Safety*

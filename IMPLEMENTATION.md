@@ -8,7 +8,7 @@ InfiniteStories is a sophisticated SwiftUI iOS app that generates personalized b
 
 - **SwiftUI**: Modern declarative UI framework with advanced animations
 - **SwiftData**: Apple's persistence framework for model storage and relationships
-- **OpenAI API**: GPT-4o for story generation and scene extraction, DALL-E 3 for illustrations, gpt-4o-mini-tts for audio
+- **OpenAI API**: GPT-4o for story generation and scene extraction, DALL-E 3 for illustrations, tts-1-hd for audio
 - **AVFoundation**: MP3 audio playback with background support
 - **Combine**: Reactive programming for real-time synchronization
 - **Keychain**: Secure API key storage
@@ -52,7 +52,7 @@ Views (SwiftUI + Illustrations) → ViewModels (Business Logic + Sync) → Servi
 - **NEW**: Hero visual profile integration for character consistency
 
 **Audio Generation**
-- Model: `gpt-4o-mini-tts`
+- Model: `tts-1-hd`
 - Format: MP3
 - Voice options with tailored instructions:
   - **coral**: Warm, nurturing bedtime voice
@@ -456,7 +456,7 @@ try response.imageData.write(to: illustrationURL)
 ### Updated Pricing (2024)
 - **GPT-4o**: ~$0.01-0.02 per story (generation + scene extraction)
 - **DALL-E 3**: ~$0.04 per illustration (3-7 illustrations per story)
-- **gpt-4o-mini-tts**: ~$0.03 per 1000 characters
+- **tts-1-hd**: ~$0.03 per 1000 characters
 - **Average story with illustrations**: ~$0.25-0.40 total per story
 
 ### Cost Optimization Strategies
@@ -588,4 +588,4 @@ InfiniteStories has evolved into a sophisticated visual storytelling platform th
 - **Graceful error handling** with intelligent retry mechanisms and beautiful fallback states
 - **Performance optimization** for smooth operation across different device capabilities
 
-The exclusive use of OpenAI's APIs (GPT-4o, DALL-E 3, gpt-4o-mini-tts) ensures consistent, high-quality content generation while maintaining strict child safety standards through advanced content policy filtering and visual consistency management.
+The exclusive use of OpenAI's APIs (GPT-4o, DALL-E 3, tts-1-hd) ensures consistent, high-quality content generation while maintaining strict child safety standards through advanced content policy filtering and visual consistency management.
