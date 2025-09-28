@@ -336,8 +336,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "212"
             endingLineNumber = "212"
-            landmarkName = "importScenes(from:)"
-            landmarkType = "7">
+            landmarkName = "recommendedIllustrationCount"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -352,7 +352,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "225"
             endingLineNumber = "225"
-            landmarkName = "updateIllustration(at:withImagePath:)"
+            landmarkName = "importScenes(from:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -400,8 +400,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "202"
             endingLineNumber = "202"
-            landmarkName = "recommendedIllustrationCount"
-            landmarkType = "24">
+            landmarkName = "illustrationAt(timestamp:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

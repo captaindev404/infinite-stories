@@ -8,9 +8,119 @@
 import Foundation
 import SwiftData
 
+// MARK: - Helper Types for Supabase Compatibility
+
+/// Codable wrapper for Story to enable Supabase sync
+struct StoryCodable: Codable {
+    let id: String
+    let userId: String
+    let heroId: String?
+    let title: String
+    let content: String
+    let createdAt: String
+    let isFavorite: Bool
+    let playCount: Int
+    let estimatedDuration: String
+    let wordCount: Int
+    let eventType: String?
+    let eventData: [String: Any]?
+    let customEventId: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case heroId = "hero_id"
+        case title
+        case content
+        case createdAt = "created_at"
+        case isFavorite = "is_favorite"
+        case playCount = "play_count"
+        case estimatedDuration = "estimated_duration"
+        case wordCount = "word_count"
+        case eventType = "event_type"
+        case eventData = "event_data"
+        case customEventId = "custom_event_id"
+    }
+
+    init(from story: Story, userId: UUID) {
+        self.id = story.id.uuidString
+        self.userId = userId.uuidString
+        self.heroId = story.hero?.id.uuidString
+        self.title = story.title
+        self.content = story.content
+        self.createdAt = ISO8601DateFormatter.supabase.string(from: story.createdAt)
+        self.isFavorite = story.isFavorite
+        self.playCount = story.playCount
+        self.estimatedDuration = "\(Int(story.estimatedDuration)) seconds"
+        self.wordCount = story.content.split(separator: " ").count
+
+        if let builtInEvent = story.builtInEvent {
+            self.eventType = "built_in"
+            self.eventData = ["event": builtInEvent.rawValue]
+            self.customEventId = nil
+        } else if let customEvent = story.customEvent {
+            self.eventType = "custom"
+            self.eventData = nil
+            self.customEventId = customEvent.id.uuidString
+        } else {
+            self.eventType = nil
+            self.eventData = nil
+            self.customEventId = nil
+        }
+    }
+
+    // Custom encoding for eventData
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(userId, forKey: .userId)
+        try container.encodeIfPresent(heroId, forKey: .heroId)
+        try container.encode(title, forKey: .title)
+        try container.encode(content, forKey: .content)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(isFavorite, forKey: .isFavorite)
+        try container.encode(playCount, forKey: .playCount)
+        try container.encode(estimatedDuration, forKey: .estimatedDuration)
+        try container.encode(wordCount, forKey: .wordCount)
+        try container.encodeIfPresent(eventType, forKey: .eventType)
+        try container.encodeIfPresent(customEventId, forKey: .customEventId)
+
+        // Encode eventData as JSON
+        if let eventData = eventData {
+            let jsonData = try JSONSerialization.data(withJSONObject: eventData)
+            let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
+            try container.encode(AnyJSON(jsonObject as? Encodable), forKey: .eventData)
+        }
+    }
+
+    // Custom decoding for eventData
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        userId = try container.decode(String.self, forKey: .userId)
+        heroId = try container.decodeIfPresent(String.self, forKey: .heroId)
+        title = try container.decode(String.self, forKey: .title)
+        content = try container.decode(String.self, forKey: .content)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        isFavorite = try container.decode(Bool.self, forKey: .isFavorite)
+        playCount = try container.decode(Int.self, forKey: .playCount)
+        estimatedDuration = try container.decode(String.self, forKey: .estimatedDuration)
+        wordCount = try container.decode(Int.self, forKey: .wordCount)
+        eventType = try container.decodeIfPresent(String.self, forKey: .eventType)
+        customEventId = try container.decodeIfPresent(String.self, forKey: .customEventId)
+
+        // Decode eventData from AnyJSON
+        if let anyJSON = try container.decodeIfPresent(AnyJSON.self, forKey: .eventData) {
+            eventData = anyJSON.value as? [String: Any]
+        } else {
+            eventData = nil
+        }
+    }
+}
+
 @Model
 final class Story {
-    var id: UUID = UUID()
+    var id: UUID = UUID() // Single UUID for both local and remote
     var title: String {
         didSet {
             // Only mark for regeneration if we already have an audio file
@@ -19,9 +129,11 @@ final class Story {
                 audioNeedsRegeneration = true
                 lastModified = Date()
             }
+            // Mark as needing sync
+            markAsModified()
         }
     }
-    
+
     var content: String {
         didSet {
             // Only mark for regeneration if we already have an audio file
@@ -30,6 +142,8 @@ final class Story {
                 audioNeedsRegeneration = true
                 lastModified = Date()
             }
+            // Mark as needing sync
+            markAsModified()
         }
     }
     
@@ -45,7 +159,11 @@ final class Story {
     var estimatedDuration: TimeInterval
     var audioNeedsRegeneration: Bool
     var lastModified: Date
-    
+
+    // Simple sync properties
+    var lastSyncedAt: Date? // When last synced to Supabase
+    var needsSync: Bool = true // Whether changes need to be synced
+
     @Relationship(inverse: \Hero.stories) var hero: Hero?
 
     // Illustrations for visual storytelling
@@ -67,6 +185,8 @@ final class Story {
         self.estimatedDuration = 0
         self.audioNeedsRegeneration = false
         self.lastModified = Date()
+        self.lastSyncedAt = nil
+        self.needsSync = true
     }
     
     // Initializer for custom events
@@ -85,6 +205,8 @@ final class Story {
         self.estimatedDuration = 0
         self.audioNeedsRegeneration = false
         self.lastModified = Date()
+        self.lastSyncedAt = nil
+        self.needsSync = true
 
         // Increment usage count for custom event
         customEvent.incrementUsage()
@@ -260,6 +382,26 @@ final class Story {
         for illustration in illustrations where illustration.isPlaceholder {
             illustration.resetError()
             illustration.retryCount = 0
+        }
+    }
+
+    // MARK: - Simple Sync Methods
+
+    /// Mark story as needing sync (call after any change)
+    func markAsModified() {
+        lastModified = Date()
+        needsSync = true
+    }
+
+    /// Sync status for UI
+    var syncStatusDescription: String {
+        if let lastSync = lastSyncedAt, !needsSync {
+            let formatter = RelativeDateTimeFormatter()
+            return "Synced \(formatter.localizedString(for: lastSync, relativeTo: Date()))"
+        } else if needsSync {
+            return "Needs sync"
+        } else {
+            return "Not synced"
         }
     }
 }

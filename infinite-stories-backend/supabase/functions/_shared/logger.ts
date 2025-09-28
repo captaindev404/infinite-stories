@@ -24,7 +24,8 @@ export enum LogCategory {
   RATE_LIMIT = 'rate_limit',
   CACHE = 'cache',
   DATABASE = 'database',
-  STORAGE = 'storage'
+  STORAGE = 'storage',
+  SYNC = 'sync'
 }
 
 /**
@@ -307,6 +308,22 @@ export class Logger {
         cache_key: key,
         cache_hit: hit
       }
+    );
+  }
+
+  /**
+   * Log sync operation
+   */
+  logSync(
+    phase: string,
+    requestId: string,
+    context: Record<string, any>
+  ): void {
+    this.info(
+      `Sync operation: ${phase}`,
+      LogCategory.SYNC,
+      requestId,
+      context
     );
   }
 

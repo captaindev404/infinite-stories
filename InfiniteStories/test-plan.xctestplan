@@ -1,0 +1,138 @@
+{
+  "configurations" : [
+    {
+      "id" : "B4E4C7D8-9F4B-4E8E-9C3A-5D2F1A8B3C4E",
+      "name" : "Unit Tests",
+      "options" : {
+        "testTimeoutsEnabled" : true,
+        "maximumTestExecutionTimeAllowance" : 60,
+        "codeCoverage" : true,
+        "codeCoverageTargets" : [
+          {
+            "containerPath" : "container:InfiniteStories.xcodeproj",
+            "identifier" : "InfiniteStories",
+            "name" : "InfiniteStories"
+          }
+        ]
+      },
+      "testTargets" : [
+        {
+          "skippedTests" : [
+            "SupabaseEdgeFunctionTests",
+            "SupabaseRealtimeTests"
+          ],
+          "target" : {
+            "containerPath" : "container:InfiniteStories.xcodeproj",
+            "identifier" : "InfiniteStoriesTests",
+            "name" : "InfiniteStoriesTests"
+          }
+        }
+      ]
+    },
+    {
+      "id" : "C5F5D8E9-A05C-5F9F-AD4B-6E3G2B9C4D5F",
+      "name" : "Integration Tests",
+      "options" : {
+        "testTimeoutsEnabled" : true,
+        "maximumTestExecutionTimeAllowance" : 300,
+        "environmentVariableEntries" : [
+          {
+            "key" : "INTEGRATION_TESTS",
+            "value" : "1"
+          },
+          {
+            "key" : "SUPABASE_URL",
+            "value" : "http://127.0.0.1:54321"
+          }
+        ]
+      },
+      "testTargets" : [
+        {
+          "selectedTests" : [
+            "SupabaseEdgeFunctionTests",
+            "SupabaseRealtimeTests"
+          ],
+          "target" : {
+            "containerPath" : "container:InfiniteStories.xcodeproj",
+            "identifier" : "InfiniteStoriesTests",
+            "name" : "InfiniteStoriesTests"
+          }
+        }
+      ]
+    },
+    {
+      "id" : "D6G6E9FA-B16D-6GAG-BE5C-7F4H3CAD5E6G",
+      "name" : "Performance Tests",
+      "options" : {
+        "testRepetitionMode" : "retryOnFailure",
+        "maximumTestRepetitions" : 3,
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:InfiniteStories.xcodeproj",
+          "identifier" : "InfiniteStories",
+          "name" : "InfiniteStories"
+        }
+      },
+      "testTargets" : [
+        {
+          "selectedTests" : [
+            "SupabasePerformanceTests"
+          ],
+          "target" : {
+            "containerPath" : "container:InfiniteStories.xcodeproj",
+            "identifier" : "InfiniteStoriesTests",
+            "name" : "InfiniteStoriesTests"
+          }
+        }
+      ]
+    },
+    {
+      "id" : "E7H7FAGB-C27E-7HBH-CF6D-8G5I4DBE6F7H",
+      "name" : "UI Tests",
+      "options" : {
+        "uiTestingScreenshotsEnabled" : true,
+        "userAttachmentLifetime" : "keepAlways"
+      },
+      "testTargets" : [
+        {
+          "target" : {
+            "containerPath" : "container:InfiniteStories.xcodeproj",
+            "identifier" : "InfiniteStoriesUITests",
+            "name" : "InfiniteStoriesUITests"
+          }
+        }
+      ]
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:InfiniteStories.xcodeproj",
+          "identifier" : "InfiniteStories",
+          "name" : "InfiniteStories"
+        }
+      ]
+    },
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : false,
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:InfiniteStories.xcodeproj",
+        "identifier" : "InfiniteStoriesTests",
+        "name" : "InfiniteStoriesTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:InfiniteStories.xcodeproj",
+        "identifier" : "InfiniteStoriesUITests",
+        "name" : "InfiniteStoriesUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

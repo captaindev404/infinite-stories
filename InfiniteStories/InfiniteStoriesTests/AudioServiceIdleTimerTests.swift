@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import AVFoundation
 @testable import InfiniteStories
 
 class AudioServiceIdleTimerTests: XCTestCase {

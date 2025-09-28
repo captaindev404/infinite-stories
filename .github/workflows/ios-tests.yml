@@ -1,0 +1,294 @@
+name: iOS Tests
+
+on:
+  push:
+    branches: [main, develop, feat/gpt-5]
+  pull_request:
+    branches: [main]
+
+env:
+  XCODE_VERSION: '15.0'
+  IOS_SIMULATOR: 'iPhone 15'
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+    - name: Setup Ruby (for Fastlane)
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
+        bundler-cache: true
+
+    - name: Cache Swift Packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/Library/Developer/Xcode/DerivedData
+          .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Run Unit Tests
+      run: |
+        xcodebuild test \
+          -project InfiniteStories/InfiniteStories.xcodeproj \
+          -scheme InfiniteStories \
+          -testPlan "Unit Tests" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }}" \
+          -resultBundlePath TestResults/UnitTests.xcresult \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO | xcpretty
+
+    - name: Generate Coverage Report
+      if: always()
+      run: |
+        cd InfiniteStories
+        xcrun xccov view --report --json TestResults/UnitTests.xcresult > coverage.json
+
+    - name: Upload Coverage
+      if: always()
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./InfiniteStories/coverage.json
+        flags: unit-tests
+        name: unit-coverage
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: unit-test-results
+        path: InfiniteStories/TestResults/UnitTests.xcresult
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Supabase CLI
+      run: npm install -g supabase
+
+    - name: Start Local Supabase
+      run: |
+        cd infinite-stories-backend
+        npx supabase start
+        npx supabase db reset
+
+    - name: Wait for Supabase
+      run: |
+        timeout=60
+        while ! curl -s http://127.0.0.1:54321/rest/v1/ > /dev/null; do
+          sleep 1
+          timeout=$((timeout - 1))
+          if [ $timeout -eq 0 ]; then
+            echo "Timeout waiting for Supabase"
+            exit 1
+          fi
+        done
+        echo "Supabase is ready"
+
+    - name: Deploy Edge Functions
+      run: |
+        cd infinite-stories-backend
+        npx supabase functions serve &
+        sleep 5
+
+    - name: Run Integration Tests
+      env:
+        INTEGRATION_TESTS: '1'
+        SUPABASE_URL: 'http://127.0.0.1:54321'
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY_TEST }}
+      run: |
+        xcodebuild test \
+          -project InfiniteStories/InfiniteStories.xcodeproj \
+          -scheme InfiniteStories \
+          -testPlan "Integration Tests" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }}" \
+          -resultBundlePath TestResults/IntegrationTests.xcresult \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO | xcpretty
+
+    - name: Stop Supabase
+      if: always()
+      run: |
+        cd infinite-stories-backend
+        npx supabase stop
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: integration-test-results
+        path: InfiniteStories/TestResults/IntegrationTests.xcresult
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+    - name: Setup Supabase (Local)
+      run: |
+        npm install -g supabase
+        cd infinite-stories-backend
+        npx supabase start
+        npx supabase db reset
+
+    - name: Run Performance Tests
+      run: |
+        xcodebuild test \
+          -project InfiniteStories/InfiniteStories.xcodeproj \
+          -scheme InfiniteStories \
+          -testPlan "Performance Tests" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }}" \
+          -resultBundlePath TestResults/PerformanceTests.xcresult \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO | xcpretty
+
+    - name: Extract Performance Metrics
+      run: |
+        cd InfiniteStories
+        xcrun xcresulttool get --path TestResults/PerformanceTests.xcresult \
+          --format json > performance-metrics.json
+
+    - name: Upload Performance Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-metrics
+        path: InfiniteStories/performance-metrics.json
+
+    - name: Stop Supabase
+      if: always()
+      run: |
+        cd infinite-stories-backend
+        npx supabase stop
+
+  ui-tests:
+    name: UI Tests
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+
+    - name: Boot Simulator
+      run: |
+        xcrun simctl boot "${{ env.IOS_SIMULATOR }}" || true
+        xcrun simctl wait "${{ env.IOS_SIMULATOR }}" --state=booted
+
+    - name: Run UI Tests
+      run: |
+        xcodebuild test \
+          -project InfiniteStories/InfiniteStories.xcodeproj \
+          -scheme InfiniteStories \
+          -testPlan "UI Tests" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }}" \
+          -resultBundlePath TestResults/UITests.xcresult \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO | xcpretty
+
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ui-test-screenshots
+        path: InfiniteStories/TestResults/UITests.xcresult/Attachments
+
+  test-summary:
+    name: Test Summary
+    needs: [unit-tests, integration-tests, performance-tests, ui-tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Download All Test Results
+      uses: actions/download-artifact@v3
+
+    - name: Generate Summary Report
+      run: |
+        echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ needs.unit-tests.result }}" == "success" ]; then
+          echo "| Unit Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Unit Tests | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.integration-tests.result }}" == "success" ]; then
+          echo "| Integration Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Integration Tests | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.performance-tests.result }}" == "success" ]; then
+          echo "| Performance Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Performance Tests | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.ui-tests.result }}" == "success" ]; then
+          echo "| UI Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| UI Tests | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const unitStatus = '${{ needs.unit-tests.result }}' === 'success' ? '✅' : '❌';
+          const integrationStatus = '${{ needs.integration-tests.result }}' === 'success' ? '✅' : '❌';
+          const performanceStatus = '${{ needs.performance-tests.result }}' === 'success' ? '✅' : '❌';
+          const uiStatus = '${{ needs.ui-tests.result }}' === 'success' ? '✅' : '❌';
+
+          const comment = `## Test Results
+
+          | Test Suite | Status |
+          |------------|--------|
+          | Unit Tests | ${unitStatus} |
+          | Integration Tests | ${integrationStatus} |
+          | Performance Tests | ${performanceStatus} |
+          | UI Tests | ${uiStatus} |
+
+          View detailed results in the [Actions tab](${context.payload.pull_request.html_url.replace('/pull/', '/actions/runs/')})`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
