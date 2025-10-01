@@ -16,8 +16,8 @@ InfiniteStories is a magical iOS app that generates personalized bedtime stories
 ### 🎯 Key Features
 
 - **🦸 Custom Heroes** - Create personalized characters with unique traits and abilities
-- **🎨 AI Story Generation** - Powered by OpenAI GPT-4 for creative, unique stories
-- **🎵 Professional Audio** - High-quality text-to-speech with multiple voice options
+- **🎨 AI Story Generation** - Powered by OpenAI GPT-5 (`gpt-5`) with configurable reasoning for creative, unique stories
+- **🎵 Professional Audio** - Enhanced quality text-to-speech with gpt-4o-mini-tts and multiple voice options
 - **📚 Story Library** - Beautiful card-based interface with search and filters
 - **🎮 Gamification** - Track reading streaks, favorites, and story statistics
 - **🌙 Event-Based Stories** - Bedtime, adventure, holiday, and learning themes
@@ -98,17 +98,17 @@ struct AppConfiguration {
 #### With Supabase Backend (Recommended)
 | Service | Model | Purpose | Performance |
 |---------|-------|---------|--------------|
-| **Story Generation** | `gpt-4o` | Creative story writing with scene extraction | ~2-3 seconds |
-| **Text-to-Speech** | `tts-1-hd` | High-quality audio narration | ~1-2 seconds per minute |
-| **Avatar Generation** | `dall-e-3` | Hero avatar creation | ~5-8 seconds |
-| **Illustrations** | `dall-e-3` | Scene illustrations with consistency | ~8-10 seconds per scene |
+| **Story Generation** | `gpt-5` | Creative story writing with configurable reasoning and scene extraction | ~2-3 seconds |
+| **Text-to-Speech** | `gpt-4o-mini-tts` | Enhanced quality audio narration | ~1-2 seconds per minute |
+| **Avatar Generation** | `gpt-5` | Hero avatar creation with improved instruction following | ~5-8 seconds |
+| **Illustrations** | `gpt-5` | Scene illustrations with enhanced visual consistency | ~8-10 seconds per scene |
 
 #### Direct OpenAI Integration (Legacy)
 | Service | Model | Purpose |
 |---------|-------|---------|
-| **Story Generation** | `gpt-4o` | Creative story writing |
-| **Text-to-Speech** | `tts-1-hd` | Audio narration |
-| **Image Generation** | `dall-e-3` | Avatars and illustrations |
+| **Story Generation** | `gpt-5` | Creative story writing with configurable reasoning |
+| **Text-to-Speech** | `gpt-4o-mini-tts` | Enhanced quality audio narration |
+| **Image Generation** | `gpt-5` | Avatars and illustrations with improved instruction following |
 
 ### Available Voices
 
@@ -444,7 +444,7 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ## 🙏 Acknowledgments
 
-- **OpenAI** - For GPT-4 and TTS APIs
+- **OpenAI** - For GPT-5 and gpt-4o-mini-tts APIs
 - **Apple** - For SwiftUI and SwiftData frameworks
 - **Community** - For feedback and contributions
 

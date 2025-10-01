@@ -138,7 +138,7 @@ export const CustomEventSchema: ValidationSchema = {
 export const AudioSynthesisSchema: ValidationSchema = {
   story_id: {
     type: 'uuid',
-    required: true
+    required: false // Made optional to allow standalone audio synthesis without a story
   },
   text: {
     type: 'string',
@@ -185,6 +185,10 @@ export const AvatarGenerationSchema: ValidationSchema = {
   previous_generation_id: {
     type: 'string',
     required: false
+  },
+  style: {
+    type: 'string',
+    required: false // Added optional style parameter for iOS compatibility
   }
 };
 
@@ -242,6 +246,10 @@ export const SceneIllustrationSchema: ValidationSchema = {
   hero_id: {
     type: 'uuid',
     required: true
+  },
+  hero_visual_profile: {
+    type: 'object',
+    required: false // Added optional hero_visual_profile for iOS visual consistency
   }
 };
 

@@ -1,16 +1,21 @@
 /**
  * Avatar Generation Edge Function
  *
- * This function handles hero avatar generation using GPT-Image-1, providing
- * visual consistency through generation ID tracking. Features:
+ * This function handles hero avatar generation using GPT-5 image generation,
+ * providing visual consistency through generation ID tracking. Features:
  * - Child-safe image generation with content filtering
  * - Visual consistency through generation ID chaining
  * - Multiple size and quality options
+ * - Enhanced image quality and instruction following
  * - File storage in Supabase Storage
  * - Automatic hero profile updates
+ *
+ * Model: gpt-5 (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// Validate environment variables at startup
+import { validateEnvironmentVariables } from '../_shared/env-validation.ts';
+validateEnvironmentVariables();
 import {
   withEdgeFunctionWrapper,
   parseAndValidateJSON,
@@ -101,9 +106,8 @@ async function uploadAvatarImage(
 ): Promise<{ url: string; size: number }> {
   const supabase = createSupabaseServiceClient();
 
-  // Create filename
-  const timestamp = Date.now();
-  const fileName = `${userId}/${heroId}_avatar_${timestamp}.png`;
+  // Use consistent naming convention: {userId}/{heroId}/avatar.png
+  const fileName = `${userId}/${heroId}/avatar.png`;
 
   logger.debug(
     'Uploading avatar image to storage',
@@ -116,12 +120,13 @@ async function uploadAvatarImage(
     }
   );
 
-  // Upload to storage
+  // Upload to storage with upsert to allow overwriting
   const { data, error } = await supabase.storage
     .from('hero-avatars')
     .upload(fileName, imageData, {
       contentType: 'image/png',
-      cacheControl: '86400' // 24 hours
+      cacheControl: '86400', // 24 hours
+      upsert: true // Allow overwriting if file exists
     });
 
   if (error) {
@@ -227,7 +232,7 @@ async function storeGenerationChain(
 /**
  * Main avatar generation handler
  */
-serve(async (req) => {
+Deno.serve(async (req) => {
   return withEdgeFunctionWrapper(req, 'avatar_generation', async ({ userId, supabase, requestId }) => {
     const request = await parseAndValidateJSON<AvatarGenerationRequest>(req, AvatarGenerationSchema);
 
@@ -262,11 +267,12 @@ serve(async (req) => {
       quality
     );
 
-    const cached = await cache.get<AvatarGenerationResponse>(cacheKey, requestId);
-    if (cached) {
-      logger.logImageGeneration('cache_hit', requestId, { hero_id: request.hero_id });
-      return { ...cached, cached: true };
-    }
+    // Cache disabled for development/debugging
+    // const cached = await cache.get<AvatarGenerationResponse>(cacheKey, requestId);
+    // if (cached) {
+    //   logger.logImageGeneration('cache_hit', requestId, { hero_id: request.hero_id });
+    //   return { ...cached, cached: true };
+    // }
 
     // Build comprehensive prompt
     const fullPrompt = buildAvatarPrompt(hero, request.prompt);
@@ -279,7 +285,7 @@ serve(async (req) => {
       filtered_length: filteredPrompt.length
     });
 
-    // Generate image using GPT-Image-1 with official client
+    // Generate image using DALL-E 3 with official client
     logger.logOpenAIRequest(MODELS.IMAGE, 'avatar_generation', requestId, filteredPrompt.length);
 
     const startTime = Date.now();
@@ -309,7 +315,7 @@ serve(async (req) => {
     const response = await openai.createImage(imageRequest, requestId);
 
     const responseTime = Date.now() - startTime;
-    logger.logOpenAIResponse(true, responseTime, requestId, response.usage);
+    logger.logOpenAIResponse(true, responseTime, requestId);
 
     // Extract image data and metadata
     const imageResult = response.data[0];
@@ -361,8 +367,8 @@ serve(async (req) => {
       quality: quality
     };
 
-    // Cache the response
-    await cache.set(cacheKey, avatarResponse, CACHE_CONFIG.avatar_images.ttl, requestId);
+    // Cache disabled for development/debugging
+    // await cache.set(cacheKey, avatarResponse, CACHE_CONFIG.avatar_images.ttl, requestId);
 
     logger.logImageGeneration('avatar_completed', requestId, {
       hero_id: request.hero_id,

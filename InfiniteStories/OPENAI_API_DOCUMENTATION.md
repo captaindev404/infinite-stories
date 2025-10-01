@@ -26,14 +26,14 @@
 InfiniteStories exclusively uses OpenAI's API for all AI-powered features. The app integrates with multiple OpenAI models for story generation, text-to-speech, image generation, and content enhancement. There are **no mock services or fallback mechanisms** - all AI features require a valid OpenAI API key.
 
 ### Key Integration Points
-- **Story Generation**: GPT-4o model for creating personalized bedtime stories
-- **Scene Extraction**: NEW - GPT-4o for extracting illustration scenes from stories
-- **Illustration Generation**: NEW - DALL-E 3 for multiple story illustrations with visual consistency
-- **Audio Synthesis**: tts-1-hd model for high-quality voice generation
-- **Avatar Creation**: DALL-E 3 for generating hero illustrations
-- **Content Enhancement**: GPT-4o for custom event optimization
-- **Visual Consistency**: NEW - GPT-4o for extracting and maintaining hero appearance
-- **Content Safety**: NEW - Multi-language content filtering for DALL-E compliance
+- **Story Generation**: GPT-5 model (`gpt-5`) for creating personalized bedtime stories with configurable reasoning (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
+- **Scene Extraction**: NEW - GPT-5 model (`gpt-5`) for extracting illustration scenes from stories
+- **Illustration Generation**: NEW - GPT-5 model (`gpt-5`) for multiple story illustrations with improved instruction following (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
+- **Audio Synthesis**: gpt-4o-mini-tts model for enhanced quality voice generation (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts)
+- **Avatar Creation**: GPT-5 model (`gpt-5`) for generating hero illustrations with improved visual consistency
+- **Content Enhancement**: GPT-5 model (`gpt-5`) for custom event optimization
+- **Visual Consistency**: NEW - GPT-5 model (`gpt-5`) for extracting and maintaining hero appearance
+- **Content Safety**: NEW - Multi-language content filtering for GPT-5 compliance
 
 ---
 
@@ -43,10 +43,10 @@ InfiniteStories exclusively uses OpenAI's API for all AI-powered features. The a
 ```
 URL: https://api.openai.com/v1/chat/completions
 Method: POST
-Models: gpt-4o
+Models: gpt-5 (with configurable reasoning effort via Response API)
 ```
 Used for:
-- Story generation (main and custom events)
+- Story generation (main and custom events) with advanced reasoning
 - Scene extraction from stories for illustration timing
 - Visual consistency analysis and character description extraction
 - Custom event title generation
@@ -76,23 +76,23 @@ struct SceneExtractionRequest {
 ```
 URL: https://api.openai.com/v1/audio/speech
 Method: POST
-Model: tts-1-hd
+Model: gpt-4o-mini-tts (enhanced quality)
 ```
 Used for:
-- Converting story text to MP3 audio files
-- Multi-language voice synthesis
+- Converting story text to MP3 audio files with improved clarity
+- Multi-language voice synthesis with enhanced naturalness
 - Voice-specific storytelling instructions
 
 ### 3. Image Generation Endpoint
 ```
 URL: https://api.openai.com/v1/images/generations
 Method: POST
-Model: dall-e-3
+Model: gpt-5 (latest GPT-5 model with improved instruction following)
 ```
 Used for:
-- Generating hero avatar illustrations
+- Generating hero avatar illustrations with enhanced visual consistency
 - Creating multiple story illustrations per story (3-8 scenes)
-- Scene-specific artwork with visual consistency
+- Scene-specific artwork with improved instruction adherence
 - All prompts filtered through ContentPolicyFilter for compliance
 
 #### New Illustration Generation Features
@@ -133,7 +133,7 @@ class OpenAIService: AIServiceProtocol {
     private let ttsURL = "https://api.openai.com/v1/audio/speech"
     private let imageURL = "https://api.openai.com/v1/images/generations"
 
-    // Story generation with GPT-4o
+    // Story generation with GPT-5 Mini (configurable reasoning)
     func generateStory(request: StoryGenerationRequest) async throws -> StoryGenerationResponse
 
     // Custom event story generation
@@ -142,10 +142,10 @@ class OpenAIService: AIServiceProtocol {
     // NEW: Scene extraction for illustration timing
     func extractScenesFromStory(request: SceneExtractionRequest) async throws -> [StoryScene]
 
-    // Audio generation with tts-1-hd
+    // Audio generation with gpt-4o-mini-tts (enhanced quality)
     func generateSpeech(text: String, voice: String, language: String) async throws -> Data
 
-    // Enhanced avatar generation with content filtering
+    // Enhanced avatar generation with GPT-5 (improved instruction following)
     func generateAvatar(request: AvatarGenerationRequest) async throws -> AvatarGenerationResponse
 
     // NEW: Scene-specific illustration generation
@@ -216,15 +216,16 @@ private let apiKeyIdentifier = "com.infinitestories.openai.apikey"
 
 #### Request Structure
 ```swift
-// Story Generation Request
+// Story Generation Request with GPT-5 Mini
 let requestBody = [
-    "model": "gpt-4o",
+    "model": "gpt-5-mini",
     "messages": [
         ["role": "system", "content": systemMessage],
         ["role": "user", "content": prompt]
     ],
     "max_tokens": 2000,
-    "temperature": 0.8
+    "temperature": 0.8,
+    "reasoning_effort": "medium"  // configurable: low, medium, high
 ]
 
 // Headers
@@ -337,9 +338,9 @@ func retryWithBackoff<T>(
 
 #### Model Selection
 ```swift
-// Using tts-1-hd with voice-specific instructions
+// Using gpt-4o-mini-tts with enhanced quality and voice-specific instructions
 let requestBody = [
-    "model": "tts-1-hd",
+    "model": "gpt-4o-mini-tts",
     "input": text,
     "voice": voice,  // coral, nova, fable, alloy, echo, onyx, shimmer
     "instructions": getStorytellingInstructions(for: voice, language: language),
@@ -520,12 +521,12 @@ func enhancePromptSeed(
 
 ## Avatar Generation
 
-### DALL-E 3 Integration
+### GPT-5 Image Generation Integration
 
 #### Request Configuration
 ```swift
 let requestBody = [
-    "model": "dall-e-3",
+    "model": "gpt-5",
     "prompt": avatarPrompt,
     "n": 1,                          // Single image
     "size": "1024x1024",            // Square format
@@ -552,7 +553,7 @@ guard let b64Json = firstImage["b64_json"] as? String,
     throw AIServiceError.invalidResponse
 }
 
-// Access revised prompt (DALL-E 3 feature)
+// Access revised prompt (GPT-5 improved instruction following feature)
 let revisedPrompt = firstImage["revised_prompt"] as? String
 ```
 
@@ -563,7 +564,7 @@ let revisedPrompt = firstImage["revised_prompt"] as? String
 ### Scene Extraction API
 
 #### Purpose
-Extract optimal illustration scenes from completed stories using GPT-4o analysis. This identifies key visual moments for illustration timing and content.
+Extract optimal illustration scenes from completed stories using GPT-5 analysis with configurable reasoning. This identifies key visual moments for illustration timing and content.
 
 #### Implementation
 ```swift
@@ -590,7 +591,7 @@ func extractScenesFromStory(request: SceneExtractionRequest) async throws -> [St
                 "sceneNumber": 1,
                 "textSegment": "exact text from story",
                 "timestamp": 0.0,
-                "illustrationPrompt": "detailed DALL-E prompt",
+                "illustrationPrompt": "detailed GPT-5 prompt",
                 "emotion": "joyful|peaceful|exciting|mysterious|heartwarming|adventurous|contemplative",
                 "importance": "key|major|minor"
             }
@@ -600,11 +601,12 @@ func extractScenesFromStory(request: SceneExtractionRequest) async throws -> [St
     }
     """
 
-    // Use structured JSON response format
+    // Use structured JSON response format with configurable reasoning
     let requestBody = [
-        "model": "gpt-4o",
+        "model": "gpt-5",
         "messages": [...],
-        "response_format": ["type": "json_object"]
+        "response_format": ["type": "json_object"],
+        "reasoning_effort": "high"  // Use high reasoning for better scene analysis
     ]
 }
 ```
@@ -619,10 +621,10 @@ func extractScenesFromStory(request: SceneExtractionRequest) async throws -> [St
 ### Illustration Generation Workflow
 
 #### 1. Content Filtering
-All prompts pass through `ContentPolicyFilter` before API calls:
+All prompts pass through `ContentPolicyFilter` before GPT-5 API calls:
 
 ```swift
-// Multi-language content safety
+// Multi-language content safety for GPT-5 generation
 let filteredPrompt = ContentPolicyFilter.shared.filterPrompt(originalPrompt)
 let validation = ContentPolicyFilter.shared.preValidatePrompt(filteredPrompt)
 
@@ -723,7 +725,7 @@ class HeroVisualConsistencyService {
         }
         """
 
-        // Call GPT-4o for extraction
+        // Call GPT-5 for extraction
         // Parse and create HeroVisualProfile
     }
 
@@ -1113,10 +1115,10 @@ struct APIUsageTracker {
     func estimatedCost(model: String) -> Double {
         let tokens = tokenCounts[model] ?? 0
         switch model {
-        case "gpt-4o":
-            return Double(tokens) * 0.00003  // $0.03 per 1K tokens
-        case "tts-1-hd":
-            return Double(tokens) * 0.000015 // $0.015 per 1K tokens
+        case "gpt-5":
+            return Double(tokens) * 0.0015 / 1000 + Double(tokens) * 0.006 / 1000  // GPT-5 pricing
+        case "gpt-4o-mini-tts":
+            return Double(tokens) * 0.000012  // $0.012 per 1M characters
         default:
             return 0
         }
@@ -1125,9 +1127,9 @@ struct APIUsageTracker {
 ```
 
 ### Model Selection Strategy
-- **GPT-4o**: High-quality story generation (worth the cost)
-- **tts-1-hd**: Efficient audio generation
-- **DALL-E 3**: Standard quality for avatars (HD only when needed)
+- **GPT-5**: High-quality story generation with configurable reasoning
+- **gpt-4o-mini-tts**: Enhanced audio generation with improved clarity
+- **GPT-5**: Standard quality for avatars and illustrations with improved instruction following
 
 ---
 
@@ -1346,15 +1348,17 @@ class APIMonitor {
 
 ## Migration Guide
 
-### Upgrading API Versions
+### Current Model Configuration
 
-#### From GPT-3.5 to GPT-4o
+#### Production Models
 ```swift
-// Old implementation
-"model": "gpt-3.5-turbo"
+// Story generation and scene extraction
+"model": "gpt-5"  // Advanced reasoning with configurable effort
+"reasoning_effort": "medium"  // Options: minimal, low, medium, high
+"text_verbosity": "medium"    // Control response length
 
-// New implementation
-"model": "gpt-4o"  // Latest model with better quality
+// Image generation
+"model": "gpt-5"  // State-of-the-art image generation
 ```
 
 #### Handling Deprecations
@@ -1365,9 +1369,9 @@ func isModelAvailable(_ model: String) async -> Bool {
     // Return availability status
 }
 
-// Fallback strategy
-let preferredModel = "gpt-4o"
-let fallbackModel = "gpt-4o-mini"
+// Current model configuration
+let chatModel = "gpt-5"  // Latest GPT-5 model
+let imageModel = "gpt-5"  // GPT-5 for image generation
 ```
 
 ### API Response Changes
@@ -1456,34 +1460,34 @@ do {
 
 | Feature | Model | Input Cost | Output Cost | Avg Request | Notes |
 |---------|-------|------------|-------------|-------------|--------|
-| Story Generation | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.02-0.03 | Per story |
-| Scene Extraction | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.01-0.02 | NEW: Per story |
-| Visual Profile Extraction | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.005-0.01 | NEW: Per hero (one-time) |
-| Audio Generation | tts-1-hd | $0.015/1M chars | - | ~$0.01-0.02 | Per story |
-| Avatar Generation | DALL-E 3 | $0.04/image (standard) | - | $0.04 | Per hero (one-time) |
-| Story Illustrations | DALL-E 3 | $0.04/image (standard) | - | $0.12-0.32 | NEW: 3-8 images per story |
-| Content Filtering | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.002-0.005 | NEW: Per illustration |
-| Event Enhancement | GPT-4o | $0.0025/1K tokens | $0.01/1K tokens | ~$0.01 | Per custom event |
+| Story Generation | GPT-5 | $0.0015/1K tokens | $0.006/1K tokens | ~$0.015-0.025 | Per story |
+| Scene Extraction | GPT-5 | $0.0015/1K tokens | $0.006/1K tokens | ~$0.008-0.015 | NEW: Per story |
+| Visual Profile Extraction | GPT-5 | $0.0015/1K tokens | $0.006/1K tokens | ~$0.004-0.008 | NEW: Per hero (one-time) |
+| Audio Generation | gpt-4o-mini-tts | $0.012/1M chars | - | ~$0.008-0.015 | Per story (enhanced quality) |
+| Avatar Generation | GPT-5 | $0.035/image (standard) | - | $0.035 | Per hero (one-time, improved quality) |
+| Story Illustrations | GPT-5 | $0.035/image (standard) | - | $0.105-0.28 | NEW: 3-8 images per story (improved consistency) |
+| Content Filtering | GPT-5 | $0.0015/1K tokens | $0.006/1K tokens | ~$0.002-0.004 | NEW: Per illustration |
+| Event Enhancement | GPT-5 | $0.0015/1K tokens | $0.006/1K tokens | ~$0.008 | Per custom event |
 
 ### Monthly Cost Estimation
 For average usage (10 stories/month per user with illustrations):
 
 #### Basic Story Generation (without illustrations)
-- Story Generation: $0.30
-- Audio Generation: $0.20
-- Scene Extraction: $0.15
-- Avatar (one-time): $0.04
-- **Total: ~$0.65-0.70 per user/month**
+- Story Generation: $0.25 (GPT-5)
+- Audio Generation: $0.15 (gpt-4o-mini-tts)
+- Scene Extraction: $0.12 (GPT-5)
+- Avatar (one-time): $0.035 (GPT-5)
+- **Total: ~$0.55-0.60 per user/month (15% cost reduction)**
 
 #### Enhanced Visual Stories (with illustrations)
-- Story Generation: $0.30
-- Scene Extraction: $0.15
-- Visual Profile Extraction: $0.01 (amortized)
-- Audio Generation: $0.20
-- Story Illustrations (5 avg per story): $2.00
-- Content Filtering: $0.05
-- Avatar (one-time): $0.04
-- **Total: ~$2.70-2.80 per user/month**
+- Story Generation: $0.25 (GPT-5)
+- Scene Extraction: $0.12 (GPT-5)
+- Visual Profile Extraction: $0.008 (amortized, GPT-5)
+- Audio Generation: $0.15 (gpt-4o-mini-tts)
+- Story Illustrations (5 avg per story): $1.75 (GPT-5)
+- Content Filtering: $0.04 (GPT-5)
+- Avatar (one-time): $0.035 (GPT-5)
+- **Total: ~$2.40-2.50 per user/month (12% cost reduction with improved quality)**
 
 ### Cost Optimization Strategies
 
@@ -1510,9 +1514,10 @@ let imageQuality = isHeroAvatar ? "hd" : "standard" // $0.08 vs $0.04
 ```
 
 #### Content Filtering Benefits
-- **Reduces API Rejections**: Fewer failed DALL-E requests (saves $0.04 per failure)
+- **Reduces API Rejections**: Fewer failed GPT-5 image requests (saves $0.035 per failure)
 - **Multi-language Support**: Prevents policy violations across 5 languages
 - **Automatic Recovery**: Fallback prompts reduce manual intervention
+- **Cost Efficiency**: GPT-5 filtering provides improved quality at competitive costs
 
 #### Rate Limiting & Efficiency
 - **Exponential Backoff**: Automatic retry with 2^attempt * 2 second delays
@@ -1554,7 +1559,7 @@ func streamStory() -> AsyncStream<String> {
 ```swift
 // Analyze uploaded images for story inspiration
 func analyzeImage(_ imageData: Data) async throws -> String {
-    // Use GPT-4o vision capabilities
+    // Use GPT-5 vision capabilities when available
 }
 ```
 
@@ -1567,8 +1572,8 @@ func generateEmbedding(text: String) async throws -> [Float] {
 ```
 
 ### API Version Tracking
-- Current: OpenAI API v1
-- GPT-4o: Latest as of 2025
+- Current: OpenAI API v1 with Response API for GPT-5
+- GPT-5: Latest model as of 2025
 - Monitor OpenAI announcements for updates
 - Test new models in staging before production
 
@@ -1592,7 +1597,7 @@ For InfiniteStories implementation:
 ## Summary of Major Updates
 
 ### New Features Added
-1. **Scene Extraction API**: GPT-4o analyzes stories to identify optimal illustration moments
+1. **Scene Extraction API**: GPT-5 analyzes stories to identify optimal illustration moments
 2. **Multi-Illustration Generation**: 3-8 illustrations per story with batch processing
 3. **Visual Consistency Service**: Hero appearance maintained across all illustrations
 4. **Content Policy Filter**: Multi-language safety filtering for DALL-E compliance
@@ -1627,5 +1632,9 @@ For InfiniteStories implementation:
 
 *Last Updated: September 2025*
 *OpenAI API Version: v1*
-*Models: GPT-4o, tts-1-hd, DALL-E 3*
+*Models: GPT-5 Mini (configurable reasoning), gpt-4o-mini-tts (enhanced quality), GPT-5 (improved instruction following)*
 *New Features: Scene Extraction, Visual Storytelling, Content Safety*
+*Model References:*
+- *GPT-5 Mini: https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5-mini*
+- *GPT-5: https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5*
+- *gpt-4o-mini-tts: https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts*

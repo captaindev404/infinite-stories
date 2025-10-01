@@ -17,7 +17,7 @@ struct AvatarGenerationView: View {
     @State private var generatedImage: UIImage?
     @State private var generationError: String?
     @State private var showingSuggestions = false
-    @State private var aiService: OpenAIService?
+    @State private var aiService: AIServiceProtocol?
     @StateObject private var appSettings = AppSettings()
     @State private var avatarSaved = false
     @State private var generatedGenerationId: String? // Store generation ID for chaining
@@ -282,9 +282,8 @@ struct AvatarGenerationView: View {
     }
 
     private func setupAIService() {
-        if !appSettings.openAIAPIKey.isEmpty {
-            aiService = OpenAIService(apiKey: appSettings.openAIAPIKey)
-        }
+        // Always use the AI service factory
+        aiService = AIServiceFactory.createAIService()
     }
 
     private func generateDefaultPrompt() {
@@ -315,7 +314,7 @@ struct AvatarGenerationView: View {
             hero: hero,
             prompt: finalPrompt,
             size: "1024x1024",
-            quality: "standard",
+            quality: "high",  // Use "high" (backend accepts: low, medium, high)
             previousGenerationId: nil // No previous generation for initial avatar
         )
 

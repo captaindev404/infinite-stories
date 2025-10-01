@@ -64,13 +64,12 @@ class EventPictogramGenerator: ObservableObject {
     init(
         aiService: AIServiceProtocol? = nil
     ) {
-        // Use provided service or create a new one with API key from settings
+        // Use provided service or create a new one through factory
         if let service = aiService {
             self.aiService = service
         } else {
-            // Get API key from keychain if available
-            let apiKey = KeychainHelper.shared.loadString(key: "com.infinitestories.openai.apikey") ?? ""
-            self.aiService = OpenAIService(apiKey: apiKey)
+            // Create AI service through factory
+            self.aiService = AIServiceFactory.createAIService()
         }
         self.contentFilter = ContentPolicyFilter.shared
 

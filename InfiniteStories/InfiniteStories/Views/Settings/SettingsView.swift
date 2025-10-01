@@ -8,6 +8,10 @@
 import SwiftUI
 import SwiftData
 
+extension Notification.Name {
+    static let aiServiceChanged = Notification.Name("aiServiceChanged")
+}
+
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -15,12 +19,9 @@ struct SettingsView: View {
     @StateObject private var settings = AppSettings()
     @EnvironmentObject private var themeSettings: ThemeSettings
     
-    @State private var showingAPIKeyInfo = false
-    @State private var tempAPIKey: String = ""
     @State private var showingSuccess = false
     @State private var showingEraseConfirmation = false
     @State private var showingEraseComplete = false
-    @State private var showingRemoveAPIKeyConfirmation = false
     
     var body: some View {
         NavigationStack {
@@ -34,7 +35,7 @@ struct SettingsView: View {
                         VStack(alignment: .leading) {
                             Text("InfiniteStories Settings")
                                 .font(.headline)
-                            Text("Configure AI story generation")
+                            Text("Configure app settings")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -77,72 +78,7 @@ struct SettingsView: View {
                         .font(.caption)
                 }
                 
-                Section {
-                    VStack(alignment: .leading, spacing: 15) {
-                        HStack {
-                            Text("OpenAI API Key")
-                                .font(.headline)
-                            
-                            Spacer()
-                            
-                            Button(action: { showingAPIKeyInfo = true }) {
-                                Image(systemName: "info.circle")
-                                    .foregroundColor(.blue)
-                            }
-                        }
-                        
-                        if settings.hasValidAPIKey {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                Text("API key configured")
-                                    .foregroundColor(.green)
-                                    .font(.subheadline)
-                                
-                                Spacer()
-                                
-                                Button("Update") {
-                                    tempAPIKey = settings.openAIAPIKey
-                                }
-                                .font(.subheadline)
-                                .foregroundColor(.blue)
-                            }
-                        } else {
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack {
-                                    Image(systemName: "exclamationmark.triangle")
-                                        .foregroundColor(.orange)
-                                    Text("AI story generation disabled")
-                                        .foregroundColor(.orange)
-                                        .font(.subheadline)
-                                }
-                                
-                                SecureField("sk-...", text: $tempAPIKey)
-                                    .textFieldStyle(.roundedBorder)
-                                    .font(.system(.body, design: .monospaced))
-                                
-                                Button(action: saveAPIKey) {
-                                    Text("Save API Key")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(tempAPIKey.isEmpty ? Color.gray : Color.green)
-                                        .cornerRadius(10)
-                                }
-                                .disabled(tempAPIKey.isEmpty)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 8)
-                } header: {
-                    Text("AI Configuration")
-                } footer: {
-                    Text("An OpenAI API key is required to generate new stories. Without it, the app will use sample stories only.")
-                        .font(.caption)
-                }
-                
-                if settings.hasValidAPIKey {
+                // Story Preferences Section
                     Section {
                         HStack {
                             Picker("Story Length", selection: $settings.defaultStoryLength) {
@@ -192,7 +128,7 @@ struct SettingsView: View {
                     } header: {
                         Text("Story Preferences")
                     } footer: {
-                        Text("Voice selection uses OpenAI's enhanced text-to-speech with storytelling instructions. Coral and Fable are recommended for bedtime stories.")
+                        Text("Voice selection uses enhanced text-to-speech with storytelling instructions. Coral and Fable are recommended for bedtime stories.")
                             .font(.caption)
                     }
                     
@@ -261,14 +197,6 @@ struct SettingsView: View {
                     }
 
                     Section {
-                        Button(action: { showingRemoveAPIKeyConfirmation = true }) {
-                            HStack {
-                                Image(systemName: "trash")
-                                Text("Remove API Key")
-                            }
-                            .foregroundColor(.red)
-                        }
-
                         Button(action: { showingEraseConfirmation = true }) {
                             HStack {
                                 Image(systemName: "exclamationmark.triangle.fill")
@@ -279,11 +207,10 @@ struct SettingsView: View {
                     } header: {
                         Text("Advanced")
                     } footer: {
-                        Text("Removing the API key will disable AI story generation. Erasing all data will permanently delete all heroes and stories.")
+                        Text("Erasing all data will permanently delete all heroes and stories.")
                             .font(.caption)
                     }
-                }
-                
+
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("About InfiniteStories")
@@ -315,22 +242,6 @@ struct SettingsView: View {
                     .fontWeight(.semibold)
                 }
             }
-            .sheet(isPresented: $showingAPIKeyInfo) {
-                APIKeyInfoView()
-            }
-            .alert("API Key Saved!", isPresented: $showingSuccess) {
-                Button("OK") { }
-            } message: {
-                Text("Your OpenAI API key has been saved securely. You can now generate AI-powered stories!")
-            }
-            .confirmationDialog("Remove API Key?", isPresented: $showingRemoveAPIKeyConfirmation, titleVisibility: .visible) {
-                Button("Remove", role: .destructive) {
-                    clearAPIKey()
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("This will disable AI story generation. You can add a new API key anytime.")
-            }
             .confirmationDialog("Erase All Data?", isPresented: $showingEraseConfirmation, titleVisibility: .visible) {
                 Button("Erase Everything", role: .destructive) {
                     eraseAllData()
@@ -347,20 +258,6 @@ struct SettingsView: View {
                 Text("All heroes, stories, and audio files have been permanently deleted.")
             }
         }
-        .onAppear {
-            tempAPIKey = settings.openAIAPIKey
-        }
-    }
-    
-    private func saveAPIKey() {
-        settings.openAIAPIKey = tempAPIKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        showingSuccess = true
-        tempAPIKey = ""
-    }
-    
-    private func clearAPIKey() {
-        settings.openAIAPIKey = ""
-        tempAPIKey = ""
     }
     
     private func eraseAllData() {
@@ -391,9 +288,7 @@ struct SettingsView: View {
                 }
             }
             
-            // Clear API key and settings
-            settings.openAIAPIKey = ""
-            tempAPIKey = ""
+            // Clear settings
             
             // Reset theme to system default
             themeSettings.themePreferenceString = "system"
@@ -419,110 +314,6 @@ struct SettingsView: View {
         }
     }
 
-}
-
-struct APIKeyInfoView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("How to get your OpenAI API Key")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        Text("Follow these steps to get your API key:")
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 15) {
-                        APIKeyStep(
-                            number: "1",
-                            title: "Visit OpenAI",
-                            description: "Go to platform.openai.com and sign up or log in to your account."
-                        )
-                        
-                        APIKeyStep(
-                            number: "2", 
-                            title: "Navigate to API Keys",
-                            description: "In your dashboard, go to the API section and click on 'API Keys'."
-                        )
-                        
-                        APIKeyStep(
-                            number: "3",
-                            title: "Create New Key",
-                            description: "Click 'Create new secret key' and give it a name like 'InfiniteStories'."
-                        )
-                        
-                        APIKeyStep(
-                            number: "4",
-                            title: "Copy and Paste",
-                            description: "Copy the generated key (starts with 'sk-') and paste it in the settings above."
-                        )
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Important Notes:")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                        
-                        Text("• Your API key is stored securely on your device only")
-                        Text("• OpenAI charges per story generated (usually $0.01-0.05)")
-                        Text("• Keep your API key private - don't share it with others")
-                        Text("• You can revoke or regenerate keys anytime on OpenAI's website")
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding()
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(12)
-                    
-                    Spacer()
-                }
-                .padding()
-            }
-            .navigationTitle("API Key Help")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
-struct APIKeyStep: View {
-    let number: String
-    let title: String
-    let description: String
-    
-    var body: some View {
-        HStack(alignment: .top, spacing: 15) {
-            Text(number)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .frame(width: 30, height: 30)
-                .background(Color.purple)
-                .clipShape(Circle())
-            
-            VStack(alignment: .leading, spacing: 5) {
-                Text(title)
-                    .font(.headline)
-                
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-        }
-    }
 }
 
 #Preview {

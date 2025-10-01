@@ -1,0 +1,16 @@
+=== AI PROMPT DEBUG FILE ===
+Generated: 2025-09-17 07:50:28 +0000
+Type: DALL-E-Scene-3
+Request ID: 81c54d0a
+
+=== METADATA ===
+words: 148
+hero: Emmanounette
+length: 1025
+keywords: étoile, enchanting, style, ability, expressive, joie, hibou, eyes, watercolor, moment
+type: DALL-E-Scene-3
+
+=== PROMPT ===
+Children's book illustration in a warm, magical style. Show Emmanounette, matching this exact appearance: A cartoon children's book illustration of Emmanounette, a kind and curious character, Une petite fille de 3 ans pleine de vie, métisse avec des beaux cheveux crépus, known for their ability to Elle déborde d’énergie, sait faire du vélo et des puzzles, with big expressive eyes and a cheerful smile, high quality, child-friendly, safe for children, appropriate for bedtime stories, wholesome, innocent, magical, fantasy character portrait, no mysterious or gentle elements, bright and cheerful, portrait . Scene: Cette musique magique remplissait le cœur d'Emmanounette de joie et de tranquillité. Monsieur Hibou, lui, écoutait en fermant les yeux, bercé par la mélodie céleste. Après un moment, une des étoile.... Context: Bedtime Adventure. Style: Soft, dreamy watercolor with gentle colors, child-friendly, whimsical, and enchanting. Maintain consistent character appearance throughout. No text or words in the image.
+
+=== END ===

@@ -1,0 +1,32 @@
+=== OPENAI PLAYGROUND COMMAND ===
+Generated: 2025-09-17 13:09:05 +0000
+Request ID: 0527a597
+
+🌐 PLAYGROUND URL:
+https://platform.openai.com/playground
+
+⚙️ SETTINGS:
+Model: dall-e-3
+Size: 1024x1024
+Quality: standard
+Number of images: 1
+
+📝 PROMPT TO PASTE:
+---START---
+Bright colorful children's book illustration Happy cartoon character in a magical world Characters painting beautiful pictures together Cheerful watercolor style with rainbow colors Everyone smiling and playing together Sunny day with flowers and butterflies Safe friendly magical environment surrounded by friendly magical creatures and companions.
+---END---
+
+📋 CURL COMMAND (for terminal):
+curl https://api.openai.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "dall-e-3",
+    "prompt": "Bright colorful children's book illustration Happy cartoon character in a magical world Characters painting beautiful pictures together Cheerful watercolor style with rainbow colors Everyone smiling and playing together Sunny day with flowers and butterflies Safe friendly magical environment surrounded by friendly magical creatures and companions.",
+    "n": 1,
+    "size": "1024x1024",
+    "quality": "standard",
+    "response_format": "b64_json"
+  }'
+
+=== END ===

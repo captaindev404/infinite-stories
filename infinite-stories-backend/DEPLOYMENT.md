@@ -14,9 +14,9 @@ Comprehensive deployment guide for the InfiniteStories Supabase backend. This do
 ### Required Accounts
 - **Supabase Account** with project created
 - **OpenAI Account** with API access to:
-  - GPT-4o (text generation)
-  - TTS-1 / TTS-1-HD (audio synthesis)
-  - DALL-E 3 (image generation)
+  - GPT-5 Mini (text generation with configurable reasoning)
+  - GPT-4o Mini TTS (audio synthesis with enhanced quality)
+  - GPT-5 (image generation with improved instruction following)
 
 ### System Requirements
 - **Memory**: 8GB RAM minimum (16GB recommended)
@@ -61,7 +61,7 @@ npx supabase functions deploy
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `OPENAI_API_KEY` | OpenAI API key with gpt-4o access | ✅ |
+| `OPENAI_API_KEY` | OpenAI API key with GPT-5 model access | ✅ |
 
 ### Supabase Configuration (Auto-set)
 
@@ -83,13 +83,13 @@ npx supabase functions deploy
 ## AI Models Configuration
 
 ### Text Generation
-- **Primary Model**: `gpt-4o`
-- **Fallback Model**: `gpt-4o-mini`
+- **Primary Model**: `gpt-5-mini` (with configurable reasoning effort)
+- **Fallback Model**: `gpt-5-mini` (with minimal reasoning effort)
 - **Parameters**: Temperature 0.7-0.9, Max tokens 2000-4000
 - **Use Cases**: Story generation, scene extraction, content analysis
 
 ### Text-to-Speech
-- **Models**: `tts-1` (faster) / `tts-1-hd` (higher quality)
+- **Model**: `gpt-4o-mini-tts` (enhanced quality and natural speech)
 - **Voices Available**:
   - `coral` - Warm, nurturing (default)
   - `nova` - Cheerful, engaging
@@ -100,7 +100,7 @@ npx supabase functions deploy
   - `shimmer` - Bright, melodic
 
 ### Image Generation
-- **Model**: `dall-e-3`
+- **Model**: `gpt-5` (enhanced image generation with better instruction following)
 - **Sizes**: 1024x1024 (square), 1024x1792 (portrait), 1792x1024 (landscape)
 - **Quality**: Standard or HD
 - **Style**: Natural or Vivid
@@ -121,7 +121,7 @@ https://your-project-ref.supabase.co/functions/v1/scene-illustration
 ### Run Validation Tests
 
 ```bash
-# Test gpt-4o integration
+# Test GPT-5 Mini integration
 cd supabase/functions/test
 deno test --allow-all gpt5-mini-validation.ts
 ```
@@ -178,7 +178,7 @@ WHERE created_at > NOW() - INTERVAL '24 hours'
 GROUP BY function_name;
 ```
 
-### Monitor gpt-4o Performance
+### Monitor GPT-5 Mini Performance
 
 ```sql
 SELECT
@@ -206,7 +206,7 @@ Rate limits are enforced per user:
 All content goes through comprehensive safety filtering:
 
 1. **Rule-based filtering**: Removes unsafe terms and phrases
-2. **AI-powered filtering**: gpt-4o analyzes content for child safety
+2. **AI-powered filtering**: gpt-5-mini with minimal reasoning analyzes content for child safety
 3. **Image prompt sanitization**: Ensures child-appropriate images
 4. **Companionship enforcement**: Children never shown alone
 
@@ -522,7 +522,7 @@ curl https://api.openai.com/v1/models \
 # Check rate limits
 curl -i https://api.openai.com/v1/chat/completions \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -d '{"model":"gpt-4o","messages":[{"role":"user","content":"test"}]}'
+  -d '{"model":"gpt-5-mini","messages":[{"role":"user","content":"test"}]}'
 ```
 
 #### Database Connection Issues
@@ -732,9 +732,9 @@ const MAX_TOKENS = {
 
 // Use appropriate models for each task
 const MODEL_SELECTION = {
-  complex_tasks: 'gpt-4o',
-  simple_tasks: 'gpt-4o-mini',
-  filtering: 'gpt-4o-mini',
+  complex_tasks: 'gpt-5-mini',  // with high reasoning effort
+  simple_tasks: 'gpt-5-mini',   // with medium reasoning effort
+  filtering: 'gpt-5-mini',      // with minimal reasoning effort
 };
 
 // Implement caching aggressively

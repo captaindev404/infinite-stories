@@ -1,0 +1,16 @@
+=== AI PROMPT DEBUG FILE ===
+Generated: 2025-09-17 00:05:58 +0000
+Type: DALL-E-Scene-2
+Request ID: dbe78fd0
+
+=== METADATA ===
+words: 149
+keywords: d'une, known, elements, show, colors, d’énergie, watercolor, souriait, safe, smile
+hero: Emmanounette
+type: DALL-E-Scene-2
+length: 1018
+
+=== PROMPT ===
+Children's book illustration in a warm, magical style. Show Emmanounette, matching this exact appearance: A cartoon children's book illustration of Emmanounette, a kind and curious character, Une petite fille de 3 ans pleine de vie, métisse avec des beaux cheveux crépus, known for their ability to Elle déborde d’énergie, sait faire du vélo et des puzzles, with big expressive eyes and a cheerful smile, high quality, child-friendly, safe for children, appropriate for bedtime stories, wholesome, innocent, magical, fantasy character portrait, no scary or dark elements, bright and cheerful, portrait . Scene: Emmanounette descendit de son vélo et s'approcha d'une grande fleur qui lui souriait. Elle lui demanda si elle connaissait le chemin du Jardin des Étoiles, un endroit légendaire où chaque enfant po.... Context: Bedtime Adventure. Style: Soft, dreamy watercolor with gentle colors, child-friendly, whimsical, and enchanting. Maintain consistent character appearance throughout. No text or words in the image.
+
+=== END ===

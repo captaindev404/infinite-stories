@@ -63,13 +63,9 @@ class StoryViewModel: ObservableObject {
     init(audioService: AudioServiceProtocol = AudioService()) {
         self.audioService = audioService
 
-        // Only use real AI service - no mocks
-        if appSettings.hasValidAPIKey {
-            self.aiService = OpenAIService(apiKey: appSettings.openAIAPIKey)
-        } else {
-            // Create a placeholder that will show error messages
-            self.aiService = OpenAIService(apiKey: "")
-        }
+        // Use AIServiceFactory to create the appropriate service
+        // The factory will decide between OpenAI direct or Supabase based on configuration
+        self.aiService = AIServiceFactory.createAIService()
 
         setupBackgroundHandlers()
 
@@ -77,6 +73,18 @@ class StoryViewModel: ObservableObject {
         if let audioService = audioService as? AudioService {
             audioService.navigationDelegate = self
         }
+
+        // Listen for AI service changes from Settings
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAIServiceChange),
+            name: Notification.Name("aiServiceChanged"),
+            object: nil
+        )
+    }
+
+    @objc private func handleAIServiceChange() {
+        refreshAIService()
     }
     
     func setModelContext(_ context: ModelContext) {
@@ -86,22 +94,24 @@ class StoryViewModel: ObservableObject {
     }
     
     func refreshAIService() {
-        // Update AI service when settings change
-        if appSettings.hasValidAPIKey {
-            self.aiService = OpenAIService(apiKey: appSettings.openAIAPIKey)
-        } else {
-            self.aiService = OpenAIService(apiKey: "")
-        }
-        
+        // Update AI service using the factory
+        // The factory will create the appropriate service based on configuration
+        self.aiService = AIServiceFactory.createAIService()
+
         // Set the AI service on the audio service for TTS generation
         audioService.setAIService(self.aiService)
+
+        // Reinitialize illustration generator with the new AI service if context is available
+        if let context = modelContext {
+            self.illustrationGenerator = IllustrationGenerator(aiService: aiService, modelContext: context)
+        }
     }
     
     func generateStory(for hero: Hero, event: StoryEvent) async {
         print("📱 === Story Generation Flow Started ===")
         print("📱 Hero: \(hero.name) (\(hero.traitsDescription))")
         print("📱 Event: \(event.rawValue)")
-        print("📱 Has API Key: \(appSettings.hasValidAPIKey)")
+        print("📱 Using Supabase Edge Functions")
         
         isGeneratingStory = true
         generationError = nil
@@ -225,7 +235,7 @@ class StoryViewModel: ObservableObject {
         print("📱 === Custom Story Generation Flow Started ===")
         print("📱 Hero: \(hero.name) (\(hero.traitsDescription))")
         print("📱 Custom Event: \(customEvent.title)")
-        print("📱 Has API Key: \(appSettings.hasValidAPIKey)")
+        print("📱 Using Supabase Edge Functions")
         
         isGeneratingStory = true
         generationError = nil
@@ -590,6 +600,8 @@ class StoryViewModel: ObservableObject {
                 return "Network error. Please check your internet connection"
             case .invalidResponse:
                 return "Received invalid response from AI service"
+            case .invalidRequest(let message):
+                return "Invalid request: \(message)"
             case .apiError(let message):
                 return "API Error: \(message)"
             case .rateLimitExceeded:
@@ -1171,18 +1183,6 @@ extension StoryViewModel: AudioNavigationDelegate {
 
 // Settings for AI service configuration
 class AppSettings: ObservableObject {
-    private let keychainHelper = KeychainHelper.shared
-    private let apiKeyIdentifier = "com.infinitestories.openai.apikey"
-    
-    @Published var openAIAPIKey: String {
-        didSet {
-            if openAIAPIKey.isEmpty {
-                _ = keychainHelper.delete(key: apiKeyIdentifier)
-            } else {
-                _ = keychainHelper.saveString(openAIAPIKey, for: apiKeyIdentifier)
-            }
-        }
-    }
     
     @Published var preferredVoice: String {
         didSet {
@@ -1203,10 +1203,7 @@ class AppSettings: ObservableObject {
     }
     
     init() {
-        // Load API key from Keychain (secure storage)
-        self.openAIAPIKey = keychainHelper.loadString(key: apiKeyIdentifier) ?? ""
-        
-        // Load other settings from UserDefaults
+        // Load settings from UserDefaults
         self.preferredVoice = UserDefaults.standard.string(forKey: "preferredVoice") ?? "coral"
         self.defaultStoryLength = UserDefaults.standard.integer(forKey: "defaultStoryLength") == 0 ? 7 : UserDefaults.standard.integer(forKey: "defaultStoryLength")
         
@@ -1216,11 +1213,7 @@ class AppSettings: ObservableObject {
         self.preferredLanguage = UserDefaults.standard.string(forKey: "preferredLanguage") ?? defaultLanguage
     }
     
-    var hasValidAPIKey: Bool {
-        return !openAIAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-    
-    // Available OpenAI voices for TTS (optimized for children's bedtime stories)
+    // Available voices for TTS (optimized for children's bedtime stories)
     static let availableVoices: [(id: String, name: String, description: String)] = [
         ("coral", "Coral", "Warm and nurturing - ideal for bedtime"),
         ("nova", "Nova", "Friendly and cheerful - captivating for young listeners"),
@@ -1249,6 +1242,18 @@ class AppSettings: ObservableObject {
         case "it": return "Italian"
         case "en": return "English"
         default: return "English"  // Default to English for unsupported languages
+        }
+    }
+
+    // Helper method to map language name to language code for Supabase Edge Functions
+    static func supportedLanguageToCode(_ language: String) -> String {
+        switch language {
+        case "Spanish": return "es"
+        case "French": return "fr"
+        case "German": return "de"
+        case "Italian": return "it"
+        case "English": return "en"
+        default: return "en"  // Default to English for unsupported languages
         }
     }
 }

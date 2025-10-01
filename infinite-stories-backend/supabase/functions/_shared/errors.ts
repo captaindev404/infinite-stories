@@ -14,10 +14,8 @@ export enum ErrorCode {
   MISSING_FIELDS = 'MISSING_FIELDS',
   INVALID_CONTENT = 'INVALID_CONTENT',
 
-  // Rate limiting
-  RATE_LIMITED = 'RATE_LIMITED',
-
   // OpenAI API errors
+  RATE_LIMITED = 'RATE_LIMITED', // Only for OpenAI rate limits
   OPENAI_ERROR = 'OPENAI_ERROR',
   CONTENT_POLICY_VIOLATION = 'CONTENT_POLICY_VIOLATION',
   MODEL_UNAVAILABLE = 'MODEL_UNAVAILABLE',
@@ -144,19 +142,6 @@ export function createValidationError(message: string, details?: any): APIError 
     400,
     message,
     details
-  );
-}
-
-/**
- * Rate limit error helper
- */
-export function createRateLimitError(retryAfter: number): APIError {
-  return new APIError(
-    ErrorCode.RATE_LIMITED,
-    429,
-    'Rate limit exceeded',
-    { limit_type: 'requests_per_hour' },
-    retryAfter
   );
 }
 

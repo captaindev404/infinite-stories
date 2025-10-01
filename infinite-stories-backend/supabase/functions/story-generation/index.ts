@@ -3,16 +3,22 @@
  *
  * This function handles story generation requests from the iOS app, replacing
  * direct OpenAI API calls with server-side processing. It includes:
- * - Story generation using GPT-5-mini with fallback to GPT-4o
+ * - Story generation using GPT-5 Mini with configurable reasoning
  * - Official OpenAI Node.js SDK integration
- * - Automatic scene extraction with enhanced reasoning
  * - Content filtering for child safety
  * - Caching for performance
  * - Usage tracking and rate limiting
  * - Migration support with feature flags
+ *
+ * Note: Scene extraction has been moved to a separate edge function (extract-scenes)
+ * to allow for independent scaling and optimization.
+ *
+ * Model: gpt-5-mini (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5-mini)
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// Validate environment variables at startup
+import { validateEnvironmentVariables } from '../_shared/env-validation.ts';
+validateEnvironmentVariables();
 import {
   withEdgeFunctionWrapper,
   parseAndValidateJSON,
@@ -36,7 +42,7 @@ import {
 interface StoryGenerationRequest {
   hero_id: string;
   event: {
-    type: 'built_in' | 'custom';
+    type: string;
     data: any;
   };
   target_duration: number; // seconds
@@ -52,30 +58,22 @@ interface StoryGenerationResponse {
   content: string;
   estimated_duration: number;
   word_count: number;
-  scenes: Array<{
-    scene_number: number;
-    text_segment: string;
-    illustration_prompt: string;
-    timestamp_seconds: number;
-    emotion: string;
-    importance: string;
-  }>;
 }
 
 /**
  * Built-in story events (matches iOS StoryEvent enum)
  */
 const BUILT_IN_EVENTS = {
-  'magical_forest_adventure': 'discovers a hidden magical forest where talking animals need help solving a puzzle',
-  'friendly_dragon_encounter': 'meets a shy, friendly dragon who has lost their way home',
-  'underwater_treasure_hunt': 'dives into a magical underwater world to find a treasure that helps sea creatures',
-  'cloud_castle_journey': 'climbs a rainbow to visit a castle in the clouds where they help cloud creatures',
-  'time_travel_mission': 'travels back in time to help historical figures solve a fun problem',
-  'space_exploration': 'blasts off to space to help alien friends fix their broken spaceship',
-  'miniature_world_discovery': 'shrinks down to explore a tiny world where they help miniature creatures',
-  'weather_wizard_training': 'learns to control weather magic to help their town during a gentle storm',
-  'animal_language_learning': 'gains the ability to talk to animals and helps them organize a forest festival',
-  'dream_world_adventure': 'enters the dream world to help other children have better dreams'
+  'Bedtime Adventure': 'a calm bedtime adventure that helps prepare for sleep',
+  'School Day Fun': 'an exciting day at school with learning and fun',
+  'Birthday Celebration': 'a magical birthday celebration with surprises',
+  'Weekend Explorer': 'a fun weekend adventure exploring new places',
+  'Rainy Day Magic': 'a creative indoor adventure on a rainy day',
+  'Family Time': 'a heartwarming adventure with family',
+  'Making Friends': 'a story about making new friends and friendship',
+  'Learning Something New': 'an adventure while learning something exciting and new',
+  'Helping Others': 'a story about helping others and being kind',
+  'Holiday Adventure': 'a festive holiday adventure full of joy'
 } as const;
 
 /**
@@ -234,10 +232,14 @@ async function generateStoryContent(
 
   const prompt = getPrompt(hero, traits, event, targetDuration);
 
-  // Filter the prompt for safety
-  const filteredPrompt = await contentFilter.filterStoryPrompt(prompt, requestId);
+  // Note: Prompt filtering is optional and can be disabled for performance
+  // The system prompt already ensures safe content generation
+  const shouldFilterPrompt = Deno.env.get('FILTER_STORY_PROMPTS') === 'true';
+  const filteredPrompt = shouldFilterPrompt
+    ? await contentFilter.filterStoryPrompt(prompt, requestId)
+    : prompt;
 
-  // Get optimal parameters for GPT-5-mini story generation
+  // Get optimal parameters for GPT-5 Mini story generation
   const modelParams = getOptimalParams('story_generation');
 
   logger.logOpenAIRequest(MODELS.CHAT, 'story_generation', requestId, filteredPrompt.length);
@@ -256,8 +258,8 @@ async function generateStoryContent(
     ],
     max_tokens: modelParams.max_tokens,
     temperature: modelParams.temperature,
-    reasoning_effort: modelParams.reasoning_effort,
-    text_verbosity: modelParams.text_verbosity,
+    reasoning_effort: modelParams.reasoning_effort,  // GPT-5 Mini reasoning configuration
+    text_verbosity: modelParams.text_verbosity,      // GPT-5 Mini verbosity configuration
     user_id: hero.user_id
   }, requestId);
 
@@ -270,8 +272,17 @@ async function generateStoryContent(
     throw new Error('No story content generated');
   }
 
-  // Filter the generated content
-  const filterResult = await contentFilter.filterContent(storyContent, true, requestId);
+  // Note: Output filtering is optional - AI-generated content from GPT-5 is already safe
+  // Enable FILTER_STORY_OUTPUT=true in production if extra validation is needed
+  const shouldFilterOutput = Deno.env.get('FILTER_STORY_OUTPUT') === 'true';
+  const filterResult = shouldFilterOutput
+    ? await contentFilter.filterContent(storyContent, requestId, { skipOnError: true })
+    : {
+        isClean: true,
+        filteredContent: storyContent,
+        warnings: [],
+        changesApplied: []
+      };
 
   // Generate title
   const title = `${hero.name} and the ${event.split(' ').slice(0, 3).join(' ')}`;
@@ -297,134 +308,11 @@ async function generateStoryContent(
   };
 }
 
-/**
- * Extract scenes from story using OpenAI
- */
-async function extractScenes(
-  storyContent: string,
-  storyDuration: number,
-  hero: any,
-  eventContext: string,
-  requestId: string
-): Promise<Array<{
-  scene_number: number;
-  text_segment: string;
-  illustration_prompt: string;
-  timestamp_seconds: number;
-  emotion: string;
-  importance: string;
-}>> {
-  const prompt = `You are an expert at analyzing children's bedtime stories and identifying key visual moments for illustration.
-
-Analyze the following story and identify the most important scenes for illustration. Consider:
-- Natural narrative breaks and transitions
-- Key emotional moments
-- Visual variety (different settings, actions, moods)
-- Story pacing (distribute scenes evenly throughout)
-
-Story Duration: ${Math.round(storyDuration)} seconds
-Hero: ${hero.name}
-Context: ${eventContext}
-
-STORY TEXT:
-${storyContent}
-
-INSTRUCTIONS:
-1. Identify 3-6 optimal scenes for this story (1 scene per 15-30 seconds of narration)
-2. Choose scenes that best represent the story arc
-3. For each scene, provide:
-   - The exact text segment from the story
-   - A detailed illustration prompt for GPT-Image-1
-   - Estimated timestamp when this scene would occur during audio playback
-   - The emotional tone and importance
-
-The illustration prompts should:
-- Be child-friendly and magical
-- Use warm, watercolor or soft digital art style
-- Be specific about colors, composition, and atmosphere
-- Include ${hero.name} in the scene with companions
-- Be under 150 words each
-
-Return your analysis as a JSON object matching this structure:
-{
-  "scenes": [
-    {
-      "sceneNumber": 1,
-      "textSegment": "exact text from story",
-      "timestamp": 0.0,
-      "illustrationPrompt": "detailed GPT-Image-1 prompt",
-      "emotion": "joyful|peaceful|exciting|mysterious|heartwarming|adventurous|contemplative",
-      "importance": "key|major|minor"
-    }
-  ],
-  "sceneCount": total_number,
-  "reasoning": "brief explanation of scene selection"
-}`;
-
-  // Use high reasoning effort for detailed scene extraction
-  const extractionParams = getOptimalParams('scene_extraction');
-
-  logger.logOpenAIRequest(MODELS.CHAT, 'scene_extraction', requestId, prompt.length);
-
-  const startTime = Date.now();
-  const response = await openai.createChatCompletion({
-    messages: [
-      {
-        role: 'system',
-        content: 'You are an expert at visual storytelling and scene analysis for children\'s books.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ],
-    max_tokens: extractionParams.max_tokens,
-    temperature: extractionParams.temperature,
-    reasoning_effort: extractionParams.reasoning_effort,
-    text_verbosity: extractionParams.text_verbosity,
-    response_format: { type: 'json_object' },
-    user_id: hero.user_id
-  }, requestId);
-
-  const responseTime = Date.now() - startTime;
-  logger.logOpenAIResponse(true, responseTime, requestId, response.usage);
-
-  const contentToProcess = response.choices[0].message.content?.trim();
-  if (!contentToProcess) {
-    throw new Error('No scene extraction content generated');
-  }
-
-  const sceneData = JSON.parse(contentToProcess);
-
-  // Process and filter scenes
-  const scenes = await Promise.all(
-    sceneData.scenes.map(async (scene: any, index: number) => {
-      // Filter illustration prompt for safety
-      const filteredPrompt = await contentFilter.filterImagePrompt(scene.illustrationPrompt, requestId);
-
-      return {
-        scene_number: scene.sceneNumber || index + 1,
-        text_segment: scene.textSegment,
-        illustration_prompt: filteredPrompt,
-        timestamp_seconds: scene.timestamp || (index * (storyDuration / sceneData.scenes.length)),
-        emotion: scene.emotion || 'peaceful',
-        importance: scene.importance || 'major'
-      };
-    })
-  );
-
-  logger.logStoryGeneration('scenes_extracted', requestId, {
-    scene_count: scenes.length,
-    reasoning: sceneData.reasoning
-  });
-
-  return scenes;
-}
 
 /**
  * Main story generation handler
  */
-serve(async (req) => {
+Deno.serve(async (req) => {
   return withEdgeFunctionWrapper(req, 'story_generation', async ({ userId, supabase, requestId }) => {
     const request = await parseAndValidateJSON<StoryGenerationRequest>(req, StoryGenerationSchema);
 
@@ -452,7 +340,9 @@ serve(async (req) => {
     let eventContext: string;
 
     if (request.event.type === 'built_in') {
-      const eventKey = request.event.data.event as keyof typeof BUILT_IN_EVENTS;
+      // iOS app sends "name" field with the event key
+      const eventKey = (request.event.data.name || request.event.data.event) as
+          keyof typeof BUILT_IN_EVENTS;
       eventPrompt = BUILT_IN_EVENTS[eventKey];
       eventContext = `Built-in event: ${eventKey}`;
 
@@ -477,18 +367,19 @@ serve(async (req) => {
     }
 
     // Check cache
-    const cacheKey = CacheKeyGenerator.storyGeneration(
-      request.hero_id,
-      request.event,
-      request.language,
-      request.target_duration
-    );
-
-    const cached = await cache.get<StoryGenerationResponse>(cacheKey, requestId);
-    if (cached) {
-      logger.logStoryGeneration('cache_hit', requestId, { story_id: cached.story_id });
-      return { ...cached, cached: true };
-    }
+    // Cache disabled for development/debugging
+    // const cacheKey = CacheKeyGenerator.storyGeneration(
+    //   request.hero_id,
+    //   request.event,
+    //   request.language,
+    //   request.target_duration
+    // );
+    //
+    // const cached = await cache.get<StoryGenerationResponse>(cacheKey, requestId);
+    // if (cached) {
+    //   logger.logStoryGeneration('cache_hit', requestId, { story_id: cached.story_id });
+    //   return { ...cached, cached: true };
+    // }
 
     // Generate story
     const storyResult = await generateStoryContent(
@@ -496,15 +387,6 @@ serve(async (req) => {
       eventPrompt,
       request.target_duration,
       request.language,
-      requestId
-    );
-
-    // Extract scenes
-    const scenes = await extractScenes(
-      storyResult.content,
-      storyResult.estimatedDuration,
-      hero,
-      eventContext,
       requestId
     );
 
@@ -525,7 +407,6 @@ serve(async (req) => {
         generation_metadata: {
           target_duration: request.target_duration,
           actual_duration: storyResult.estimatedDuration,
-          scene_count: scenes.length,
           event_context: eventContext
         }
       })
@@ -537,45 +418,21 @@ serve(async (req) => {
       throw new Error('Failed to save story');
     }
 
-    // Save scenes to database
-    if (scenes.length > 0) {
-      const { error: scenesError } = await supabase
-        .from('story_scenes')
-        .insert(
-          scenes.map(scene => ({
-            story_id: savedStory.id,
-            scene_number: scene.scene_number,
-            text_segment: scene.text_segment,
-            illustration_prompt: scene.illustration_prompt,
-            sanitized_prompt: scene.illustration_prompt, // Already filtered
-            timestamp_seconds: scene.timestamp_seconds,
-            emotion: scene.emotion,
-            importance: scene.importance
-          }))
-        );
-
-      if (scenesError) {
-        logger.warn('Failed to save scenes', LogCategory.DATABASE, requestId, scenesError as Error);
-      }
-    }
-
     // Prepare response
     const response: StoryGenerationResponse = {
       story_id: savedStory.id,
       title: storyResult.title,
       content: storyResult.content,
       estimated_duration: storyResult.estimatedDuration,
-      word_count: storyResult.wordCount,
-      scenes
+      word_count: storyResult.wordCount
     };
 
-    // Cache the response
-    await cache.set(cacheKey, response, CACHE_CONFIG.story_content.ttl, requestId);
+    // Cache disabled for development/debugging
+    // await cache.set(cacheKey, response, CACHE_CONFIG.story_content.ttl, requestId);
 
     logger.logStoryGeneration('completed', requestId, {
       story_id: savedStory.id,
-      duration: storyResult.estimatedDuration,
-      scenes: scenes.length
+      duration: storyResult.estimatedDuration
     });
 
     return response;

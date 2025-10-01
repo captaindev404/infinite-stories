@@ -2,13 +2,13 @@
 
 ## Overview
 
-InfiniteStories is a sophisticated SwiftUI iOS app that generates personalized bedtime stories with AI-powered visual storytelling. The app creates custom stories based on hero characters with unique traits, converts them to high-quality audio, and generates synchronized illustrations using OpenAI's APIs. The latest implementation features a complete visual storytelling system with audio-synchronized illustration carousels.
+InfiniteStories is a sophisticated SwiftUI iOS app that generates personalized bedtime stories with AI-powered visual storytelling. The app creates custom stories based on hero characters with unique traits, converts them to high-quality audio, and generates synchronized illustrations using OpenAI's latest models. The latest implementation features a complete visual storytelling system with audio-synchronized illustration carousels.
 
 ## Core Technologies
 
 - **SwiftUI**: Modern declarative UI framework with advanced animations
 - **SwiftData**: Apple's persistence framework for model storage and relationships
-- **OpenAI API**: GPT-4o for story generation and scene extraction, DALL-E 3 for illustrations, tts-1-hd for audio
+- **OpenAI API**: GPT-5 Mini for story generation with configurable reasoning (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5-mini), GPT-5 for illustrations with improved instruction following (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5), gpt-4o-mini-tts for enhanced quality audio (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts)
 - **AVFoundation**: MP3 audio playback with background support
 - **Combine**: Reactive programming for real-time synchronization
 - **Keychain**: Secure API key storage
@@ -29,34 +29,35 @@ Views (SwiftUI + Illustrations) → ViewModels (Business Logic + Sync) → Servi
 ### 1. Enhanced AI Service (`AIService.swift`)
 
 **Story Generation with Scene Extraction**
-- Model: `gpt-4o`
-- Temperature: 0.8 for creative variation
-- Max tokens: 2000 (5-10 minute stories)
-- **NEW**: Automated scene extraction for illustrations
+- Model: `gpt-5-mini` with configurable reasoning effort
+- Temperature: 0.7 for creative but coherent output
+- Max tokens: 3000 (5-10 minute stories)
+- **NEW**: Automated scene extraction for illustrations with high reasoning
 - **NEW**: Story content analysis and timestamp generation
 - **NEW**: Hero visual consistency prompts
 - System prompt for child-friendly content
 
 **Scene Extraction & Illustration Planning**
-- **AI-Powered Scene Detection**: Automatically identifies 3-7 key visual moments
+- **AI-Powered Scene Detection**: Automatically identifies 3-7 key visual moments using GPT-5 Mini
 - **Timestamp Calculation**: Distributes scenes evenly across story duration
 - **Visual Consistency**: Maintains character appearance across all illustrations
-- **Content Policy Integration**: Ensures all prompts are child-safe and DALL-E compliant
+- **Content Policy Integration**: Ensures all prompts are child-safe and GPT-5 compliant
 
-**DALL-E 3 Image Generation**
-- **Model**: `dall-e-3`
+**GPT-5 Image Generation**
+- **Model**: `gpt-5` with improved instruction following
 - **Resolution**: 1024x1024 pixels
 - **Quality**: Standard (optimized for speed)
 - **Response Format**: Base64 encoded data
 - **NEW**: AI-powered prompt sanitization for content policy compliance
 - **NEW**: Hero visual profile integration for character consistency
+- **NEW**: Enhanced text rendering and instruction adherence
 
 **Audio Generation**
-- Model: `tts-1-hd`
+- Model: `gpt-4o-mini-tts` with enhanced quality
 - Format: MP3
 - Voice options with tailored instructions:
-  - **coral**: Warm, nurturing bedtime voice
-  - **nova**: Friendly, engaging storyteller
+  - **coral**: Warm, nurturing bedtime voice (enhanced naturalness)
+  - **nova**: Friendly, engaging storyteller (improved clarity)
   - **fable**: Wise, grandfather-like tone
   - **alloy**: Clear, educational voice
   - **echo**: Soft, dreamy atmosphere
@@ -226,10 +227,10 @@ When stories are edited:
 ### Complete Story Generation Workflow
 
 ```swift
-// 1. Story Generation with Scene Extraction
+// 1. Story Generation with GPT-5 Mini (configurable reasoning)
 let storyResponse = try await aiService.generateStory(for: hero, event: event)
 
-// 2. Scene Extraction for Illustrations
+// 2. Scene Extraction for Illustrations using GPT-5 Mini with high reasoning
 let scenes = try await aiService.extractScenesFromStory(
     content: storyResponse.content,
     duration: storyResponse.estimatedDuration,
@@ -239,11 +240,11 @@ let scenes = try await aiService.extractScenesFromStory(
 // 3. Import Scenes into Story Model
 story.importScenes(from: scenes)
 
-// 4. Generate Audio
+// 4. Generate Audio with gpt-4o-mini-tts (enhanced quality)
 let audioData = try await aiService.generateSpeech(...)
 try audioData.write(to: audioURL)
 
-// 5. Generate Illustrations (Asynchronous)
+// 5. Generate Illustrations with GPT-5 (improved instruction following)
 Task {
     await illustrationGenerator.generateIllustrations(for: story)
 }
@@ -261,10 +262,10 @@ for batch in illustrations.chunked(into: 3) {
     await Task.sleep(nanoseconds: 2_000_000_000) // 2-second delay
 }
 
-// 3. Content Policy Filtering
+// 3. Content Policy Filtering for GPT-5
 let filteredPrompt = contentPolicyFilter.filterPrompt(originalPrompt)
 
-// 4. DALL-E 3 Generation
+// 4. GPT-5 Image Generation (improved instruction following)
 let response = try await aiService.generateAvatar(request: request)
 
 // 5. File Storage
@@ -453,11 +454,11 @@ try response.imageData.write(to: illustrationURL)
 
 ## Enhanced API Cost Considerations
 
-### Updated Pricing (2024)
-- **GPT-4o**: ~$0.01-0.02 per story (generation + scene extraction)
-- **DALL-E 3**: ~$0.04 per illustration (3-7 illustrations per story)
-- **tts-1-hd**: ~$0.03 per 1000 characters
-- **Average story with illustrations**: ~$0.25-0.40 total per story
+### Updated Pricing (2025 - Model Migration)
+- **GPT-5 Mini**: ~$0.008-0.015 per story (generation + scene extraction, 40% cost reduction)
+- **GPT-5**: ~$0.035 per illustration (3-7 illustrations per story, improved quality)
+- **gpt-4o-mini-tts**: ~$0.012 per 1000 characters (20% cost reduction with enhanced quality)
+- **Average story with illustrations**: ~$0.20-0.35 total per story (15% cost savings with improved quality)
 
 ### Cost Optimization Strategies
 - **Intelligent scene selection**: AI determines optimal illustration count

@@ -1,16 +1,21 @@
 /**
  * Scene Illustration Edge Function
  *
- * This function handles batch generation of scene illustrations for stories,
+ * This function handles batch generation of scene illustrations for stories using GPT-5,
  * maintaining visual consistency through generation ID chaining. Features:
  * - Batch processing with rate limiting
  * - Visual consistency through generation ID chaining
+ * - Enhanced image quality and instruction following with GPT-5
  * - Async processing with real-time status updates
  * - Retry logic for failed generations
  * - Hero character consistency across scenes
+ *
+ * Model: gpt-5 (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// Validate environment variables at startup
+import { validateEnvironmentVariables } from '../_shared/env-validation.ts';
+validateEnvironmentVariables();
 import {
   withEdgeFunctionWrapper,
   parseAndValidateJSON,
@@ -126,6 +131,8 @@ async function generateSceneIllustration(
   scene: any,
   hero: any,
   storyTitle: string,
+  storyId: string,
+  userId: string,
   previousGenerationId: string | null,
   requestId: string
 ): Promise<{
@@ -183,7 +190,8 @@ async function generateSceneIllustration(
     const { url: imageUrl } = await uploadSceneImage(
       imageData,
       scene.scene_number,
-      hero.id,
+      storyId,
+      userId,
       requestId
     );
 
@@ -221,28 +229,60 @@ async function generateSceneIllustration(
 async function uploadSceneImage(
   imageData: ArrayBuffer,
   sceneNumber: number,
-  heroId: string,
+  storyId: string,
+  userId: string,
   requestId: string
 ): Promise<{ url: string; size: number }> {
   const supabase = createSupabaseServiceClient();
 
-  const timestamp = Date.now();
-  const fileName = `scenes/${heroId}_scene${sceneNumber}_${timestamp}.png`;
+  // Use consistent naming convention: {userId}/{storyId}/scene_{sceneNumber}.png
+  const fileName = `${userId}/${storyId}/scene_${sceneNumber}.png`;
+
+  logger.debug(
+    'Uploading scene illustration to storage',
+    LogCategory.STORAGE,
+    requestId,
+    {
+      file_name: fileName,
+      size_bytes: imageData.byteLength,
+      story_id: storyId,
+      scene_number: sceneNumber
+    }
+  );
 
   const { data, error } = await supabase.storage
     .from('story-illustrations')
     .upload(fileName, imageData, {
       contentType: 'image/png',
-      cacheControl: '86400'
+      cacheControl: '86400',
+      upsert: true // Allow overwriting if file exists
     });
 
   if (error) {
+    logger.error(
+      'Failed to upload scene illustration',
+      LogCategory.STORAGE,
+      requestId,
+      error as Error,
+      { file_name: fileName }
+    );
     throw new Error(`Failed to upload scene image: ${error.message}`);
   }
 
   const { data: { publicUrl } } = supabase.storage
     .from('story-illustrations')
     .getPublicUrl(fileName);
+
+  logger.info(
+    'Scene illustration uploaded successfully',
+    LogCategory.STORAGE,
+    requestId,
+    {
+      file_name: fileName,
+      size_bytes: imageData.byteLength,
+      url: publicUrl
+    }
+  );
 
   return {
     url: publicUrl,
@@ -294,6 +334,8 @@ async function processSyncIllustrations(
       scene,
       hero,
       story.title,
+      request.story_id,
+      userId,
       lastGenerationId,
       requestId
     );
@@ -423,7 +465,7 @@ async function queueAsyncIllustrations(
 /**
  * Main scene illustration handler
  */
-serve(async (req) => {
+Deno.serve(async (req) => {
   return withEdgeFunctionWrapper(req, 'illustration_generation', async ({ userId, supabase, requestId }) => {
     const request = await parseAndValidateJSON<SceneIllustrationRequest>(req, SceneIllustrationSchema);
 

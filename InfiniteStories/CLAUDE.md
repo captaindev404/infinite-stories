@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Methods: importScenes, updateIllustration, resetFailedIllustrations
 - **StoryIllustration**: NEW - Visual storytelling system
   - Audio-synced illustrations with precise timestamps
-  - DALL-E prompt storage and image path management
+  - GPT-5 prompt storage and image path management
   - Comprehensive error tracking with retry mechanisms
   - Display order management for carousel navigation
   - File existence validation and cleanup support
@@ -45,11 +45,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 #### AI Integration (OpenAI Exclusive)
 - **AIService**: Centralized OpenAI API integration with enhanced scene extraction
-  - **Story Generation**: GPT-4o model (temperature: 0.8, max tokens: 2000)
-  - **Scene Extraction**: AI-powered story segmentation for illustration timing
-  - **Audio Synthesis**: tts-1-hd model with 7 specialized children's voices
-  - **Avatar Generation**: DALL-E 3 (1024x1024, standard quality) with prompt optimization
-  - **Illustration Generation**: Multi-scene DALL-E integration with consistency
+  - **Story Generation**: GPT-5 (`gpt-5`) with configurable reasoning (temperature: 0.7-0.8, max tokens: 50000)
+  - **Scene Extraction**: AI-powered story segmentation with GPT-5 reasoning
+  - **Audio Synthesis**: gpt-4o-mini-tts with 7 specialized children's voices and enhanced quality
+  - **Avatar Generation**: GPT-5 (`gpt-5`) with enhanced instruction following (multiple sizes, quality options)
+  - **Illustration Generation**: Multi-scene GPT-5 (`gpt-5`) integration with improved visual consistency
   - Multi-language support (English, Spanish, French, German, Italian)
   - Secure API key storage in iOS Keychain
   - Comprehensive error handling with typed errors
@@ -65,11 +65,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **HeroVisualConsistencyService**: NEW - Character appearance management
   - AI-powered visual characteristic extraction from avatar prompts
   - Consistent character descriptions for scene illustrations
-  - Visual profile creation and enhancement with GPT-4
+  - Visual profile creation and enhancement with GPT-5
   - Canonical prompt management for character consistency
 
 - **ContentPolicyFilter**: NEW - Child safety and content filtering
-  - Comprehensive DALL-E prompt filtering for content policy compliance
+  - Comprehensive prompt filtering for GPT-5 content policy compliance
   - Multi-language safety term replacement (English, French, Spanish, German, Italian)
   - Isolation term filtering critical for child safety
   - Pre-validation with risk level assessment
@@ -108,7 +108,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Performance optimization for frequently used pictograms
   - Thread-safe operations for concurrent access
 
-- **AvatarPromptAssistant**: DALL-E prompt generation for hero avatars
+- **AvatarPromptAssistant**: Prompt generation for GPT-5 hero avatars
   - Automatic prompt enhancement based on hero traits
   - Age-appropriate illustration styles
 
@@ -227,13 +227,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Key Features
 
 1. **Hero Creation**: Step-by-step character building with AI-generated avatars
-2. **Story Generation**: AI-powered stories using OpenAI GPT-4o with scene extraction
+2. **Story Generation**: AI-powered stories using OpenAI GPT-5 with configurable reasoning and scene extraction
 3. **Visual Storytelling**: NEW - AI-generated illustrations synchronized with audio
-4. **Visual Consistency**: NEW - Character appearance maintained across all illustrations using GPT-Image-1 multi-turn generation
+4. **Visual Consistency**: NEW - Character appearance maintained across all illustrations using GPT-5 multi-turn generation
 5. **Multi-Turn Image Generation**: NEW - Each illustration references the previous image for perfect visual consistency
 6. **Custom Events**: User-defined scenarios with AI enhancement, pictograms, and usage tracking
 7. **Multi-Language Support**: 5 languages with localized prompts and voices
-8. **Audio Generation**: High-quality MP3 synthesis via tts-1-hd
+8. **Audio Generation**: High-quality MP3 synthesis via gpt-4o-mini-tts with enhanced voice quality
 9. **Story Editing**: In-app editing with automatic audio regeneration
 10. **Reading Journey**: Comprehensive statistics and progress tracking with charts
 11. **Advanced Audio Playback**: Full-featured player with lock screen controls and queue management
@@ -275,9 +275,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### API Endpoints and Models
 
-#### Story Generation (GPT-4o)
-- **Temperature**: 0.8 for creative but coherent output
-- **Max Tokens**: 2000 for stories, varies for other uses
+#### Story Generation (GPT-5)
+- **Model**: gpt-5 (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
+- **Temperature**: 0.7 for creative but coherent output
+- **Max Tokens**: 50000 for stories and scenes
+- **Reasoning Effort**: Configurable (minimal/low/medium/high) for different tasks via Response API
+- **Text Verbosity**: Adjustable for response length control
 - **Enhanced Features**: Scene extraction with timestamps for illustration synchronization
 - **Use Cases**:
   - Main story generation with character traits
@@ -286,7 +289,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Scene segmentation for visual storytelling
   - Visual characteristic extraction for character consistency
 
-#### Audio Synthesis (tts-1-hd)
+#### Audio Synthesis (gpt-4o-mini-tts)
+- **Model**: gpt-4o-mini-tts (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts)
 - **Format**: MP3 exclusively (no fallback TTS)
 - **Voices**: 7 specialized children's storytelling voices
 - **Features**:
@@ -294,26 +298,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Multi-language support (5 languages)
   - Background generation support
 
-#### Avatar Generation (GPT-Image-1)
+#### Avatar Generation (GPT-5)
+- **Model**: gpt-5 (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
 - **Resolution**: 1024x1024, 1024x1536, or 1536x1024 pixels
-- **Quality**: Low, medium, or high (mapped from standard/hd)
+- **Quality**: Standard, HD options
 - **Response**: Base64 encoded (always)
 - **Storage**: Documents/Avatars directory with URL reference
 - **Content Filtering**: Comprehensive safety filtering before API calls
 - **Visual Profiles**: Automatic extraction of character characteristics for consistency
-- **New Features**: Background control (auto/transparent/opaque), output format selection (PNG/JPEG)
+- **Enhanced Features**: Improved instruction following, better text rendering with GPT-5
+- **New Features**: Background control, output format selection (PNG/JPEG)
 
-#### NEW: Illustration Generation (GPT-Image-1 with Multi-Turn)
+#### NEW: Illustration Generation (GPT-5 with Multi-Turn)
 - **Multi-Scene Support**: Generate multiple illustrations per story
 - **Audio Synchronization**: Timestamp-based illustration display
 - **Visual Consistency**: Character appearance maintained across scenes using generation ID chaining
-- **Multi-Turn Generation**: Each illustration references the previous image for consistency
-- **Sequential Processing**: Illustrations generated one by one to maintain generation chain
-- **Generation ID Storage**: Persistent generation IDs for future consistency
-- **Error Handling**: Retry mechanisms with graceful failure modes and chain recovery
-- **Content Safety**: Child-safe content filtering with multi-language support
+- **Multi-Turn Generation**: Each illustration references the previous image for consistency via generation IDs
+- **Sequential Processing**: Illustrations generated one-by-one to maintain visual chain
+- **Generation ID Storage**: Persistent generation IDs stored in models for future consistency
+- **Error Handling**: Retry mechanisms with graceful failure modes and generation chain recovery
+- **Content Safety**: Child-safe content filtering with multi-language support before API calls
 - **Storage**: Documents/StoryIllustrations directory with organized file management
-- **Enhanced Quality**: Improved instruction following and text rendering capabilities
+- **Enhanced Quality**: GPT-5's improved instruction following and visual consistency capabilities
 
 ### Security and Best Practices
 - API keys stored in iOS Keychain (never hardcoded)
@@ -323,11 +329,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Rate limit detection (HTTP 429) - needs retry logic implementation
 
 ### Cost Optimization
-- **Average Monthly Cost**: ~$0.45-0.55 per user (10 stories) - reduced with GPT-Image-1
-- **Story Generation**: ~$0.02-0.03 per story
-- **Audio Generation**: ~$0.01-0.02 per story
-- **Avatar Generation**: $0.02-0.19 per image (low/medium/high quality with GPT-Image-1)
-- **Illustration Generation**: $0.02-0.19 per image (token-based pricing)
+- **Average Monthly Cost**: ~$0.55-0.60 per user (10 stories) with GPT-5
+- **Story Generation**: ~$0.015-0.025 per story (GPT-5)
+- **Audio Generation**: ~$0.008-0.015 per story (gpt-4o-mini-tts)
+- **Avatar Generation**: $0.035 per image (standard quality with GPT-5)
+- **Illustration Generation**: $0.035 per image (GPT-5 standard quality)
 
 ### Multi-Turn Image Generation Implementation
 - **Generation ID Chaining**: Each illustration references the previous image's generation ID
@@ -335,7 +341,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Sequential Processing**: Illustrations generated one-by-one to maintain visual chain
 - **Error Recovery**: Graceful fallback to previous generation IDs when chain breaks
 - **Persistent Storage**: Generation IDs stored in Hero and StoryIllustration models
-- **API Integration**: `previous_generation_id` parameter added to GPT-Image-1 requests
+- **API Integration**: `previous_generation_id` parameter for GPT-5 multi-turn generation
 
 ### Areas for Improvement
 - Implement exponential backoff for rate limiting (partially addressed with error handling)
@@ -349,22 +355,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Building and Testing
 ```bash
-# Build (requires Xcode installation)
-xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories build
+# Build (ALWAYS USE iPhone 17 SIMULATOR)
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories \
+  -destination 'platform=iOS Simulator,name=iPhone 17' build
 
-# Run tests
-xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories test
+# Run tests (with iPhone 17)
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories \
+  -destination 'platform=iOS Simulator,name=iPhone 17' test
 
-# Run on simulator (default: iPhone 17)
+# Run on simulator (ALWAYS iPhone 17)
 xcrun simctl boot "iPhone 17"
 xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories \
   -destination 'platform=iOS Simulator,name=iPhone 17' run
+
+# When using MCP tools, always use iPhone 17 simulator ID:
+# ID: 4384C01B-2605-453C-BCEF-60D801C49830
 ```
 
 ### API Configuration
 1. Configure OpenAI API key in Settings view (stored in Keychain)
 2. OpenAI API is mandatory - no mock services or fallbacks
-3. Audio uses tts-1-hd with voice-specific instructions
+3. Audio uses gpt-4o-mini-tts with voice-specific instructions and enhanced quality
 4. Multi-language support via prompt localization
 
 ## Key Technologies
@@ -555,7 +566,7 @@ InfiniteStories/
 - **Performance Optimization**: Device-specific adaptations for smooth operation
 - **Floating Action Button**: Primary CTA at bottom-right with haptic feedback
 - **Reading Journey**: Comprehensive statistics dashboard with charts
-- **AI Avatars**: DALL-E generated hero illustrations with visual profiles
+- **AI Avatars**: GPT-5 (`gpt-5`) generated hero illustrations with visual profiles
 - **Enhanced UI**: Magical interface with ambient animations
 - **Navigation Updates**: Streamlined button placement and inline components
 - **Multi-Language**: 5 language support with safety filtering
@@ -597,10 +608,62 @@ InfiniteStories/
 - Implement caching where appropriate (especially for illustrations)
 - Consider batch operations for efficiency
 - Track user usage patterns for optimization
-- Plan for ~$0.65-0.85 per active user monthly (reduced with GPT-Image-1 migration)
+- Plan for ~$0.55-0.75 per active user monthly with GPT-5 migration
 - Illustration generation adds ~$0.15-0.25 per story with visual content (reduced costs)
 - Content filtering reduces API rejections and associated costs
 - Token-based pricing provides better cost predictability
+
+## Working Methods and Best Practices
+
+### Code Development Workflow
+1. **Always build the app after making changes** - Use `xcodebuild` to verify compilation
+2. **Test changes incrementally** - Build after each significant change, not just at the end
+3. **Use proper error handling** - Never leave unhandled optionals or force unwraps
+4. **Follow Swift conventions** - Use SwiftUI patterns, proper naming, and documentation
+
+### Build Commands - ALWAYS COMPILE AFTER CHANGES
+```bash
+# MANDATORY: Always compile the iOS app after making code changes
+# PRIMARY: Always use iPhone 17 simulator for consistency
+
+# Build for iPhone 17 Simulator (ALWAYS USE THIS)
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories -destination 'platform=iOS Simulator,name=iPhone 17' build
+
+# If using MCP XcodeBuildMCP tools, use simulator ID for iPhone 17:
+# Simulator ID: 4384C01B-2605-453C-BCEF-60D801C49830
+# mcp__XcodeBuildMCP__build_sim with simulatorId: "4384C01B-2605-453C-BCEF-60D801C49830"
+
+# Alternative builds (only if iPhone 17 is unavailable):
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories -destination 'platform=iOS Simulator,OS=26.0,name=iPhone 17' build
+
+# Build for physical iOS device
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories -destination generic/platform=iOS build
+
+# Build for macOS (Designed for iPad/iPhone)
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories -destination 'platform=macOS,arch=arm64,variant=Designed for [iPad,iPhone]' build
+
+# Run tests after build
+xcodebuild -project InfiniteStories.xcodeproj -scheme InfiniteStories test
+```
+
+### Important Development Rules
+- **BUILD VERIFICATION IS MANDATORY**: ALWAYS compile the iOS app after completing ANY implementation tasks
+  - **ALWAYS USE iPhone 17 SIMULATOR** for consistency
+  - Use `xcodebuild` commands listed above (prefer iPhone 17)
+  - Never skip compilation verification
+  - If build fails, fix immediately before proceeding
+  - Build after EVERY significant code change
+- **File Management**: Never create files unless absolutely necessary - prefer editing existing ones
+- **Documentation**: Only create documentation when explicitly requested
+- **Error Recovery**: If build fails, immediately fix issues before proceeding
+- **API Integration**: All AI features require OpenAI API - no mocks or fallbacks
+- **Performance**: Consider device capabilities and optimize for smooth operation
+
+### Common Build Issues and Solutions
+- **Missing Dependencies**: Ensure all Swift packages are resolved
+- **API Key Issues**: Verify Keychain storage and retrieval
+- **SwiftData Errors**: Check model relationships and migrations
+- **Asset Issues**: Verify all referenced images and resources exist
 
 ## Important Instruction Reminders
 
@@ -608,7 +671,9 @@ Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+ALWAYS build the app after completing implementation tasks to verify correctness.
 
 IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.
 - AppStore validation preparation
 - Always fix the build
+- Verify compilation after changes

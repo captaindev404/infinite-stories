@@ -1,0 +1,15 @@
+=== AI PROMPT DEBUG FILE ===
+Generated: 2025-09-17 07:50:28 +0000
+Type: DALL-E
+Request ID: 4b42f806
+
+=== METADATA ===
+keywords: enchanting, style, ability, expressive, jardin, nommée, eyes, était, watercolor, quality
+type: DALL-E
+length: 1025
+words: 152
+
+=== PROMPT ===
+Children's book illustration in a warm, magical style. Show Emmanounette, matching this exact appearance: A cartoon children's book illustration of Emmanounette, a kind and curious character, Une petite fille de 3 ans pleine de vie, métisse avec des beaux cheveux crépus, known for their ability to Elle déborde d’énergie, sait faire du vélo et des puzzles, with big expressive eyes and a cheerful smile, high quality, child-friendly, safe for children, appropriate for bedtime stories, wholesome, innocent, magical, fantasy character portrait, no mysterious or gentle elements, bright and cheerful, portrait . Scene: Il était une fois une petite fille de trois ans, pleine de vie, nommée Emmanounette. Chaque soir avant de se coucher, elle aimait s'aventurer dans le jardin de ses rêves, un endroit magique où tout.... Context: Bedtime Adventure. Style: Soft, dreamy watercolor with gentle colors, child-friendly, whimsical, and enchanting. Maintain consistent character appearance throughout. No text or words in the image.
+
+=== END ===

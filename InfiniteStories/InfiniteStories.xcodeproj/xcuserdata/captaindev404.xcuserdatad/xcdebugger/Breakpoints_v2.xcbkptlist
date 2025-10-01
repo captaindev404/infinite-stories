@@ -159,9 +159,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "863"
-            endingLineNumber = "863"
-            landmarkName = "basicPromptSanitization(_:)"
-            landmarkType = "7">
+            endingLineNumber = "863">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -175,9 +173,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "817"
-            endingLineNumber = "817"
-            landmarkName = "OpenAIService"
-            landmarkType = "3">
+            endingLineNumber = "817">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -191,9 +187,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1019"
-            endingLineNumber = "1019"
-            landmarkName = "sanitizePromptWithAI(_:)"
-            landmarkType = "7">
+            endingLineNumber = "1019">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -207,9 +201,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "848"
-            endingLineNumber = "848"
-            landmarkName = "basicPromptSanitization(_:)"
-            landmarkType = "7">
+            endingLineNumber = "848">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -336,8 +328,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "212"
             endingLineNumber = "212"
-            landmarkName = "recommendedIllustrationCount"
-            landmarkType = "24">
+            landmarkName = "init(title:content:customEvent:hero:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -352,7 +344,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "225"
             endingLineNumber = "225"
-            landmarkName = "importScenes(from:)"
+            landmarkName = "init(title:content:customEvent:hero:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -368,7 +360,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "222"
             endingLineNumber = "222"
-            landmarkName = "importScenes(from:)"
+            landmarkName = "init(title:content:customEvent:hero:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -400,7 +392,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "202"
             endingLineNumber = "202"
-            landmarkName = "illustrationAt(timestamp:)"
+            landmarkName = "init(title:content:customEvent:hero:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -431,9 +423,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "473"
-            endingLineNumber = "473"
-            landmarkName = "extractScenesFromStory(request:)"
-            landmarkType = "7">
+            endingLineNumber = "473">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -447,9 +437,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1364"
-            endingLineNumber = "1364"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1364">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -463,9 +451,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1365"
-            endingLineNumber = "1365"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1365">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -479,9 +465,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1361"
-            endingLineNumber = "1361"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1361">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -495,9 +479,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1461"
-            endingLineNumber = "1461"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1461">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -511,9 +493,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1468"
-            endingLineNumber = "1468"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1468">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -527,9 +507,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1393"
-            endingLineNumber = "1393"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
-            landmarkType = "7">
+            endingLineNumber = "1393">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -543,8 +521,86 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1442"
-            endingLineNumber = "1442"
-            landmarkName = "generateSceneIllustration(prompt:hero:previousGenerationId:)"
+            endingLineNumber = "1442">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EDFC804C-2BA3-4439-A2B3-C8A9D8718D2F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "InfiniteStories/Services/SupabaseService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "fetchHeroes(limit:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DBCFBB77-766F-4C57-A2E2-F706DC491E4C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "InfiniteStories/Services/SupabaseService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "saveHero(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9BED3C12-AD2E-497F-9797-114499AD1BCD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "InfiniteStories/Services/SupabaseService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
+            landmarkName = "deleteHero(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "714E403B-0CCC-4928-B740-9D0BFF4BF926"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "InfiniteStoriesTests/TestUtilities/MockSupabaseService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "fetchHeroes(limit:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BD174D14-FE29-4C29-8523-4EA670F22423"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "InfiniteStories/Services/SupabaseService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "241"
+            endingLineNumber = "241"
+            landmarkName = "generateStory(heroId:eventType:eventData:targetDuration:language:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

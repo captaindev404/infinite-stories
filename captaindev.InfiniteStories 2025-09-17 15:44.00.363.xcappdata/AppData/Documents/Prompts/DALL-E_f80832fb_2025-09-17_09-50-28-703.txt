@@ -1,0 +1,17 @@
+=== AI PROMPT DEBUG FILE ===
+Generated: 2025-09-17 07:50:28 +0000
+Type: DALL-E
+Request ID: f80832fb
+
+=== METADATA ===
+words: 147
+length: 1025
+type: DALL-E
+keywords: enchanting, style, ability, expressive, sourire, hibou, eyes, watercolor, répondit, quality
+
+=== PROMPT ===
+Children's book illustration in a warm, magical style. Show Emmanounette, matching this exact appearance: A cartoon children's book illustration of Emmanounette, a kind and curious character, Une petite fille de 3 ans pleine de vie, métisse avec des beaux cheveux crépus, known for their ability to Elle déborde d’énergie, sait faire du vélo et des puzzles, with big expressive eyes and a cheerful smile, high quality, child-friendly, safe for children, appropriate for bedtime stories, wholesome, innocent, magical, fantasy character portrait, no mysterious or gentle elements, bright and cheerful, portrait . Scene: "Bonsoir, Emmanounette," hulula-t-il doucement. "Où vas-tu par cette belle nuit. " Emmanounette lui répondit avec un grand sourire : "Je cherche le secret des étoiles. "
+
+Monsieur Hibou, intrigué, .... Context: Bedtime Adventure. Style: Soft, dreamy watercolor with gentle colors, child-friendly, whimsical, and enchanting. Maintain consistent character appearance throughout. No text or words in the image.
+
+=== END ===

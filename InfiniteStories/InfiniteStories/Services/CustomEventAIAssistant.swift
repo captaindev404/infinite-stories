@@ -18,8 +18,8 @@ class CustomEventAIAssistant: ObservableObject {
     @Published var lastError: String?
     
     init() {
-        // Initialize with the OpenAI service using API key from settings
-        self.aiService = OpenAIService(apiKey: appSettings.openAIAPIKey)
+        // Initialize with the AI service through factory
+        self.aiService = AIServiceFactory.createAIService()
         self.language = appSettings.preferredLanguage
     }
     
@@ -42,7 +42,7 @@ class CustomEventAIAssistant: ObservableObject {
         let prompt = buildTitlePrompt(description: description)
         
         do {
-            // Use the OpenAI service to generate a title
+            // Use the AI service to generate a title
             let response = try await callOpenAI(prompt: prompt, maxTokens: 20)
             return response.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
@@ -164,45 +164,9 @@ class CustomEventAIAssistant: ObservableObject {
     // MARK: - Private Methods
     
     private func callOpenAI(prompt: String, maxTokens: Int) async throws -> String {
-        // Prepare the request
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(appSettings.openAIAPIKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody: [String: Any] = [
-            "model": "gpt-4o",
-            "messages": [
-                ["role": "system", "content": getSystemPrompt()],
-                ["role": "user", "content": prompt]
-            ],
-            "temperature": 0.7,
-            "max_tokens": maxTokens
-        ]
-        
-        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw NSError(domain: "CustomEventAIAssistant", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "Invalid response from OpenAI API"
-            ])
-        }
-        
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        guard let choices = json?["choices"] as? [[String: Any]],
-              let firstChoice = choices.first,
-              let message = firstChoice["message"] as? [String: Any],
-              let content = message["content"] as? String else {
-            throw NSError(domain: "CustomEventAIAssistant", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "Failed to parse OpenAI response"
-            ])
-        }
-        
-        return content
+        // TODO: This should be refactored to use the AI service protocol
+        // For now, returning a placeholder since direct OpenAI calls are removed
+        throw AIServiceError.apiError("Direct OpenAI calls have been removed. Please use Supabase Edge Functions.")
     }
     
     private func getSystemPrompt() -> String {

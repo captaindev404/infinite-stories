@@ -22,8 +22,8 @@ struct StoryCodable: Codable {
     let playCount: Int
     let estimatedDuration: String
     let wordCount: Int
-    let eventType: String?
-    let eventData: [String: Any]?
+    let eventType: String  // Always provided, defaults to "built_in"
+    let eventData: [String: Any]  // Always provided, defaults to empty object
     let customEventId: String?
 
     enum CodingKeys: String, CodingKey {
@@ -60,11 +60,13 @@ struct StoryCodable: Codable {
             self.customEventId = nil
         } else if let customEvent = story.customEvent {
             self.eventType = "custom"
-            self.eventData = nil
+            // Provide empty object instead of nil for custom events
+            self.eventData = [:]
             self.customEventId = customEvent.id.uuidString
         } else {
-            self.eventType = nil
-            self.eventData = nil
+            // Default to built_in with empty data if no event is specified
+            self.eventType = "built_in"
+            self.eventData = [:]
             self.customEventId = nil
         }
     }
@@ -82,15 +84,13 @@ struct StoryCodable: Codable {
         try container.encode(playCount, forKey: .playCount)
         try container.encode(estimatedDuration, forKey: .estimatedDuration)
         try container.encode(wordCount, forKey: .wordCount)
-        try container.encodeIfPresent(eventType, forKey: .eventType)
+        try container.encode(eventType, forKey: .eventType)  // Always encode
         try container.encodeIfPresent(customEventId, forKey: .customEventId)
 
-        // Encode eventData as JSON
-        if let eventData = eventData {
-            let jsonData = try JSONSerialization.data(withJSONObject: eventData)
-            let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
-            try container.encode(AnyJSON(jsonObject as? Encodable), forKey: .eventData)
-        }
+        // Always encode eventData as JSON (never nil)
+        let jsonData = try JSONSerialization.data(withJSONObject: eventData)
+        let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
+        try container.encode(AnyJSON(jsonObject as? Encodable), forKey: .eventData)
     }
 
     // Custom decoding for eventData
@@ -106,14 +106,15 @@ struct StoryCodable: Codable {
         playCount = try container.decode(Int.self, forKey: .playCount)
         estimatedDuration = try container.decode(String.self, forKey: .estimatedDuration)
         wordCount = try container.decode(Int.self, forKey: .wordCount)
-        eventType = try container.decodeIfPresent(String.self, forKey: .eventType)
+        // Default to "built_in" if eventType is missing
+        eventType = try container.decodeIfPresent(String.self, forKey: .eventType) ?? "built_in"
         customEventId = try container.decodeIfPresent(String.self, forKey: .customEventId)
 
-        // Decode eventData from AnyJSON
+        // Decode eventData from AnyJSON, default to empty object if nil
         if let anyJSON = try container.decodeIfPresent(AnyJSON.self, forKey: .eventData) {
-            eventData = anyJSON.value as? [String: Any]
+            eventData = anyJSON.value as? [String: Any] ?? [:]
         } else {
-            eventData = nil
+            eventData = [:]
         }
     }
 }
@@ -210,6 +211,31 @@ final class Story {
 
         // Increment usage count for custom event
         customEvent.incrementUsage()
+    }
+
+    // Initializer for stories without events or with optional custom events
+    init(title: String, content: String, customEvent: CustomStoryEvent? = nil, hero: Hero?) {
+        self.id = UUID()
+        self.title = title
+        self.content = content
+        self.builtInEvent = nil
+        self.customEvent = customEvent
+        self.hero = hero
+        self.createdAt = Date()
+        self.audioFileName = nil
+        self.isGenerated = true
+        self.isFavorite = false
+        self.playCount = 0
+        self.estimatedDuration = 0
+        self.audioNeedsRegeneration = false
+        self.lastModified = Date()
+        self.lastSyncedAt = nil
+        self.needsSync = true
+
+        // Increment usage count for custom event if provided
+        if let customEvent = customEvent {
+            customEvent.incrementUsage()
+        }
     }
     
     // Computed properties for event access

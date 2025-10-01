@@ -23,9 +23,9 @@ InfiniteStories is a sophisticated AI-powered bedtime story generation system de
 Create magical, personalized bedtime stories that adapt to each child's unique hero character, ensuring safe, educational, and entertaining content that grows with the child.
 
 ### Core Capabilities
-- **AI Story Generation**: Leveraging GPT-5-mini for intelligent, contextual story creation
-- **Professional Narration**: High-quality text-to-speech with multiple voice options
-- **Visual Storytelling**: AI-generated illustrations synchronized with story narration
+- **AI Story Generation**: Leveraging GPT-5 Mini for intelligent, contextual story creation with configurable reasoning (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5-mini)
+- **Professional Narration**: Enhanced quality text-to-speech with gpt-4o-mini-tts and multiple voice options (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts)
+- **Visual Storytelling**: AI-generated illustrations using GPT-5 with improved instruction following, synchronized with story narration (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-5)
 - **Content Safety**: Multi-layered content filtering ensuring child-appropriate material
 - **Personalization**: Custom heroes, events, and story parameters
 - **Cross-Platform Sync**: CloudKit integration for seamless experience across devices
@@ -239,12 +239,12 @@ serve(async (req) => {
 
 ### AI Integration Architecture
 
-#### GPT-5-mini Configuration
+#### GPT-5 Mini Configuration
 ```typescript
 interface GPT5MiniConfig {
   model: 'gpt-5-mini'
   reasoning_effort: 'low' | 'medium' | 'high'
-  verbosity: 'low' | 'medium' | 'high'
+  text_verbosity: 'low' | 'medium' | 'high'
   temperature: number
   max_tokens: number
 }
@@ -253,13 +253,19 @@ interface GPT5MiniConfig {
 const configs = {
   storyGeneration: {
     reasoning_effort: 'medium',
-    verbosity: 'high',
-    temperature: 0.8,
+    text_verbosity: 'high',
+    temperature: 0.7,
+    max_tokens: 3000
+  },
+  sceneExtraction: {
+    reasoning_effort: 'high',
+    text_verbosity: 'medium',
+    temperature: 0.5,
     max_tokens: 2000
   },
   contentFiltering: {
     reasoning_effort: 'low',
-    verbosity: 'low',
+    text_verbosity: 'low',
     temperature: 0.3,
     max_tokens: 100
   }
@@ -474,9 +480,9 @@ enum BackendError: LocalizedError {
 
 #### OpenAI Integration
 - **Models Used**:
-  - gpt-5-mini: Story generation
-  - gpt-4o-mini-tts: Text-to-speech synthesis
-  - gpt-image-1: Avatar and scene generation
+  - gpt-5-mini: Story generation with configurable reasoning
+  - gpt-4o-mini-tts: Enhanced quality text-to-speech synthesis
+  - gpt-5: Avatar and scene generation with improved instruction following
 
 #### Integration Patterns
 ```typescript
@@ -712,9 +718,9 @@ interface LogEntry {
 
 ### External Services
 - **AI Provider**: OpenAI
-  - gpt-5-mini (text generation)
-  - gpt-4o-mini-tts (audio)
-  - gpt-image-1 (images)
+  - gpt-5-mini (text generation with configurable reasoning)
+  - gpt-4o-mini-tts (enhanced quality audio)
+  - gpt-5 (images with improved instruction following)
 - **CDN**: CloudFlare
 - **Monitoring**: Supabase Analytics
 - **Error Tracking**: Sentry (planned)
@@ -769,7 +775,7 @@ interface LogEntry {
 
 ## Conclusion
 
-The InfiniteStories architecture represents a modern, scalable, and secure system designed to deliver magical storytelling experiences to children worldwide. By leveraging cutting-edge AI technology, cloud-native architecture patterns, and a strong focus on safety and performance, the system provides a robust foundation for current features while maintaining flexibility for future growth and innovation.
+The InfiniteStories architecture represents a modern, scalable, and secure system designed to deliver magical storytelling experiences to children worldwide. By leveraging cutting-edge AI technology (GPT-5 Mini with configurable reasoning, GPT-5 with improved instruction following, and gpt-4o-mini-tts with enhanced quality), cloud-native architecture patterns, and a strong focus on safety and performance, the system provides a robust foundation for current features while maintaining flexibility for future growth and innovation.
 
 The architecture prioritizes:
 - **Child Safety**: Through comprehensive content filtering and validation

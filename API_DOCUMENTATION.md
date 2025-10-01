@@ -98,13 +98,14 @@ private let ttsURL = "https://api.openai.com/v1/audio/speech"
 #### Model Configuration
 
 ```swift
-// Story Generation
-"model": "gpt-4o"
-"max_tokens": 2000
-"temperature": 0.8
+// Story Generation with GPT-5 Mini
+"model": "gpt-5-mini"
+"max_tokens": 3000
+"temperature": 0.7
+"reasoning_effort": "medium"  // configurable: low, medium, high
 
-// Text-to-Speech
-"model": "tts-1-hd"
+// Text-to-Speech with Enhanced Quality
+"model": "gpt-4o-mini-tts"
 "response_format": "mp3"
 ```
 
@@ -492,7 +493,7 @@ urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
 ```json
 {
-    "model": "gpt-4o",
+    "model": "gpt-5-mini",
     "messages": [
         {
             "role": "system",
@@ -503,16 +504,17 @@ urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
             "content": "Create a 7-minute bedtime story..."
         }
     ],
-    "max_tokens": 2000,
-    "temperature": 0.8
+    "max_tokens": 3000,
+    "temperature": 0.7,
+    "reasoning_effort": "medium"
 }
 ```
 
-#### Text-to-Speech
+#### Text-to-Speech with Enhanced Quality
 
 ```json
 {
-    "model": "tts-1-hd",
+    "model": "gpt-4o-mini-tts",
     "input": "Story text here...",
     "voice": "nova",
     "response_format": "mp3"
@@ -666,26 +668,31 @@ var audioFileName: String?
 
 | Endpoint | Limit | Window |
 |----------|-------|--------|
-| Chat Completion | 10,000 tokens/min | 1 minute |
-| TTS | 3 requests/min | 1 minute |
+| Chat Completion (GPT-5 Mini) | 15,000 tokens/min | 1 minute |
+| TTS (gpt-4o-mini-tts) | 5 requests/min | 1 minute |
 
 ### Token Estimation
 
-- Average story: 500-800 tokens
+- Average story: 500-1000 tokens
 - System prompt: 100 tokens
-- Response: 600-1000 tokens
-- Total per story: ~1500-2000 tokens
+- Response: 700-1200 tokens
+- Total per story: ~1800-2500 tokens
 
 ### Cost Estimation
 
 | Service | Cost | Unit |
 |---------|------|------|
-| GPT-4 | $0.03 | per 1K tokens |
-| TTS HD | $0.03 | per 1K characters |
+| GPT-5 Mini | $0.0015 (input) / $0.006 (output) | per 1K tokens |
+| gpt-4o-mini-tts | $0.012 | per 1K characters |
+| GPT-5 (images) | $0.035 | per image (standard) |
 
-Average cost per story: $0.05-0.10
+Average cost per story: $0.02-0.04 (15% cost reduction with improved quality)
 
 ---
 
 *Last updated: September 2025*
 *API Version: 1.0.0*
+*Current Models in Production:*
+- **GPT-5 Mini**: Advanced chat model with configurable reasoning effort for story generation and scene extraction
+- **gpt-4o-mini-tts**: High-quality text-to-speech with 7 specialized children's voices
+- **GPT-5**: State-of-the-art image generation for avatars and illustrations with multi-turn consistency

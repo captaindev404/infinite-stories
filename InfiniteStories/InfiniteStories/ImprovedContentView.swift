@@ -208,6 +208,9 @@ struct ImprovedContentView: View {
             }
             .onAppear {
                 startAnimations()
+                // Initialize SyncService with model context
+                SyncService.shared.initialize(modelContext: modelContext)
+                print("✅ SyncService initialized with model context")
             }
         }
     }

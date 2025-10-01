@@ -75,7 +75,7 @@ supabase/functions/
 - **Database**: PostgreSQL with Row Level Security
 - **Storage**: Supabase Storage (S3-compatible)
 - **Authentication**: Supabase Auth with JWT
-- **AI Models**: OpenAI GPT-4o, TTS, DALL-E 3
+- **AI Models**: OpenAI GPT-5, gpt-4o-mini-tts, GPT-5 (images)
 - **Languages**: TypeScript, SQL
 
 ### Request Flow
@@ -209,7 +209,7 @@ Automatic replacement of inappropriate terms with child-friendly alternatives:
 
 #### 2. AI-Powered Content Analysis
 
-GPT-4o analyzes content for appropriateness:
+GPT-5 analyzes content for appropriateness:
 
 ```typescript
 interface ContentAnalysis {
@@ -564,12 +564,12 @@ class APIClient {
 ```swift
 class CostTracker {
     func trackAPIUsage(response: StoryGenerationResponse) {
-        // Monitor GPT-5-mini cost savings
+        // Monitor GPT-5 cost
         if let usage = response.tokenUsage {
-            let estimatedCost = calculateGPT5MiniCost(usage)
+            let estimatedCost = calculateGPT5Cost(usage)
 
             Analytics.track("api_cost", properties: [
-                "model": "gpt-4o",
+                "model": "gpt-5",
                 "function": "story_generation",
                 "tokens": usage.totalTokens,
                 "cost": estimatedCost,
@@ -578,9 +578,10 @@ class CostTracker {
         }
     }
 
-    private func calculateGPT5MiniCost(_ usage: TokenUsage) -> Double {
-        let inputCost = Double(usage.promptTokens) / 1000.0 * 0.00015
-        let outputCost = Double(usage.completionTokens) / 1000.0 * 0.0006
+    private func calculateGPT5Cost(_ usage: TokenUsage) -> Double {
+        // GPT-5 pricing: $0.0015 per 1K input tokens, $0.006 per 1K output tokens
+        let inputCost = Double(usage.promptTokens) / 1000.0 * 0.0015
+        let outputCost = Double(usage.completionTokens) / 1000.0 * 0.006
         return inputCost + outputCost
     }
 }
@@ -995,10 +996,12 @@ interface VoiceProfile {
 Automatic fallback to alternative models:
 
 ```typescript
-const modelHierarchy = [
-  { model: 'gpt-4o', maxRetries: 2 },
-  { model: 'gpt-4o-mini', maxRetries: 3 }
-];
+const modelConfig = {
+  model: 'gpt-5',
+  maxRetries: 3,
+  reasoning_effort: 'low',  // configurable: minimal, low, medium, high
+  text_verbosity: 'low'      // configurable: low, medium, high
+};
 ```
 
 ### Content Versioning

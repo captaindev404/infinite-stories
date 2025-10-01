@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 /**
  * Create Supabase client with service role key for server-side operations
@@ -52,6 +52,24 @@ export async function validateAuth(req: Request): Promise<{
 
   // Create client with the provided token
   const supabase = createSupabaseClient(authHeader);
+
+  // For local development, skip validation if using the demo token
+  const isDemoToken = authHeader.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9');
+
+  // Only allow demo token in development environment
+  const isDevelopment = Deno.env.get('ENVIRONMENT') === 'development' ||
+                       Deno.env.get('DENO_DEPLOYMENT_ID') === undefined;
+
+  if (isDemoToken) {
+    if (!isDevelopment) {
+      throw new Error('Demo token not allowed in production environment');
+    }
+    // Use a fixed dev user ID for local development
+    return {
+      userId: '00000000-0000-0000-0000-000000000001',
+      supabase
+    };
+  }
 
   // Validate the token and get user
   const { data: { user }, error } = await supabase.auth.getUser();

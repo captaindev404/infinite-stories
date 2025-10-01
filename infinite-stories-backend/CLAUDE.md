@@ -2,6 +2,39 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working Methods and Best Practices
+
+### Development Workflow
+1. **Always test Edge Functions after implementation** - Deploy and verify functionality
+2. **Use proper error handling** - Comprehensive try-catch blocks and error responses
+3. **Follow TypeScript conventions** - Proper types, async/await patterns
+4. **Verify Supabase integration** - Test database operations and RLS policies
+
+### Testing Commands
+```bash
+# Start local Supabase
+npx supabase start
+
+# Deploy Edge Functions
+npx supabase functions deploy
+
+# Test Edge Function locally
+npx supabase functions serve extract-scenes
+
+# View function logs
+npx supabase functions logs extract-scenes
+
+# Reset database with migrations
+npx supabase db reset
+```
+
+### Important Development Rules
+- **Function Testing**: ALWAYS test Edge Functions after implementation
+- **Error Handling**: Implement comprehensive error handling with proper logging
+- **Type Safety**: Use TypeScript types for all request/response interfaces
+- **Performance**: Implement caching for expensive operations
+- **Security**: Validate all inputs and enforce authentication
+
 ## Project Overview
 
 This is the backend component for the Infinite Stories project - a comprehensive Supabase-based backend that replaces direct OpenAI API calls from the iOS app. The backend includes Edge Functions for story generation, audio synthesis, image generation, and content filtering, all designed with child safety as the top priority.
@@ -100,20 +133,19 @@ cp .env.example .env.local
 - **Caching**: Database-backed caching system for performance
 
 ### Edge Functions Architecture
-- **story-generation**: Generates bedtime stories using GPT-4o with scene extraction
-- **audio-synthesis**: Creates TTS audio using tts-1-hd with voice-specific instructions
-- **avatar-generation**: Generates hero avatars using GPT-Image-1 with visual consistency
+- **story-generation**: Generates bedtime stories using GPT-5 (`gpt-5`) with configurable reasoning and scene extraction
+- **audio-synthesis**: Creates TTS audio using gpt-4o-mini-tts with enhanced voice quality and instructions
+- **avatar-generation**: Generates hero avatars using GPT-5 (`gpt-5`) with enhanced visual consistency
 - **scene-illustration**: Batch processes scene illustrations with generation ID chaining
-- **_shared**: Common utilities for auth, validation, caching, rate limiting, and content filtering
+- **_shared**: Common utilities for auth, validation, caching, and content filtering
 
 ### Content Safety System
 - **Rule-based filtering**: Comprehensive word/phrase replacement for child safety
-- **AI-powered filtering**: GPT-4 analyzes content for appropriateness
+- **AI-powered filtering**: GPT-5 analyzes content for appropriateness
 - **Image prompt sanitization**: Ensures all images are child-friendly
 - **Companionship enforcement**: Prevents children from being shown alone
 
 ### Key Features
-- **Rate Limiting**: Per-user, per-function rate limits with database tracking
 - **Visual Consistency**: Generation ID chaining for character consistency across images
 - **Multi-language Support**: 5 languages (English, Spanish, French, German, Italian)
 - **Voice Configurations**: 7 specialized voices with custom instructions
@@ -165,7 +197,6 @@ cp .env.example .env.local
 - **Unit Testing**: Test shared utilities individually
 - **Integration Testing**: Test complete function workflows
 - **Content Safety Testing**: Verify all content filtering works correctly
-- **Rate Limiting Testing**: Ensure limits are enforced properly
 - **Visual Consistency Testing**: Verify generation ID chaining works
 
 ### Deployment Process
@@ -229,7 +260,6 @@ serve(async (req) => {
 - Audio content filtering
 
 ### API Security
-- Rate limiting per user
 - Input validation on all endpoints
 - CORS properly configured
 - Secrets stored securely
@@ -245,7 +275,6 @@ serve(async (req) => {
 ### Key Metrics
 - Function response times
 - Error rates by function
-- Rate limit hit rates
 - OpenAI API costs
 - Content filtering effectiveness
 
@@ -257,7 +286,6 @@ serve(async (req) => {
 
 ### Maintenance Tasks
 - Cache cleanup (expired entries)
-- Rate limit cleanup (old records)
 - Usage data aggregation
 - Cost optimization review
 
@@ -326,23 +354,7 @@ const jwt = await verifyJWT(token, {
 });
 ```
 
-#### 4. Rate Limiting Problems
-
-**Problem**: Rate limits not working correctly
-
-**Solution**:
-```sql
--- Clean up expired rate limit records
-DELETE FROM rate_limits
-WHERE window_end < NOW() - INTERVAL '1 hour';
-
--- Verify rate limit configuration
-SELECT * FROM rate_limits
-WHERE user_id = 'user-uuid'
-ORDER BY created_at DESC;
-```
-
-#### 5. Content Filtering Issues
+#### 4. Content Filtering Issues
 
 **Problem**: Inappropriate content passing through
 
@@ -356,7 +368,7 @@ const filtered = await contentFilter.filterContent(content, {
 });
 ```
 
-#### 6. Storage Upload Failures
+#### 5. Storage Upload Failures
 
 **Problem**: Files fail to upload to storage
 
@@ -372,7 +384,7 @@ npx supabase storage policies list story-assets
 npx supabase storage create story-assets --public
 ```
 
-#### 7. OpenAI API Errors
+#### 6. OpenAI API Errors
 
 **Problem**: OpenAI requests failing
 
@@ -381,7 +393,7 @@ npx supabase storage create story-assets --public
 // Implement retry logic
 const response = await retryWithBackoff(async () => {
   return await openai.createCompletion({
-    model: 'gpt-4o',
+    model: 'gpt-5',
     ...params
   });
 }, {
@@ -391,7 +403,7 @@ const response = await retryWithBackoff(async () => {
 });
 ```
 
-#### 8. Performance Issues
+#### 7. Performance Issues
 
 **Problem**: Slow response times
 
@@ -468,7 +480,6 @@ ORDER BY date DESC;
 - Validate all inputs
 - Sanitize user-generated content
 - Use parameterized queries
-- Implement rate limiting
 
 ### Performance
 - Cache expensive operations

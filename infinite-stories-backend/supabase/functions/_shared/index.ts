@@ -23,9 +23,6 @@ export * from './errors.ts';
 // OpenAI client with gpt-4o
 export * from './openai-client.ts';
 
-// Rate limiting
-export * from './rate-limiter.ts';
-
 // Logging
 export * from './logger.ts';
 
@@ -38,12 +35,15 @@ export * from './cache.ts';
 // Content filtering
 export * from './content-filter.ts';
 
+// Environment validation
+export * from './env-validation.ts';
+
 /**
- * Common Edge Function wrapper that handles CORS, auth, rate limiting, and error handling
+ * Common Edge Function wrapper that handles CORS, auth, and error handling
  */
 export async function withEdgeFunctionWrapper<T>(
   req: Request,
-  functionName: keyof import('./rate-limiter.ts').RATE_LIMITS,
+  functionName: string,
   handler: (params: {
     userId: string;
     supabase: ReturnType<typeof import('./auth.ts').createSupabaseClient>;
@@ -56,7 +56,6 @@ export async function withEdgeFunctionWrapper<T>(
 
   const { handleCORS } = await import('./cors.ts');
   const { withAuth } = await import('./auth.ts');
-  const { withRateLimit } = await import('./rate-limiter.ts');
   const { withErrorHandling, createSuccessResponse, createErrorResponse } = await import('./errors.ts');
   const { logger } = await import('./logger.ts');
 
@@ -70,9 +69,7 @@ export async function withEdgeFunctionWrapper<T>(
 
     const result = await withErrorHandling(requestId, async () => {
       return await withAuth(req, async ({ userId, supabase }) => {
-        return await withRateLimit(userId, functionName, requestId, async () => {
-          return await handler({ userId, supabase, req, requestId });
-        });
+        return await handler({ userId, supabase, req, requestId });
       });
     });
 

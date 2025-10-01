@@ -10,7 +10,9 @@
  * - Event sourcing patterns for reliable sync
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// Validate environment variables at startup
+import { validateEnvironmentVariables } from '../_shared/env-validation.ts';
+validateEnvironmentVariables();
 import {
   withEdgeFunctionWrapper,
   parseAndValidateJSON,
@@ -503,7 +505,7 @@ const SyncRequestSchema = {
 // MAIN HANDLER
 // =============================================================================
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   return withEdgeFunctionWrapper(req, 'sync_orchestrator', async ({ userId, supabase, requestId }) => {
     if (req.method !== 'POST') {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), {

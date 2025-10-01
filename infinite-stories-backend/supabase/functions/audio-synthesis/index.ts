@@ -1,15 +1,19 @@
 /**
  * Audio Synthesis Edge Function
  *
- * This function handles text-to-speech generation using OpenAI's TTS models,
+ * This function handles text-to-speech generation using OpenAI's GPT-4o Mini TTS model,
  * providing the same voice configurations as the iOS app. Features:
  * - Multiple voice options with specialized instructions
- * - Multi-language support
+ * - Multi-language support with enhanced quality
  * - File storage in Supabase Storage
  * - Usage tracking and caching
+ *
+ * Model: gpt-4o-mini-tts (https://context7.com/websites/platform_openai/llms.txt?topic=gpt-4o-mini-tts)
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// Validate environment variables at startup
+import { validateEnvironmentVariables } from '../_shared/env-validation.ts';
+validateEnvironmentVariables();
 import {
   withEdgeFunctionWrapper,
   parseAndValidateJSON,
@@ -170,9 +174,8 @@ async function uploadAudioFile(
 ): Promise<{ url: string; size: number }> {
   const supabase = createSupabaseServiceClient();
 
-  // Create filename
-  const timestamp = Date.now();
-  const fileName = `${userId}/${storyId}_${voice}_${language}_${timestamp}.mp3`;
+  // Use consistent naming convention: {userId}/{storyId}/audio.mp3
+  const fileName = `${userId}/${storyId}/audio.mp3`;
 
   logger.debug(
     'Uploading audio file to storage',
@@ -186,12 +189,13 @@ async function uploadAudioFile(
     }
   );
 
-  // Upload to storage
+  // Upload to storage with upsert to allow overwriting
   const { data, error } = await supabase.storage
     .from('story-audio')
     .upload(fileName, audioData, {
       contentType: 'audio/mpeg',
-      cacheControl: '3600'
+      cacheControl: '3600',
+      upsert: true // Allow overwriting if file exists
     });
 
   if (error) {
@@ -265,7 +269,7 @@ async function updateStoryWithAudio(
 /**
  * Main audio synthesis handler
  */
-serve(async (req) => {
+Deno.serve(async (req) => {
   return withEdgeFunctionWrapper(req, 'audio_synthesis', async ({ userId, supabase, requestId }) => {
     const request = await parseAndValidateJSON<AudioSynthesisRequest>(req, AudioSynthesisSchema);
 
@@ -276,26 +280,59 @@ serve(async (req) => {
       text_length: request.text.length
     });
 
-    // Verify story access
-    const { data: story, error: storyError } = await supabase
-      .from('stories')
-      .select('id, title')
-      .eq('id', request.story_id)
-      .eq('user_id', userId)
-      .single();
-
-    if (storyError || !story) {
-      throw new Error('Story not found or access denied');
+    // Additional validation for text content
+    const trimmedText = request.text.trim();
+    if (!trimmedText || trimmedText.length === 0) {
+      logger.error(
+        'Audio synthesis requested with empty text',
+        LogCategory.VALIDATION,
+        requestId,
+        new Error('Empty text provided'),
+        { story_id: request.story_id }
+      );
+      throw new Error('Text content is required for audio synthesis');
     }
 
-    // Check cache first
-    const cacheKey = CacheKeyGenerator.audioSynthesis(request.text, request.voice, request.language);
-    const cached = await cache.get<AudioSynthesisResponse>(cacheKey, requestId);
+    // Only verify story access if story_id is provided
+    if (request.story_id) {
+      const { data: story, error: storyError } = await supabase
+        .from('stories')
+        .select('id, title, content')
+        .eq('id', request.story_id)
+        .eq('user_id', userId)
+        .single();
 
-    if (cached) {
-      logger.logAudioSynthesis('cache_hit', requestId, { story_id: request.story_id });
-      return { ...cached, cached: true };
+      if (storyError || !story) {
+        logger.warn(
+          'Story not found or access denied',
+          LogCategory.DATABASE,
+          requestId,
+          storyError as Error,
+          { story_id: request.story_id }
+        );
+        throw new Error('Story not found or access denied');
+      }
+
+      // If story exists but text is empty, try to use story content as fallback
+      if (trimmedText.length < 10 && story.content) {
+        logger.info(
+          'Using story content as fallback for audio synthesis',
+          LogCategory.AUDIO,
+          requestId,
+          { story_id: request.story_id, original_text_length: trimmedText.length }
+        );
+        request.text = story.content;
+      }
     }
+
+    // Cache disabled for development/debugging
+    // const cacheKey = CacheKeyGenerator.audioSynthesis(request.text, request.voice, request.language);
+    // const cached = await cache.get<AudioSynthesisResponse>(cacheKey, requestId);
+    //
+    // if (cached) {
+    //   logger.logAudioSynthesis('cache_hit', requestId, { story_id: request.story_id });
+    //   return { ...cached, cached: true };
+    // }
 
     // Validate voice
     if (!VOICE_INSTRUCTIONS[request.voice as keyof typeof VOICE_INSTRUCTIONS]) {
@@ -330,24 +367,28 @@ serve(async (req) => {
     logger.logOpenAIResponse(true, responseTime, requestId, undefined);
 
     // Upload to storage
+    // Use a generated ID if story_id is not provided
+    const storageId = request.story_id || `standalone_${Date.now()}_${requestId}`;
     const { url: audioUrl, size: fileSize } = await uploadAudioFile(
       audioBuffer,
-      request.story_id,
+      storageId,
       request.voice,
       request.language,
       userId,
       requestId
     );
 
-    // Update story record
-    await updateStoryWithAudio(
-      request.story_id,
-      audioUrl,
-      estimatedDuration,
-      request.voice,
-      userId,
-      requestId
-    );
+    // Update story record if story_id was provided
+    if (request.story_id) {
+      await updateStoryWithAudio(
+        request.story_id,
+        audioUrl,
+        estimatedDuration,
+        request.voice,
+        userId,
+        requestId
+      );
+    }
 
     // Prepare response
     const response: AudioSynthesisResponse = {
@@ -358,8 +399,8 @@ serve(async (req) => {
       language: request.language
     };
 
-    // Cache the response
-    await cache.set(cacheKey, response, CACHE_CONFIG.audio_files.ttl, requestId);
+    // Cache disabled for development/debugging
+    // await cache.set(cacheKey, response, CACHE_CONFIG.audio_files.ttl, requestId);
 
     logger.logAudioSynthesis('completed', requestId, {
       story_id: request.story_id,

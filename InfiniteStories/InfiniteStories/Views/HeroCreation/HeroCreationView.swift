@@ -375,6 +375,7 @@ struct HeroCreationView: View {
         if let heroToEdit = heroToEdit {
             // Update existing hero (workingHero points to heroToEdit in this case)
             updateWorkingHeroProperties()
+            heroToEdit.markAsModified()
             // The hero is already in the model context, just need to save
         } else {
             // For new heroes, use the working hero that may have avatar data
@@ -399,6 +400,17 @@ struct HeroCreationView: View {
         do {
             try modelContext.save()
             print("Hero saved successfully with avatar: \(workingHero?.hasAvatar ?? false)")
+
+            // Trigger immediate sync to Supabase
+            Task {
+                do {
+                    try await SyncService.shared.sync()
+                    print("Hero synced to Supabase successfully")
+                } catch {
+                    print("Failed to sync hero to Supabase: \(error)")
+                }
+            }
+
             dismiss()
         } catch {
             print("Failed to save hero: \(error)")

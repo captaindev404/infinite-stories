@@ -156,36 +156,15 @@ struct StoryGenerationView: View {
                 } else {
                     // Generate button
                     VStack(spacing: 15) {
-                        if !appSettings.hasValidAPIKey {
-                            VStack(spacing: 10) {
-                                HStack {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.orange)
-                                    Text("API Key Required")
-                                        .font(.headline)
-                                        .foregroundColor(.orange)
-                                }
-                                
-                                Text("You need to configure your OpenAI API key in Settings to generate stories.")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.center)
-                            }
-                            .padding()
-                            .background(Color.orange.opacity(0.1))
-                            .cornerRadius(12)
-                        }
-                        
                         Button(action: generateStory) {
                             Label("Generate Story", systemImage: "wand.and.stars")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(appSettings.hasValidAPIKey ? Color.orange : Color.gray)
+                                .background(Color.orange)
                                 .cornerRadius(12)
                         }
-                        .disabled(!appSettings.hasValidAPIKey)
                     }
                     .padding(.horizontal)
                 }
@@ -262,15 +241,25 @@ struct StoryGenerationView: View {
     
     private func generateStory() {
         Task {
-            if let builtInEvent = selectedBuiltInEvent {
-                await viewModel.generateStory(for: hero, event: builtInEvent)
-            } else if let customEvent = selectedCustomEvent {
-                await viewModel.generateStory(for: hero, customEvent: customEvent)
-            }
+            do {
+                if let builtInEvent = selectedBuiltInEvent {
+                    await viewModel.generateStory(for: hero, event: builtInEvent)
+                } else if let customEvent = selectedCustomEvent {
+                    await viewModel.generateStory(for: hero, customEvent: customEvent)
+                } else {
+                    // No event selected
+                    viewModel.generationError = "Please select an event type"
+                    return
+                }
 
-            // If successful, handle post-generation
-            if viewModel.generationError == nil {
-                // Get the generated story
+                // Check for generation error
+                if let error = viewModel.generationError {
+                    // Error already set in viewModel, UI will show it
+                    print("❌ Story generation failed: \(error)")
+                    return
+                }
+
+                // If successful, handle post-generation
                 if let story = viewModel.currentStory {
                     generatedStory = story
 
@@ -282,9 +271,14 @@ struct StoryGenerationView: View {
                         dismiss()
                     }
                 } else {
-                    // No story found, just dismiss
-                    dismiss()
+                    // No story found but no error - unexpected state
+                    print("⚠️ No story generated but no error reported")
+                    viewModel.generationError = "Story generation completed but no content was created. Please try again."
                 }
+            } catch {
+                // Handle any thrown errors from Task
+                print("❌ Unexpected error in story generation: \(error)")
+                viewModel.generationError = "An unexpected error occurred: \(error.localizedDescription)"
             }
         }
     }

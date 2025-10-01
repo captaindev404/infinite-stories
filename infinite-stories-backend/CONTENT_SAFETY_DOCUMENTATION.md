@@ -174,7 +174,7 @@ const CONTENT_RULES = {
 
 ### Layer 3: AI-Powered Content Analysis
 
-Uses GPT-4o to understand context and ensure appropriateness.
+Uses GPT-5 Mini with minimal reasoning effort to understand context and ensure appropriateness with fast processing.
 
 ```typescript
 interface ContentAnalysis {
@@ -214,7 +214,7 @@ async function analyzeContentWithAI(
   `;
 
   const response = await openai.createChatCompletion({
-    model: 'gpt-4o',
+    model: 'gpt-5-mini',
     messages: [
       {
         role: 'system',
