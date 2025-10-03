@@ -1,0 +1,590 @@
+[debug] [2025-10-01T23:05:23.708Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:05:23.709Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:05:23.710Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:05:23.710Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:18:58.001Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:18:58.002Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:18:58.002Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:18:58.002Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:19:52.592Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:19:52.594Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:19:52.594Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:19:52.594Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:24:09.635Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:24:09.636Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:24:09.636Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:24:09.636Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:39:09.138Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:39:09.139Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:39:16.850Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:39:16.850Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-01T23:39:19.916Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-01T23:39:19.917Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T18:55:06.535Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.536Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.536Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.537Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.537Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.551Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.551Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.551Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.551Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.552Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.552Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.552Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.552Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.553Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.553Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.553Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.553Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.553Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.553Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.553Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.554Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.554Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.554Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.554Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.554Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.554Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.554Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.554Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.554Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.554Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.555Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.555Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.555Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.555Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.555Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.555Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.555Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.555Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.555Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.555Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.556Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.556Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.556Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.556Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.556Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.556Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.556Z] Checked if tokens are valid: false, expires at: 1759365539746
+[debug] [2025-10-03T18:55:06.556Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T18:55:06.556Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T18:55:06.556Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T18:55:06.630Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.630Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.632Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.632Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.633Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.635Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.635Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.640Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.640Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.641Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.641Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.646Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.646Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.647Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T18:55:06.647Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T18:55:06.650Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-03T18:55:06.650Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-03T18:55:06.651Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T18:55:06.651Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T19:13:03.210Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.211Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.212Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.213Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:13:03.214Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T19:13:03.214Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.228Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.228Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.229Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.229Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.229Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.229Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.230Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.231Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T19:13:03.231Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.231Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T19:13:03.231Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:13:03.922Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T19:13:03.922Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T19:13:04.029Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T19:13:04.029Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:04.030Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T19:13:04.030Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:04.060Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T19:13:04.061Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:04.321Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T19:13:04.321Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T19:13:04.322Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T19:13:04.323Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T19:13:04.525Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T19:13:04.525Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T19:13:04.723Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T19:13:04.723Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:04.778Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T19:13:04.778Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:04.782Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T19:13:04.782Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T19:13:05.287Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T19:13:05.287Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T19:13:05.288Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T19:13:05.288Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T19:34:35.558Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.559Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.560Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.561Z] Checked if tokens are valid: true, expires at: 1759522329498
+[debug] [2025-10-03T19:34:35.562Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T19:34:35.562Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.576Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.576Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.577Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.577Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.577Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.577Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.578Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T19:34:35.578Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.578Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T19:34:35.578Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.578Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.579Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.579Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.579Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.580Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T19:34:35.580Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:35.580Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T19:34:35.580Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T19:34:36.326Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T19:34:36.326Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T19:34:36.335Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T19:34:36.335Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:36.335Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T19:34:36.335Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:36.356Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T19:34:36.356Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:36.361Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T19:34:36.361Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:36.662Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T19:34:36.662Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T19:34:36.959Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T19:34:36.959Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T19:34:37.019Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T19:34:37.019Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:37.079Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T19:34:37.079Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T19:34:37.081Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T19:34:37.081Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T19:34:37.616Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T19:34:37.616Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T19:34:37.617Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T19:34:37.617Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:09:41.562Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.564Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.564Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.565Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.565Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.581Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.581Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.581Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.581Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.581Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.582Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.582Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.582Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.582Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.582Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.583Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.583Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.583Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.583Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.583Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.584Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.584Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.584Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.584Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.584Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.584Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.584Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.584Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.584Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.584Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.585Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.585Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.585Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.585Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.585Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.585Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.585Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.585Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.585Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.585Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.586Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.586Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.586Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.586Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.586Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.586Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.586Z] Checked if tokens are valid: false, expires at: 1759522329498
+[debug] [2025-10-03T20:09:41.586Z] > refreshing access token with scopes: []
+[debug] [2025-10-03T20:09:41.586Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-03T20:09:41.586Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.659Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.660Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.674Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.674Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.677Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.677Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.687Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.687Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.688Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.688Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.699Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.699Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.700Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.700Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.709Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.709Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.710Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.710Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.720Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:09:41.720Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.721Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.721Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.731Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:09:41.731Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.732Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.732Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.742Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:09:41.742Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.743Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.743Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.752Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.752Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.753Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.753Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.763Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:09:41.764Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:41.764Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-03T20:09:41.764Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-03T20:09:41.773Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:09:41.773Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:09:42.434Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:09:42.434Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:09:42.434Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:09:42.434Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:09:42.632Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.633Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:09:42.633Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.655Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:09:42.655Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:09:42.812Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:09:42.812Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:09:42.814Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:09:42.814Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:09:42.823Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:09:42.823Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:09:42.824Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:09:42.824Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:28:47.595Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.596Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.596Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.596Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.596Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.596Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.597Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:28:47.598Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:28:47.598Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.613Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.613Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.614Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.614Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:28:47.615Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:47.616Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:28:47.617Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:28:48.278Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:28:48.278Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:28:48.278Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:28:48.278Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:28:48.411Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:28:48.411Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.413Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:28:48.413Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:28:48.414Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.491Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:28:48.491Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:28:48.590Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:28:48.590Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:28:48.593Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:28:48.593Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:28:48.675Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:28:48.675Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:28:48.677Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:28:48.677Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:30:24.998Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:24.999Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:24.999Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:24.999Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.000Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:30:25.001Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:30:25.001Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.017Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.017Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.018Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.018Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.018Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.018Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.019Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:30:25.019Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.019Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:30:25.019Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:30:25.020Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.021Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:30:25.021Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:30:25.691Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:30:25.691Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:30:25.692Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:30:25.692Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:30:25.751Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:30:25.751Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:30:25.797Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:30:25.797Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:25.801Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:30:25.801Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:25.802Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:30:25.802Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:25.802Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:30:25.802Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:25.803Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:30:25.803Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:25.805Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:30:25.805Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:30:25.869Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:30:25.869Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:30:26.154Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:30:26.154Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:30:26.157Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:30:26.157Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:31:21.290Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.292Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.293Z] Checked if tokens are valid: true, expires at: 1759525780764
+[debug] [2025-10-03T20:31:21.294Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:31:21.294Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.309Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.309Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.309Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.309Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [none]
+[debug] [2025-10-03T20:31:21.310Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-03T20:31:21.311Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.312Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [none]
+[debug] [2025-10-03T20:31:21.312Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com x-goog-quota-user=projects/infinite-stories-5a980
+[debug] [2025-10-03T20:31:21.949Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:31:21.949Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:31:21.949Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com 403
+[debug] [2025-10-03T20:31:21.950Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseio.com [omitted]
+[debug] [2025-10-03T20:31:22.066Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:31:22.066Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.069Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:31:22.069Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:31:22.070Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.072Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-10-03T20:31:22.072Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-03T20:31:22.343Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:31:22.344Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:31:22.346Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:31:22.346Z] > authorizing via signed-in user (emmanuel@captaindev.io)
+[debug] [2025-10-03T20:31:22.353Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ 200
+[debug] [2025-10-03T20:31:22.354Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/infinite-stories-5a980/services/ [omitted]
+[debug] [2025-10-03T20:31:22.355Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-03T20:31:22.355Z] > authorizing via signed-in user (emmanuel@captaindev.io)

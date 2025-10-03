@@ -1,0 +1,37 @@
+[package]
+name = "prd-tool"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "prd_tool"
+path = "src/lib.rs"
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled"] }
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+uuid = { version = "1.10", features = ["v4", "serde"] }
+colored = "2.1"
+tabled = "0.15"
+dialoguer = "0.11"
+indicatif = "0.17"
+
+[[bin]]
+name = "prd"
+path = "src/main.rs"
+
+[[bin]]
+name = "prd-dashboard"
+path = "src/dashboard.rs"
+
+[[example]]
+name = "simple_agent"
+path = "examples/simple_agent.rs"
+
+[[example]]
+name = "multi_agent_workflow"
+path = "examples/multi_agent_workflow.rs"

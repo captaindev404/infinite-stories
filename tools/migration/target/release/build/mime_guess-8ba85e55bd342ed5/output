@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/captaindev404/Code/Github/infinite-stories/tools/migration/target/release/build/mime_guess-8ba85e55bd342ed5/out/mime_types_generated.rs

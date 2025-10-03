@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**⚠️ IMPORTANT**: This is the **legacy Supabase backend** being phased out. For new features, use the Firebase backend at `../backend/`. This backend is maintained only for reference and migration purposes.
+
+## Development Tools
+
+### PRD Tool - Task Management for Migration Work
+
+When working on migration tasks or maintaining this legacy backend, use the PRD tool at `../tools/prd/`:
+
+```bash
+# Build the tool (from project root)
+cd ../tools/prd && cargo build --release
+
+# Create migration task
+./target/release/prd create "Migrate X from Supabase to Firebase" --priority high
+
+# Track migration progress
+./target/release/prd-dashboard
+```
+
+See [../tools/prd/README.md](../tools/prd/README.md) for complete documentation.
+
 ## Working Methods and Best Practices
 
 ### Development Workflow

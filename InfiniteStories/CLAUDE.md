@@ -6,6 +6,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **InfiniteStories** is a SwiftUI iOS/macOS app that generates personalized audio bedtime stories for children. Parents create hero characters with customizable traits, then generate AI-powered stories for different daily events or custom scenarios. Each story is converted to high-quality audio for playback during bedtime, with support for multiple languages and themes.
 
+## Development Tools
+
+### PRD Tool - Task Management for Complex Features
+
+When working on complex, multi-step features, use the PRD (Project Requirements & Development) tool located at `tools/prd/`:
+
+```bash
+# Build the tool (from project root)
+cd tools/prd && cargo build --release
+
+# Create a task for your feature
+./target/release/prd create "Implement new iOS feature" --priority high
+
+# Break down into subtasks
+./target/release/prd breakdown <task-id> --interactive
+
+# Track progress with dashboard
+./target/release/prd-dashboard
+```
+
+**For programmatic access (recommended for agents):**
+
+```rust
+use prd_tool::{PRDClient, Priority, TaskStatus};
+
+let client = PRDClient::new("tools/prd.db")?;
+let agent_name = "ios-dev-agent";
+
+// Register and get work
+client.create_agent(agent_name.to_string())?;
+if let Some(task) = client.get_next_task(Some(Priority::High))? {
+    client.sync_agent(agent_name, &task.id)?;
+    // Do work...
+    client.complete_task(&task.id, agent_name)?;
+}
+```
+
+See [tools/prd/README.md](../tools/prd/README.md) for complete documentation.
+
+**When to use PRD:**
+- Multi-agent coordination
+- Large feature implementations with multiple steps
+- Breaking down complex work into manageable tasks
+- Tracking progress across multiple development sessions
+
 ## Architecture
 
 ### Core Data Models (SwiftData)

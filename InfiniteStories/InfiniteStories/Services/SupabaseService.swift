@@ -16,6 +16,8 @@ final class SupabaseService: ObservableObject {
 
     private let client: SupabaseClient
     private var currentUserId: UUID?
+    private lazy var authMigration = AuthMigrationHelper.shared
+    private lazy var firebaseAuth = FirebaseAuthService.shared
 
     private init() {
         // Use configuration based on environment
@@ -29,7 +31,7 @@ final class SupabaseService: ObservableObject {
             supabaseKey: config.anonKey
         )
 
-        // Use a fixed dev user ID for local development
+        // Initial setup for local development
         if SupabaseConfig.isLocalDevelopment {
             self.currentUserId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")
         } else {
@@ -40,6 +42,41 @@ final class SupabaseService: ObservableObject {
         print("📡 SupabaseService initialized")
         print("🔗 URL: \(url.absoluteString)")
         print("🏗️ Environment: \(SupabaseConfig.isLocalDevelopment ? "Local Development" : "Production")")
+
+        // Auth migration check will be done lazily when needed
+        Task { @MainActor in
+            updateAuthMode()
+        }
+    }
+
+    @MainActor
+    private func updateAuthMode() {
+        // Check if we should use Firebase Auth
+        if authMigration.useFirebaseAuth {
+            // Use Firebase user ID if available
+            if let firebaseUserId = firebaseAuth.currentUserId {
+                self.currentUserId = UUID(uuidString: firebaseUserId) ?? UUID()
+                print("🔥 Using Firebase Auth user ID: \(firebaseUserId)")
+            }
+            print("🔐 Auth Mode: Firebase")
+        } else {
+            print("🔐 Auth Mode: Supabase")
+        }
+    }
+
+    /// Get current user ID with Firebase Auth support
+    @MainActor
+    private func getCurrentUserId() -> UUID? {
+        if authMigration.useFirebaseAuth {
+            // Use Firebase user ID
+            if let firebaseUserId = firebaseAuth.currentUserId {
+                return UUID(uuidString: firebaseUserId) ?? UUID()
+            }
+            return nil
+        } else {
+            // Use existing Supabase logic
+            return currentUserId
+        }
     }
 
     // MARK: - Test Connection
@@ -64,7 +101,7 @@ final class SupabaseService: ObservableObject {
     // MARK: - Hero Operations
 
     func saveHero(_ hero: Hero) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -86,7 +123,7 @@ final class SupabaseService: ObservableObject {
     }
 
     func fetchHeroes(limit: Int = 100) async throws -> [[String: Any]] {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -118,7 +155,7 @@ final class SupabaseService: ObservableObject {
     }
 
     func deleteHero(_ heroId: UUID) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -140,7 +177,7 @@ final class SupabaseService: ObservableObject {
     // MARK: - Story Operations
 
     func saveStory(_ story: Story) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -162,7 +199,7 @@ final class SupabaseService: ObservableObject {
     }
 
     func fetchStories(limit: Int = 50) async throws -> [[String: Any]] {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -193,7 +230,7 @@ final class SupabaseService: ObservableObject {
     }
 
     func fetchStoriesForHero(_ heroId: UUID, limit: Int = 20) async throws -> [[String: Any]] {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -638,7 +675,7 @@ final class SupabaseService: ObservableObject {
     ///   - imageData: The avatar image data
     /// - Returns: The public URL of the uploaded avatar
     func uploadAvatar(heroId: UUID, imageData: Data) async throws -> String {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -676,7 +713,7 @@ final class SupabaseService: ObservableObject {
     /// - Parameter heroId: The ID of the hero
     /// - Returns: The avatar image data, or nil if not found
     func downloadAvatar(heroId: UUID) async throws -> Data? {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -704,7 +741,7 @@ final class SupabaseService: ObservableObject {
     /// Delete avatar from Supabase Storage
     /// - Parameter heroId: The ID of the hero
     func deleteAvatar(heroId: UUID) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -731,7 +768,7 @@ final class SupabaseService: ObservableObject {
     ///   - audioData: The audio file data
     /// - Returns: The public URL of the uploaded audio
     func uploadStoryAudio(storyId: UUID, audioData: Data) async throws -> String {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -769,7 +806,7 @@ final class SupabaseService: ObservableObject {
     /// - Parameter storyId: The ID of the story
     /// - Returns: The audio file data, or nil if not found
     func downloadStoryAudio(storyId: UUID) async throws -> Data? {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -797,7 +834,7 @@ final class SupabaseService: ObservableObject {
     /// Delete story audio from Supabase Storage
     /// - Parameter storyId: The ID of the story
     func deleteStoryAudio(storyId: UUID) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -825,7 +862,7 @@ final class SupabaseService: ObservableObject {
     ///   - imageData: The illustration image data
     /// - Returns: The public URL of the uploaded illustration
     func uploadSceneIllustration(storyId: UUID, sceneNumber: Int, imageData: Data) async throws -> String {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -865,7 +902,7 @@ final class SupabaseService: ObservableObject {
     ///   - sceneNumber: The scene number (1-based)
     /// - Returns: The illustration image data, or nil if not found
     func downloadSceneIllustration(storyId: UUID, sceneNumber: Int) async throws -> Data? {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 
@@ -895,7 +932,7 @@ final class SupabaseService: ObservableObject {
     ///   - storyId: The ID of the story
     ///   - sceneNumber: The scene number (1-based)
     func deleteSceneIllustration(storyId: UUID, sceneNumber: Int) async throws {
-        guard let userId = currentUserId else {
+        guard let userId = await getCurrentUserId() else {
             throw SupabaseError.authenticationError("No user ID available")
         }
 

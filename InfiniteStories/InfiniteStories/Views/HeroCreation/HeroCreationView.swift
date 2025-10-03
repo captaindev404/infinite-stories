@@ -400,17 +400,6 @@ struct HeroCreationView: View {
         do {
             try modelContext.save()
             print("Hero saved successfully with avatar: \(workingHero?.hasAvatar ?? false)")
-
-            // Trigger immediate sync to Supabase
-            Task {
-                do {
-                    try await SyncService.shared.sync()
-                    print("Hero synced to Supabase successfully")
-                } catch {
-                    print("Failed to sync hero to Supabase: \(error)")
-                }
-            }
-
             dismiss()
         } catch {
             print("Failed to save hero: \(error)")

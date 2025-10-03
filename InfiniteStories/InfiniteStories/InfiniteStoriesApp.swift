@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import BackgroundTasks
+import FirebaseCore
 
 @main
 struct InfiniteStoriesApp: App {
@@ -24,6 +25,11 @@ struct InfiniteStoriesApp: App {
     
     init() {
         loadRocketSimConnect()
+
+        // Initialize Firebase
+        FirebaseApp.configure()
+        print("🔥 Firebase initialized successfully")
+
         // Register background tasks when app launches
         BackgroundTaskManager.shared.registerBackgroundTasks()
 

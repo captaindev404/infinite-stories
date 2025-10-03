@@ -8,9 +8,9 @@
 import Foundation
 import SwiftData
 
-// MARK: - Helper Types for Supabase Compatibility
+// MARK: - Helper Types for Firestore Compatibility
 
-/// Codable wrapper for Hero to enable Supabase sync
+/// Codable wrapper for Hero to enable Firestore sync
 struct HeroCodable: Codable {
     let id: String
     let userId: String
@@ -19,11 +19,28 @@ struct HeroCodable: Codable {
     let secondaryTrait: String
     let appearance: String
     let specialAbility: String
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let isActive: Bool
     let avatarPrompt: String?
     let avatarGenerationId: String?
+
+    // Firestore-specific metadata
+    let lastModified: Date
+    let version: Int
+    let syncStatus: String?
+
+    // Visual profile data (flattened for Firestore)
+    let visualProfileId: String?
+    let hairColor: String?
+    let hairStyle: String?
+    let eyeColor: String?
+    let skinTone: String?
+    let clothingStyle: String?
+    let clothingColors: String?
+    let distinctiveFeatures: String?
+    let artStyle: String?
+    let canonicalPrompt: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -38,6 +55,19 @@ struct HeroCodable: Codable {
         case isActive = "is_active"
         case avatarPrompt = "avatar_prompt"
         case avatarGenerationId = "avatar_generation_id"
+        case lastModified = "last_modified"
+        case version
+        case syncStatus = "sync_status"
+        case visualProfileId = "visual_profile_id"
+        case hairColor = "hair_color"
+        case hairStyle = "hair_style"
+        case eyeColor = "eye_color"
+        case skinTone = "skin_tone"
+        case clothingStyle = "clothing_style"
+        case clothingColors = "clothing_colors"
+        case distinctiveFeatures = "distinctive_features"
+        case artStyle = "art_style"
+        case canonicalPrompt = "canonical_prompt"
     }
 
     init(from hero: Hero, userId: UUID) {
@@ -48,11 +78,68 @@ struct HeroCodable: Codable {
         self.secondaryTrait = hero.secondaryTrait.rawValue
         self.appearance = hero.appearance
         self.specialAbility = hero.specialAbility
-        self.createdAt = ISO8601DateFormatter.supabase.string(from: hero.createdAt)
-        self.updatedAt = ISO8601DateFormatter.supabase.string(from: hero.updatedAt)
+        self.createdAt = hero.createdAt
+        self.updatedAt = hero.updatedAt
         self.isActive = hero.isActive
         self.avatarPrompt = hero.avatarPrompt
         self.avatarGenerationId = hero.avatarGenerationId
+
+        // Firestore metadata
+        self.lastModified = hero.updatedAt
+        self.version = 1 // Increment for optimistic concurrency control
+        self.syncStatus = hero.needsSync ? "pending" : "synced"
+
+        // Visual profile data if available
+        if let visualProfile = hero.visualProfile {
+            self.visualProfileId = visualProfile.id.uuidString
+            self.hairColor = visualProfile.hairColor
+            self.hairStyle = visualProfile.hairStyle
+            self.eyeColor = visualProfile.eyeColor
+            self.skinTone = visualProfile.skinTone
+            self.clothingStyle = visualProfile.clothingStyle
+            self.clothingColors = visualProfile.clothingColors
+            self.distinctiveFeatures = visualProfile.distinctiveFeatures
+            self.artStyle = visualProfile.artStyle
+            self.canonicalPrompt = visualProfile.canonicalPrompt
+        } else {
+            self.visualProfileId = nil
+            self.hairColor = nil
+            self.hairStyle = nil
+            self.eyeColor = nil
+            self.skinTone = nil
+            self.clothingStyle = nil
+            self.clothingColors = nil
+            self.distinctiveFeatures = nil
+            self.artStyle = nil
+            self.canonicalPrompt = nil
+        }
+    }
+
+    /// Convert Firestore data back to Hero model
+    func toHero() -> Hero {
+        let hero = Hero(
+            name: name,
+            primaryTrait: CharacterTrait(rawValue: primaryTrait) ?? .brave,
+            secondaryTrait: CharacterTrait(rawValue: secondaryTrait) ?? .kind,
+            appearance: appearance,
+            specialAbility: specialAbility
+        )
+
+        // Set ID and timestamps
+        if let uuid = UUID(uuidString: id) {
+            hero.id = uuid
+        }
+        hero.createdAt = createdAt
+        hero.updatedAt = updatedAt
+        hero.isActive = isActive
+        hero.avatarPrompt = avatarPrompt
+        hero.avatarGenerationId = avatarGenerationId
+
+        // Set sync status
+        hero.lastSyncedAt = lastModified
+        hero.needsSync = syncStatus == "pending"
+
+        return hero
     }
 }
 

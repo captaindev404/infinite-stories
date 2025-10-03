@@ -8,23 +8,31 @@
 import Foundation
 import SwiftData
 
-// MARK: - Helper Types for Supabase Compatibility
+// MARK: - Helper Types for Firestore Compatibility
 
-/// Codable wrapper for Story to enable Supabase sync
+/// Codable wrapper for Story to enable Firestore sync
 struct StoryCodable: Codable {
     let id: String
     let userId: String
     let heroId: String?
     let title: String
     let content: String
-    let createdAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let isFavorite: Bool
     let playCount: Int
-    let estimatedDuration: String
+    let estimatedDuration: Int  // Store as Int for Firestore
     let wordCount: Int
     let eventType: String  // Always provided, defaults to "built_in"
     let eventData: [String: Any]  // Always provided, defaults to empty object
     let customEventId: String?
+
+    // Firestore-specific metadata
+    let lastModified: Date
+    let version: Int
+    let syncStatus: String?
+    let audioGenerated: Bool
+    let illustrationsCount: Int
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -33,6 +41,7 @@ struct StoryCodable: Codable {
         case title
         case content
         case createdAt = "created_at"
+        case updatedAt = "updated_at"
         case isFavorite = "is_favorite"
         case playCount = "play_count"
         case estimatedDuration = "estimated_duration"
@@ -40,6 +49,11 @@ struct StoryCodable: Codable {
         case eventType = "event_type"
         case eventData = "event_data"
         case customEventId = "custom_event_id"
+        case lastModified = "last_modified"
+        case version
+        case syncStatus = "sync_status"
+        case audioGenerated = "audio_generated"
+        case illustrationsCount = "illustrations_count"
     }
 
     init(from story: Story, userId: UUID) {
@@ -48,10 +62,11 @@ struct StoryCodable: Codable {
         self.heroId = story.hero?.id.uuidString
         self.title = story.title
         self.content = story.content
-        self.createdAt = ISO8601DateFormatter.supabase.string(from: story.createdAt)
+        self.createdAt = story.createdAt
+        self.updatedAt = story.lastModified
         self.isFavorite = story.isFavorite
         self.playCount = story.playCount
-        self.estimatedDuration = "\(Int(story.estimatedDuration)) seconds"
+        self.estimatedDuration = Int(story.estimatedDuration)
         self.wordCount = story.content.split(separator: " ").count
 
         if let builtInEvent = story.builtInEvent {
@@ -69,6 +84,13 @@ struct StoryCodable: Codable {
             self.eventData = [:]
             self.customEventId = nil
         }
+
+        // Firestore metadata
+        self.lastModified = story.lastModified
+        self.version = 1 // Increment for optimistic concurrency control
+        self.syncStatus = story.needsSync ? "pending" : "synced"
+        self.audioGenerated = story.audioFileName != nil
+        self.illustrationsCount = story.illustrations.count
     }
 
     // Custom encoding for eventData
@@ -80,12 +102,20 @@ struct StoryCodable: Codable {
         try container.encode(title, forKey: .title)
         try container.encode(content, forKey: .content)
         try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
         try container.encode(isFavorite, forKey: .isFavorite)
         try container.encode(playCount, forKey: .playCount)
         try container.encode(estimatedDuration, forKey: .estimatedDuration)
         try container.encode(wordCount, forKey: .wordCount)
         try container.encode(eventType, forKey: .eventType)  // Always encode
         try container.encodeIfPresent(customEventId, forKey: .customEventId)
+
+        // Firestore metadata
+        try container.encode(lastModified, forKey: .lastModified)
+        try container.encode(version, forKey: .version)
+        try container.encodeIfPresent(syncStatus, forKey: .syncStatus)
+        try container.encode(audioGenerated, forKey: .audioGenerated)
+        try container.encode(illustrationsCount, forKey: .illustrationsCount)
 
         // Always encode eventData as JSON (never nil)
         let jsonData = try JSONSerialization.data(withJSONObject: eventData)
@@ -101,14 +131,22 @@ struct StoryCodable: Codable {
         heroId = try container.decodeIfPresent(String.self, forKey: .heroId)
         title = try container.decode(String.self, forKey: .title)
         content = try container.decode(String.self, forKey: .content)
-        createdAt = try container.decode(String.self, forKey: .createdAt)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt) ?? Date()
         isFavorite = try container.decode(Bool.self, forKey: .isFavorite)
         playCount = try container.decode(Int.self, forKey: .playCount)
-        estimatedDuration = try container.decode(String.self, forKey: .estimatedDuration)
+        estimatedDuration = try container.decode(Int.self, forKey: .estimatedDuration)
         wordCount = try container.decode(Int.self, forKey: .wordCount)
         // Default to "built_in" if eventType is missing
         eventType = try container.decodeIfPresent(String.self, forKey: .eventType) ?? "built_in"
         customEventId = try container.decodeIfPresent(String.self, forKey: .customEventId)
+
+        // Firestore metadata
+        lastModified = try container.decodeIfPresent(Date.self, forKey: .lastModified) ?? Date()
+        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
+        syncStatus = try container.decodeIfPresent(String.self, forKey: .syncStatus)
+        audioGenerated = try container.decodeIfPresent(Bool.self, forKey: .audioGenerated) ?? false
+        illustrationsCount = try container.decodeIfPresent(Int.self, forKey: .illustrationsCount) ?? 0
 
         // Decode eventData from AnyJSON, default to empty object if nil
         if let anyJSON = try container.decodeIfPresent(AnyJSON.self, forKey: .eventData) {
@@ -116,6 +154,30 @@ struct StoryCodable: Codable {
         } else {
             eventData = [:]
         }
+    }
+
+    /// Convert Firestore data back to Story model
+    func toStory() -> Story {
+        let story = Story(
+            title: title,
+            content: content
+        )
+
+        // Set ID and timestamps
+        if let uuid = UUID(uuidString: id) {
+            story.id = uuid
+        }
+        story.createdAt = createdAt
+        story.lastModified = updatedAt
+        story.isFavorite = isFavorite
+        story.playCount = playCount
+        story.estimatedDuration = TimeInterval(estimatedDuration)
+
+        // Set sync status
+        story.lastSyncedAt = lastModified
+        story.needsSync = syncStatus == "pending"
+
+        return story
     }
 }
 
@@ -236,6 +298,26 @@ final class Story {
         if let customEvent = customEvent {
             customEvent.incrementUsage()
         }
+    }
+
+    // Simple initializer for Firestore conversions
+    init(title: String, content: String) {
+        self.id = UUID()
+        self.title = title
+        self.content = content
+        self.builtInEvent = nil
+        self.customEvent = nil
+        self.hero = nil
+        self.createdAt = Date()
+        self.audioFileName = nil
+        self.isGenerated = true
+        self.isFavorite = false
+        self.playCount = 0
+        self.estimatedDuration = 0
+        self.audioNeedsRegeneration = false
+        self.lastModified = Date()
+        self.lastSyncedAt = nil
+        self.needsSync = true
     }
     
     // Computed properties for event access

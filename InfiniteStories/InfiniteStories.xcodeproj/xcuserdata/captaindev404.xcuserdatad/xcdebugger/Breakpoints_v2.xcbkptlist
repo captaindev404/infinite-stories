@@ -328,8 +328,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "212"
             endingLineNumber = "212"
-            landmarkName = "init(title:content:customEvent:hero:)"
-            landmarkType = "7">
+            landmarkName = "Story"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -344,8 +344,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "225"
             endingLineNumber = "225"
-            landmarkName = "init(title:content:customEvent:hero:)"
-            landmarkType = "7">
+            landmarkName = "Story"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -360,8 +360,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "222"
             endingLineNumber = "222"
-            landmarkName = "init(title:content:customEvent:hero:)"
-            landmarkType = "7">
+            landmarkName = "Story"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -392,8 +392,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "202"
             endingLineNumber = "202"
-            landmarkName = "init(title:content:customEvent:hero:)"
-            landmarkType = "7">
+            landmarkName = "content"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -536,7 +536,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "89"
             endingLineNumber = "89"
-            landmarkName = "fetchHeroes(limit:)"
+            landmarkName = "testConnection()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -552,7 +552,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "67"
             endingLineNumber = "67"
-            landmarkName = "saveHero(_:)"
+            landmarkName = "getCurrentUserId()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -568,8 +568,38 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "121"
             endingLineNumber = "121"
-            landmarkName = "deleteHero(_:)"
+            landmarkName = "fetchHeroes(limit:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9BED3C12-AD2E-497F-9797-114499AD1BCD - e23729f1ee0d1435"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for InfiniteStories.SupabaseService.saveHero(InfiniteStories.Hero) async throws -&gt; ()"
+                  moduleName = "InfiniteStories.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/captaindev404/Code/Github/infinite-stories/InfiniteStories/InfiniteStories/Services/SupabaseService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121">
+               </Location>
+               <Location
+                  uuid = "9BED3C12-AD2E-497F-9797-114499AD1BCD - ccb1858f34b3238"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for InfiniteStories.SupabaseService.saveHero(InfiniteStories.Hero) async throws -&gt; ()"
+                  moduleName = "InfiniteStories.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/captaindev404/Code/Github/infinite-stories/InfiniteStories/InfiniteStories/Services/SupabaseService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -600,7 +630,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "241"
             endingLineNumber = "241"
-            landmarkName = "generateStory(heroId:eventType:eventData:targetDuration:language:)"
+            landmarkName = "fetchStoriesForHero(_:limit:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1,0 +1,31 @@
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+*.local
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+
+# Service account keys
+serviceAccountKey.json
+*-service-account.json
+*.serviceaccount.json
+
+# Firebase config cache
+.runtimeconfig.json
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,219 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the resource
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Helper function to validate timestamps
+    function hasValidTimestamps() {
+      return request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    // Helper function to check allowed fields for create/update
+    function hasAllowedFields(allowedFields) {
+      return request.resource.data.keys().hasAll(allowedFields);
+    }
+
+    // ============================
+    // USERS Collection
+    // ============================
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && hasValidTimestamps();
+      allow update: if isOwner(userId)
+        && request.resource.data.userId == userId
+        && hasValidTimestamps();
+      allow delete: if false; // Users cannot delete their profile
+    }
+
+    // ============================
+    // HEROES Collection
+    // ============================
+    match /heroes/{heroId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.primaryTrait is string
+        && request.resource.data.secondaryTrait is string
+        && hasValidTimestamps();
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId
+        && hasValidTimestamps();
+      allow delete: if isOwner(resource.data.userId);
+
+      // Subcollection for visual profiles
+      match /visualProfiles/{profileId} {
+        allow read: if isOwner(get(/databases/$(database)/documents/heroes/$(heroId)).data.userId);
+        allow write: if isOwner(get(/databases/$(database)/documents/heroes/$(heroId)).data.userId);
+      }
+    }
+
+    // ============================
+    // STORIES Collection
+    // ============================
+    match /stories/{storyId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.content is string
+        && request.resource.data.eventType in ['built_in', 'custom']
+        && hasValidTimestamps();
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId
+        && hasValidTimestamps();
+      allow delete: if isOwner(resource.data.userId);
+
+      // Subcollection for story scenes
+      match /scenes/{sceneId} {
+        allow read: if isOwner(get(/databases/$(database)/documents/stories/$(storyId)).data.userId);
+        allow write: if isOwner(get(/databases/$(database)/documents/stories/$(storyId)).data.userId);
+      }
+
+      // Subcollection for story illustrations
+      match /illustrations/{illustrationId} {
+        allow read: if isOwner(get(/databases/$(database)/documents/stories/$(storyId)).data.userId);
+        allow write: if isOwner(get(/databases/$(database)/documents/stories/$(storyId)).data.userId);
+      }
+    }
+
+    // ============================
+    // CUSTOM_EVENTS Collection
+    // ============================
+    match /customEvents/{eventId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.promptSeed is string
+        && hasValidTimestamps();
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId
+        && hasValidTimestamps();
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ============================
+    // API_USAGE Collection (Read-only for users)
+    // ============================
+    match /apiUsage/{usageId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only backend can write
+    }
+
+    // ============================
+    // GENERATION_QUEUE Collection
+    // ============================
+    match /generationQueue/{queueId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.jobType in ['story', 'audio', 'avatar', 'illustration', 'scene_extraction']
+        && request.resource.data.status == 'pending'
+        && hasValidTimestamps();
+      allow update: if false; // Only backend can update
+      allow delete: if false; // No deletion allowed
+    }
+
+    // ============================
+    // SYNC_METADATA Collection
+    // ============================
+    match /syncMetadata/{metadataId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.entityType in ['hero', 'story', 'custom_event', 'story_scene', 'story_illustration']
+        && request.resource.data.deviceId is string
+        && hasValidTimestamps();
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId
+        && hasValidTimestamps();
+      allow delete: if false; // Sync metadata should not be deleted
+    }
+
+    // ============================
+    // DEVICE_PRESENCE Collection
+    // ============================
+    match /devicePresence/{presenceId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.deviceId is string
+        && hasValidTimestamps();
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId;
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ============================
+    // RATE_LIMITS Collection (Backend only)
+    // ============================
+    match /rateLimits/{limitId} {
+      allow read: if false; // Backend only
+      allow write: if false; // Backend only
+    }
+
+    // ============================
+    // API_CACHE Collection (Backend only)
+    // ============================
+    match /apiCache/{cacheId} {
+      allow read: if false; // Backend only
+      allow write: if false; // Backend only
+    }
+
+    // ============================
+    // IMAGE_GENERATION_CHAINS Collection
+    // ============================
+    match /imageGenerationChains/{chainId} {
+      allow read: if isSignedIn()
+        && exists(/databases/$(database)/documents/heroes/$(resource.data.heroId))
+        && get(/databases/$(database)/documents/heroes/$(resource.data.heroId)).data.userId == request.auth.uid;
+      allow write: if false; // Backend only
+    }
+
+    // ============================
+    // SYNC Collections (for multi-device sync)
+    // ============================
+    match /syncDeltas/{deltaId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.operation in ['insert', 'update', 'delete', 'conflict_resolved']
+        && hasValidTimestamps();
+      allow update: if false; // Only backend processes deltas
+      allow delete: if false; // Deltas are immutable
+    }
+
+    match /syncConflicts/{conflictId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow write: if false; // Backend manages conflicts
+    }
+
+    match /syncEvents/{eventId} {
+      allow read: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow write: if false; // Backend manages events
+    }
+  }
+}

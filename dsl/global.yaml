@@ -1,0 +1,1573 @@
+# InfiniteStories - Comprehensive System Architecture DSL
+# AI-Powered Bedtime Story Generation Platform for Children
+# Version: 1.0.0
+# Last Updated: 2025-10-03
+
+meta:
+  project_name: InfiniteStories
+  version: 2.6.0
+  description: AI-powered bedtime story generation platform for children aged 3-10
+  target_audience: Parents and children (3-10 years)
+  platforms:
+    - iOS 18.5+
+    - iPadOS 18.5+
+  architecture_style: Microservices with MVVM client
+  primary_language: Swift 5.9+ (iOS), TypeScript 5.0+ (Backend)
+  documentation_version: 1.0.0
+
+# =============================================================================
+# SYSTEM OVERVIEW
+# =============================================================================
+
+system_overview:
+  vision: |
+    Create magical, personalized bedtime stories that adapt to each child's unique hero character,
+    ensuring safe, educational, and entertaining content that grows with the child.
+
+  core_capabilities:
+    - ai_story_generation:
+        model: gpt-5-mini
+        purpose: Intelligent, contextual story creation with configurable reasoning
+        features:
+          - reasoning_effort: [low, medium, high]
+          - text_verbosity: [low, medium, high]
+          - temperature: 0.7-0.8
+          - max_tokens: 50000
+
+    - professional_narration:
+        model: gpt-4o-mini-tts
+        purpose: Enhanced quality text-to-speech
+        voices:
+          - coral: warm, gentle, nurturing (bedtime stories)
+          - nova: bright, cheerful (adventures)
+          - fable: traditional storytelling
+          - alloy: clear, versatile (educational)
+          - echo: warm, engaging (magical)
+          - onyx: deep, authoritative (protective themes)
+          - shimmer: soft, gentle (whimsical)
+
+    - visual_storytelling:
+        model: gpt-5
+        purpose: AI-generated illustrations with improved instruction following
+        features:
+          - multi_turn_consistency: generation_id_chaining
+          - character_appearance: maintained_across_scenes
+          - scene_synchronization: audio_timestamp_alignment
+          - quality_options: [standard, hd]
+
+    - content_safety:
+        layers:
+          - input_validation: character_name_screening
+          - prompt_engineering: safety_instructions_embedded
+          - ai_analysis: gpt-5-mini_content_review
+          - output_validation: keyword_screening_pattern_matching
+          - multi_language: 5_languages_supported
+
+    - personalization:
+        features:
+          - custom_heroes: unique_traits_and_abilities
+          - custom_events: user_defined_scenarios
+          - visual_profiles: character_consistency
+          - multi_language: 5_languages
+
+    - cross_platform_sync:
+        backend: [Supabase, Firebase]
+        strategy: dual_backend_migration
+        features:
+          - cloudkit_integration: seamless_device_sync
+          - offline_first: local_storage_priority
+          - conflict_resolution: last_write_wins
+
+# =============================================================================
+# ARCHITECTURE PATTERNS
+# =============================================================================
+
+architecture_patterns:
+  client_architecture:
+    pattern: MVVM
+    components:
+      models:
+        framework: SwiftData
+        attributes: [@Model, relationships, computed_properties]
+        persistence: ApplicationSupport/InfiniteStories/
+        sync: CloudKit_optional
+
+      views:
+        framework: SwiftUI
+        attributes: [declarative, reactive, adaptive]
+        state_management: [@State, @StateObject, @ObservedObject, @EnvironmentObject]
+        navigation: NavigationView_with_sheets_and_links
+
+      viewmodels:
+        actor: "@MainActor"
+        protocol: ObservableObject
+        pattern: dependency_injection
+        services: [AIService, AudioService, IllustrationGenerator]
+
+      services:
+        pattern: protocol_oriented
+        dependency_injection: factory_pattern
+        async_await: true
+        error_handling: typed_errors
+
+  backend_architecture:
+    pattern: microservices
+    runtime: Deno_1.37+
+    language: TypeScript_5.0+
+    deployment: edge_functions
+
+    services:
+      story_generation:
+        model: gpt-5-mini
+        purpose: creative_story_writing_with_configurable_reasoning
+        response_time: 2-3_seconds
+
+      audio_synthesis:
+        model: gpt-4o-mini-tts
+        purpose: enhanced_quality_audio_narration
+        response_time: 1-2_seconds_per_minute
+
+      avatar_generation:
+        model: gpt-5
+        purpose: hero_avatar_creation_with_improved_instruction_following
+        response_time: 5-8_seconds
+
+      scene_illustration:
+        model: gpt-5
+        purpose: scene_illustrations_with_enhanced_visual_consistency
+        response_time: 8-10_seconds_per_scene
+        features:
+          - generation_id_chaining: maintain_character_appearance
+          - sequential_processing: visual_consistency_chain
+          - error_recovery: graceful_fallback
+
+      extract_scenes:
+        model: gpt-4o
+        purpose: ai_powered_story_segmentation
+        output: scenes_with_timestamps
+
+      sync_orchestrator:
+        purpose: multi_device_synchronization
+        features:
+          - dual_uuid_mapping: SwiftData_to_Firestore
+          - conflict_resolution: timestamp_based
+          - batch_operations: efficient_sync
+
+  integration_patterns:
+    factory_pattern:
+      AIServiceFactory:
+        creates: [FirebaseAIService, SupabaseAIService]
+        selection_criteria: feature_flags
+        migration_strategy: gradual_rollout
+
+    repository_pattern:
+      purpose: data_access_abstraction
+      implementation: protocol_based_services
+      benefits: [testability, database_agnostic_design]
+
+    observer_pattern:
+      mechanisms: [NotificationCenter, Combine_publishers, SwiftData_@Query]
+      benefits: automatic_ui_updates_reactive_state
+
+    dependency_injection:
+      style: protocol_based
+      scope: [service_layer, viewmodel_layer]
+      benefits: loose_coupling_testability
+
+# =============================================================================
+# DATA MODELS
+# =============================================================================
+
+data_models:
+  Hero:
+    framework: SwiftData
+    attributes:
+      id: UUID  # Single UUID for local and remote
+      name: String
+      primary_trait: CharacterTrait_enum
+      secondary_trait: CharacterTrait_enum
+      appearance: String
+      special_ability: String
+      created_at: Date
+      updated_at: Date
+      is_active: Bool
+      avatar_image_path: String?
+      avatar_prompt: String?
+      avatar_generated_at: Date?
+      avatar_generation_id: String?  # For multi-turn consistency
+      last_synced_at: Date?
+      needs_sync: Bool
+
+    relationships:
+      stories: one_to_many_cascade_nullify
+      visual_profile: one_to_one
+
+    computed_properties:
+      - traits_description: Combined_traits_display
+      - full_description: Complete_character_summary
+      - avatar_url: Documents/Avatars_path
+      - has_avatar: File_existence_check
+      - sync_status_description: Sync_state_display
+
+    methods:
+      - mark_as_modified: Update_timestamp_set_needs_sync
+
+    sync:
+      codable_wrapper: HeroCodable
+      remote_mapping: snake_case_fields
+
+  Story:
+    framework: SwiftData
+    attributes:
+      id: UUID
+      title: String  # Auto-regenerates audio on change
+      content: String  # Auto-regenerates audio on change
+      built_in_event: StoryEvent?
+      created_at: Date
+      audio_file_name: String?
+      is_generated: Bool
+      is_favorite: Bool
+      play_count: Int
+      estimated_duration: TimeInterval
+      audio_needs_regeneration: Bool
+      last_modified: Date
+      last_synced_at: Date?
+      needs_sync: Bool
+
+    relationships:
+      hero: many_to_one_inverse
+      custom_event: many_to_one
+      illustrations: one_to_many_cascade_delete
+
+    computed_properties:
+      - event_title: Combined_event_display
+      - event_prompt_seed: Event_prompt_retrieval
+      - event_icon: Icon_name_retrieval
+      - is_custom_event: Event_type_check
+      - has_illustrations: Generated_illustrations_check
+      - sorted_illustrations: Display_order_sorted
+      - illustration_timeline: Timestamp_illustration_pairs
+      - illustration_progress: Generation_percentage
+
+    methods:
+      - increment_play_count: Usage_tracking
+      - import_scenes: AI_scene_integration
+      - update_illustration: Image_path_assignment
+      - illustration_at: Timestamp_based_lookup
+      - reset_failed_illustrations: Retry_mechanism
+      - mark_as_modified: Sync_flag_update
+
+    sync:
+      codable_wrapper: StoryCodable
+      event_handling: dual_type_support
+      remote_fields: [event_type, event_data, custom_event_id]
+
+  StoryIllustration:
+    framework: SwiftData
+    purpose: visual_storytelling_with_audio_sync
+    attributes:
+      id: UUID
+      timestamp: Double  # Audio sync timestamp
+      image_path: String?
+      image_prompt: String
+      display_order: Int
+      text_segment: String
+      is_generated: Bool
+      generation_error: String?
+      retry_count: Int
+      max_retries: Int  # Default: 3
+
+    relationships:
+      story: many_to_one_inverse
+
+    computed_properties:
+      - image_url: Documents/StoryIllustrations_path
+      - has_image: File_existence_validation
+      - is_placeholder: Error_state_check
+      - has_reached_retry_limit: Retry_exhaustion_check
+
+    methods:
+      - set_image_path: Success_state_update
+      - record_error: Failure_tracking
+      - reset_error: Retry_preparation
+      - increment_retry: Attempt_counting
+
+  HeroVisualProfile:
+    framework: SwiftData
+    purpose: character_consistency_across_illustrations
+    attributes:
+      id: UUID
+      hair_color: String
+      hair_style: String
+      hair_length: String
+      eye_color: String
+      eye_shape: String
+      skin_tone: String
+      clothing_style: String
+      clothing_colors: [String]
+      distinctive_features: [String]
+      art_style: String
+      canonical_prompt: String
+      simplified_prompt: String
+      color_palette: [String]
+
+    relationships:
+      hero: one_to_one_inverse
+
+    methods:
+      - generate_scene_character_description: Illustration_prompt_generation
+      - generate_style_consistency_prompt: Art_style_enforcement
+
+  CustomStoryEvent:
+    framework: SwiftData
+    purpose: user_defined_story_scenarios
+    attributes:
+      id: UUID
+      title: String
+      description: String
+      category: EventCategory_enum
+      age_min: Int
+      age_max: Int
+      tone: EventTone_enum
+      prompt_seed: String
+      keywords: [String]
+      usage_count: Int
+      is_favorite: Bool
+      created_at: Date
+      last_used_at: Date?
+      ai_enhanced: Bool
+      pictogram: String?
+      pictogram_generated_at: Date?
+
+    relationships:
+      stories: one_to_many
+
+    computed_properties:
+      - icon_name: Pictogram_or_default
+      - age_range_description: Formatted_age_display
+      - last_used_description: Relative_time_display
+
+    methods:
+      - increment_usage: Usage_tracking_timestamp_update
+      - update_with_ai_enhancement: AI_prompt_improvement
+      - toggle_favorite: Preference_management
+      - generate_pictogram: AI_visual_generation
+
+    enums:
+      EventCategory: [adventure, learning, bedtime, social, creative, seasonal, daily_routine, emotions, nature, celebration]
+      EventTone: [exciting, calming, humorous, inspiring, thoughtful, playful, mysterious, heartwarming]
+
+  CharacterTrait:
+    type: enum
+    values:
+      - brave: Courageous_and_fearless
+      - kind: Caring_and_compassionate
+      - curious: Inquisitive_and_eager_to_learn
+      - funny: Humorous_and_entertaining
+      - clever: Smart_and_quick_thinking
+      - magical: Mystical_and_enchanting
+      - musical: Talented_with_music_and_rhythm
+      - athletic: Strong_and_physically_active
+      - artistic: Creative_and_expressive
+      - nature_loving: Connected_to_plants_and_animals
+
+  StoryEvent:
+    type: enum
+    purpose: built_in_story_scenarios
+    values:
+      - bedtime:
+          icon: moon.stars
+          prompt_seed: calming_gentle_story_perfect_for_sleep
+      - adventure:
+          icon: map
+          prompt_seed: exciting_quest_with_challenges
+      - holiday:
+          icon: gift
+          prompt_seed: festive_seasonal_celebration
+      - learning:
+          icon: book
+          prompt_seed: educational_valuable_lessons
+      - school_day:
+          icon: backpack
+          prompt_seed: school_related_experiences
+      - birthday_party:
+          icon: birthday.cake
+          prompt_seed: birthday_celebration_fun
+      - family_visit:
+          icon: house
+          prompt_seed: visiting_family_relatives
+      - nature_walk:
+          icon: leaf
+          prompt_seed: outdoor_nature_exploration
+      - rainy_day:
+          icon: cloud.rain
+          prompt_seed: indoor_rainy_day_activities
+      - friendship:
+          icon: person.2
+          prompt_seed: friendship_and_kindness
+
+# =============================================================================
+# BUSINESS WORKFLOWS
+# =============================================================================
+
+business_workflows:
+  hero_creation:
+    steps:
+      - user_input:
+          fields: [name, primary_trait, secondary_trait, appearance?, special_ability?]
+          validation: [name_1_50_chars, traits_required]
+
+      - data_processing:
+          uuid_generation: true
+          trait_storage: enum_values
+          relationship_initialization: empty_stories_array
+
+      - avatar_generation:
+          optional: true
+          model: gpt-5
+          prompt_construction: trait_based_description
+          size: 1024x1024
+          quality: [standard, hd]
+          response_format: png
+          storage: Documents/Avatars
+          generation_id_capture: multi_turn_consistency
+
+      - visual_profile_extraction:
+          ai_analysis: gpt-5
+          characteristics: [hair, eyes, skin, clothing, features]
+          canonical_prompt_creation: character_consistency
+
+      - persistence:
+          local: SwiftData
+          remote: Supabase_or_Firebase_sync
+          avatar_storage: bucket_hero_avatars
+
+    business_rules:
+      - hero_names: 1-50 characters
+      - traits_required: minimum 2
+      - visual_profiles: maintained for illustration consistency
+      - deletion_policy: preserve_stories_nullify_relationship
+
+  story_generation:
+    steps:
+      - event_selection:
+          types: [built_in_events, custom_events]
+          duration_options: [5_min, 7_min, 10_min]
+          language_selection: [en, es, fr, de, it]
+
+      - request_validation:
+          authentication: JWT_token_check
+          rate_limiting: per_user_limits
+          hero_ownership: verification
+
+      - content_generation:
+          edge_function: story-generation
+          model: gpt-5-mini
+          configuration:
+            temperature: 0.7-0.8
+            max_tokens: 50000
+            reasoning_effort: [low, medium, high]
+            text_verbosity: [low, medium, high]
+          prompt_construction:
+            - hero_characteristics_injection
+            - event_context_integration
+            - duration_targeting: 200_words_per_minute
+            - language_specific_templates
+
+      - content_filtering:
+          pre_generation: prompt_sanitization
+          post_generation: content_validation
+          multi_language_safety: 5_languages
+          companionship_enforcement: never_show_children_alone
+
+      - scene_extraction:
+          edge_function: extract-scenes
+          model: gpt-4o
+          output:
+            - story_segmentation
+            - timestamp_generation
+            - scene_descriptions
+            - visual_prompts
+
+      - database_storage:
+          metadata: [title, content, duration]
+          scenes: JSONB_array
+          usage_tracking: api_calls_tokens
+          cost_estimation: per_story
+
+    business_rules:
+      - duration: 300-600 seconds (5-10 minutes)
+      - content_safety: must_pass_all_filters
+      - companionship: heroes_always_accompanied
+      - atmosphere: positive_magical_no_violence
+      - resolution: peaceful_ending_required
+      - word_count_targets:
+          5_min: 800-1000 words
+          7_min: 1200-1400 words
+          10_min: 1800-2000 words
+
+  audio_synthesis:
+    steps:
+      - voice_selection:
+          options: 7_specialized_childrens_voices
+          characteristics_mapping: voice_to_story_type
+          language_compatibility: check_voice_language_support
+
+      - audio_generation:
+          edge_function: audio-synthesis
+          model: gpt-4o-mini-tts
+          configuration:
+            format: mp3
+            quality: enhanced
+          voice_instructions:
+            - narration_style: [calm, energetic, etc]
+            - pacing_adjustments: duration_based
+            - emotional_tone: event_appropriate
+
+      - file_management:
+          storage: Documents/AudioFiles
+          naming: timestamp_based
+          remote_upload: story-audio_bucket
+          cdn_url: generation_and_caching
+
+      - playback_integration:
+          lock_screen_controls: MPNowPlayingInfoCenter
+          background_audio: session_configuration
+          playback_speed: 0.5x-2.0x
+          idle_timer: automatic_management
+
+    business_rules:
+      - duration_matching: audio_must_match_story_±10%
+      - voice_selection: based_on_story_type
+      - background_capability: required
+      - automatic_idle_timer: during_playback
+      - audio_route_detection: headphone_changes
+
+  scene_illustration:
+    steps:
+      - scene_processing:
+          input: extracted_scenes_from_ai
+          timestamp_calculation: audio_sync_alignment
+          queue_preparation: sequential_generation
+
+      - batch_generation:
+          edge_function: scene-illustration
+          model: gpt-5
+          sequential_processing:
+            - first_scene: uses_hero_avatar_generation_id
+            - subsequent_scenes: reference_previous_generation_id
+          generation_id_chaining: maintain_visual_consistency
+
+      - synchronization_setup:
+          timestamp_alignment: with_audio
+          display_order: scene_sequence
+          transition_timing: smooth_fades
+
+      - error_handling:
+          retry_failed: max_3_attempts
+          graceful_degradation: allow_partial_success
+          chain_recovery: fallback_to_previous_generation_id
+
+      - storage_management:
+          bucket: story-illustrations
+          organization: user_id/story_id/scene_n.png
+          cleanup: on_story_deletion
+
+    business_rules:
+      - max_illustrations: 10_per_story
+      - sequential_generation: required_for_consistency
+      - generation_chain: must_be_maintained
+      - partial_success: allowed_some_may_fail
+      - content_filtering: all_prompts_child_safe
+      - retry_limit: 3_attempts_per_illustration
+
+  avatar_generation:
+    steps:
+      - prompt_generation:
+          input: hero_traits_and_description
+          art_style: watercolor_default
+          age_appropriate: modifiers_applied
+
+      - image_generation:
+          edge_function: avatar-generation
+          model: gpt-5
+          configuration:
+            size: [1024x1024, 1024x1536, 1536x1024]
+            quality: [standard, hd]
+            style: [watercolor, cartoon]
+          generation_id_capture: store_for_consistency
+
+      - visual_profile_extraction:
+          ai_analysis: gpt-5
+          characteristics:
+            - hair: [color, style, length]
+            - eyes: [color, shape]
+            - skin_tone: value
+            - clothing: [style, colors]
+            - distinctive_features: array
+          canonical_prompt: character_description
+
+      - storage_caching:
+          local: Documents/Avatars
+          remote: hero-avatars_bucket
+          visual_profile: database
+          generation_id: persistence
+
+    business_rules:
+      - content_policy: compliance_required
+      - imagery: child_friendly_only
+      - generation_id: must_be_preserved
+      - visual_profile: required_for_illustrations
+      - retry_on_violation: content_policy_rejections
+
+  custom_event_creation:
+    steps:
+      - event_definition:
+          fields: [title, description, category, age_range, tone]
+          validation: [title_1_100_chars, category_from_enum, age_3_10]
+
+      - ai_enhancement:
+          optional: true
+          title_generation: from_description
+          prompt_seed_enhancement: context_based
+          keyword_suggestions: ai_powered
+          similar_events: recommendations
+
+      - pictogram_generation:
+          ai_powered: emoji_symbol_selection
+          combination_logic: complex_concepts
+          fallback_system: graceful_error_handling
+          context_aware: event_metadata_based
+
+      - storage_management:
+          metadata: event_database_storage
+          usage_tracking: increment_on_story_creation
+          favorite_management: user_preferences
+          pictogram_caching: efficient_retrieval
+
+    business_rules:
+      - title: 1-100 characters required
+      - age_range: 3-10 years validation
+      - category: from_predefined_list
+      - pictograms: auto_generated_or_manual
+      - usage_statistics: tracked_for_recommendations
+
+  story_playback:
+    steps:
+      - story_selection:
+          browsing: library_with_search_and_filters
+          filters: [hero, event, favorites, recent]
+          recent_stories: home_screen_display
+
+      - audio_loading:
+          cache_check: local_storage_first
+          download: from_supabase_if_needed
+          player_preparation: AVAudioPlayer_setup
+
+      - illustration_sync:
+          metadata_loading: illustration_timestamps
+          carousel_preparation: image_sequence
+          sync_manager: initialization
+
+      - playback_control:
+          controls: [play, pause, stop]
+          skip: 15_seconds_forward_backward
+          speed: 0.5x-2.0x_adjustment
+          progress: timestamp_tracking
+
+      - lock_screen_integration:
+          now_playing_info: metadata_updates
+          remote_commands: play_pause_skip
+          artwork: hero_avatar_or_illustration
+          queue_management: sequential_stories
+
+      - progress_tracking:
+          play_count: increment_on_play
+          last_played: timestamp_update
+          reading_streak: daily_tracking
+          statistics: aggregation
+
+    business_rules:
+      - audio_required: before_playback
+      - illustrations: optional_but_preferred
+      - background_playback: supported
+      - screen_sleep: prevented_during_playback
+      - queue_support: sequential_story_playback
+
+# =============================================================================
+# SERVICE LAYER ARCHITECTURE
+# =============================================================================
+
+service_layer:
+  ai_services:
+    AIServiceProtocol:
+      purpose: abstraction_for_ai_operations
+      implementations: [SupabaseAIService, FirebaseAIService]
+      factory: AIServiceFactory_dynamic_selection
+
+      methods:
+        - generate_story:
+            input: StoryGenerationRequest
+            output: StoryGenerationResponse
+            model: gpt-5-mini
+
+        - extract_scenes:
+            input: story_content
+            output: array_of_scenes_with_timestamps
+            model: gpt-4o
+
+        - generate_speech:
+            input: [text, voice]
+            output: mp3_audio_data
+            model: gpt-4o-mini-tts
+
+        - generate_avatar:
+            input: hero_description
+            output: [image_data, generation_id]
+            model: gpt-5
+
+        - generate_illustration:
+            input: [scene_description, previous_generation_id]
+            output: [image_data, generation_id]
+            model: gpt-5
+
+    IllustrationGenerator:
+      purpose: multi_scene_illustration_generation
+      features:
+        - scene_based_creation: audio_timestamp_sync
+        - hero_visual_consistency: HeroVisualProfile_integration
+        - error_tolerant: retry_mechanisms
+        - file_system_management: illustration_storage
+        - progress_tracking: status_reporting
+
+      methods:
+        - generate_illustrations_for_story:
+            input: [story, scenes]
+            output: array_of_illustration_paths
+            sequential: true_for_generation_chain
+
+        - generate_single_illustration:
+            input: [scene, previous_generation_id]
+            output: [image_path, generation_id]
+            retry_on_failure: max_3_attempts
+
+    HeroVisualConsistencyService:
+      purpose: character_appearance_management
+      features:
+        - ai_powered_extraction: visual_characteristics_from_prompts
+        - consistent_descriptions: scene_illustration_prompts
+        - visual_profile_creation: gpt-5_enhancement
+        - canonical_prompt_management: character_consistency
+
+      methods:
+        - extract_visual_profile:
+            input: avatar_prompt
+            output: HeroVisualProfile
+            ai_model: gpt-5
+
+        - generate_scene_character_description:
+            input: visual_profile
+            output: consistent_character_prompt
+
+    ContentPolicyFilter:
+      purpose: child_safety_content_filtering
+      features:
+        - comprehensive_filtering: gpt-5_content_policy_compliance
+        - multi_language_safety: 5_languages_supported
+        - isolation_term_filtering: critical_child_safety
+        - pre_validation: risk_level_assessment
+        - logging: replacement_tracking
+
+      layers:
+        - isolation_terms: [alone, lonely, abandoned, isolated, by_themselves]
+        - negative_emotions: [scared, frightened, terrified, worried, sad]
+        - violence: [fight, hit, hurt, weapon, blood]
+        - darkness: [dark, scary, creepy, nightmare, monster]
+
+      methods:
+        - filter_prompt:
+            input: original_prompt
+            output: [filtered_prompt, replacements_made]
+            languages: [en, es, fr, de, it]
+
+        - validate_content:
+            input: generated_content
+            output: [is_safe, violations_found]
+
+  audio_services:
+    AudioService:
+      purpose: audio_playback_and_generation
+      features:
+        - lock_screen_controls: MPNowPlayingInfoCenter
+        - background_audio: session_management
+        - idle_timer_management: reference_counting
+        - playback_speed: 0.5x-2.0x_control
+        - seeking: timestamp_navigation
+        - route_detection: headphone_changes
+
+      methods:
+        - generate_audio_file:
+            input: [text, filename, voice]
+            output: audio_file_url
+            storage: Documents/AudioFiles
+
+        - play_audio:
+            input: url
+            side_effects: [lock_screen_setup, idle_timer_disable]
+
+        - pause_resume_stop:
+            controls: playback_state_management
+
+        - seek_to:
+            input: timestamp
+            limitation: mp3_only_not_tts
+
+        - set_playback_speed:
+            input: speed_multiplier
+            range: 0.5-2.0
+
+      properties:
+        - is_playing: Bool_published
+        - current_time: TimeInterval_published
+        - duration: TimeInterval_published
+        - is_using_speech_synthesis: Bool
+
+  illustration_services:
+    IllustrationSyncManager:
+      purpose: audio_illustration_synchronization
+      features:
+        - real_time_switching: based_on_audio_timestamp
+        - smooth_transitions: between_story_scenes
+        - progress_tracking: illustration_display
+        - performance_optimization: large_illustration_sets
+
+      methods:
+        - update_current_illustration:
+            input: audio_timestamp
+            output: current_illustration_index
+
+        - get_illustration_at:
+            input: timestamp
+            output: StoryIllustration?
+
+  storage_services:
+    SupabaseService:
+      purpose: backend_integration_with_auth_migration
+      features:
+        - authentication: user_management
+        - database: PostgreSQL_with_RLS
+        - storage: buckets_for_media
+        - edge_functions: serverless_endpoints
+        - real_time: subscriptions_optional
+
+      buckets:
+        - hero_avatars: user_id/hero_id/avatar.png
+        - story_audio: user_id/story_id/audio.mp3
+        - story_illustrations: user_id/story_id/scene_n.png
+        - event_pictograms: user_id/event_id.png
+
+    PictogramCacheManager:
+      purpose: efficient_pictogram_storage_retrieval
+      features:
+        - in_memory_caching: fast_access
+        - persistent_caching: disk_storage
+        - automatic_invalidation: cleanup
+        - thread_safe: concurrent_access
+
+      methods:
+        - cache_pictogram:
+            input: [event_id, pictogram]
+            storage: [memory, disk]
+
+        - get_cached_pictogram:
+            input: event_id
+            output: pictogram?
+
+  system_services:
+    Logger:
+      purpose: comprehensive_logging_system
+      features:
+        - structured_logging: with_categories
+        - log_levels: [debug, info, warning, error, success, network]
+        - session_tracking: request_id_correlation
+        - file_logging: optional_performance_consideration
+        - verbose_mode: production_controls
+
+      categories: [story, audio, avatar, illustration, api, cache, ui]
+
+    BackgroundTaskManager:
+      purpose: ios_background_task_coordination
+      features:
+        - audio_generation: background_processing
+        - illustration_generation: long_running_tasks
+        - sync_operations: periodic_updates
+
+      methods:
+        - register_background_task:
+            types: [audio, processing, fetch]
+
+        - schedule_background_refresh:
+            interval: configurable
+
+    NetworkService:
+      purpose: connectivity_monitoring
+      features:
+        - connection_detection: wifi_cellular_offline
+        - automatic_retry: when_connection_restored
+        - ui_feedback: connection_status_display
+
+    IdleTimerManager:
+      purpose: screen_sleep_prevention
+      features:
+        - reference_counting: multiple_clients_supported
+        - automatic_management: playback_state_based
+
+      methods:
+        - disable_idle_timer:
+            reference_count: increment
+
+        - enable_idle_timer:
+            reference_count: decrement_auto_enable_when_zero
+
+# =============================================================================
+# INTEGRATION ARCHITECTURE
+# =============================================================================
+
+integrations:
+  openai_api:
+    authentication:
+      method: bearer_token
+      storage: iOS_Keychain
+      header: Authorization_Bearer_${api_key}
+
+    models:
+      gpt_5_mini:
+        endpoint: /v1/chat/completions
+        use_cases: [story_generation, scene_extraction, content_review]
+        configuration:
+          temperature: 0.7-0.8
+          max_tokens: 50000
+          reasoning_effort: [low, medium, high]
+          text_verbosity: [low, medium, high]
+        cost: $0.0015_input_$0.006_output_per_1k_tokens
+
+      gpt_4o_mini_tts:
+        endpoint: /v1/audio/speech
+        use_cases: [audio_narration]
+        configuration:
+          format: mp3
+          voices: 7_specialized_childrens_voices
+        cost: $0.012_per_1k_characters
+
+      gpt_5:
+        endpoint: /v1/images/generations
+        use_cases: [avatar_generation, scene_illustrations]
+        configuration:
+          size: [1024x1024, 1024x1536, 1536x1024]
+          quality: [standard, hd]
+          response_format: [png, jpeg]
+          style: [watercolor, cartoon]
+        features:
+          multi_turn_consistency: previous_generation_id_parameter
+          improved_instruction_following: better_text_rendering
+        cost: $0.035_per_image_standard_quality
+
+    rate_limits:
+      gpt_5_mini: 15000_tokens_per_minute
+      gpt_4o_mini_tts: 5_requests_per_minute
+      gpt_5_images: 10_images_per_minute
+
+    error_handling:
+      retry_logic: exponential_backoff
+      rate_limit_detection: HTTP_429
+      content_policy_violation: filtering_and_retry
+      network_errors: user_friendly_messages
+
+  backend_api:
+    base_url: ${SUPABASE_URL}/functions/v1
+    authentication: JWT_token
+
+    endpoints:
+      story_generation:
+        path: /story-generation
+        method: POST
+        input:
+          hero_id: UUID
+          event: {type: built_in|custom, data: object}
+          target_duration: Int_seconds
+          language: String_code
+        output:
+          title: String
+          content: String
+          scenes: Array<Scene>
+          estimated_duration: Int
+
+      extract_scenes:
+        path: /extract-scenes
+        method: POST
+        input:
+          story_content: String
+          target_duration: Int
+        output:
+          scenes: Array<{sceneNumber, textSegment, illustrationPrompt, timestamp}>
+
+      audio_synthesis:
+        path: /audio-synthesis
+        method: POST
+        input:
+          text: String
+          voice: String
+          language: String
+        output:
+          audio_url: String
+          duration: Int
+
+      avatar_generation:
+        path: /avatar-generation
+        method: POST
+        input:
+          hero_id: UUID
+          prompt: String
+          style: String
+          quality: String
+          size: String
+        output:
+          image_url: String
+          generation_id: String
+
+      scene_illustration:
+        path: /scene-illustration
+        method: POST
+        input:
+          story_id: UUID
+          scenes: Array<Scene>
+          hero_generation_id: String
+        output:
+          illustrations: Array<{sceneNumber, imageUrl, generationId}>
+
+  cloudkit_sync:
+    purpose: seamless_cross_device_sync
+    strategy:
+      sync_mode: automatic_background
+      conflict_resolution: last_write_wins
+      selective_sync: user_preference
+      offline_first: local_priority
+
+    synced_data:
+      - hero_definitions: complete_profile
+      - story_metadata: without_large_content
+      - custom_events: user_scenarios
+      - user_preferences: settings
+      - reading_statistics: progress_tracking
+
+  firebase_migration:
+    status: in_progress
+    dual_backend: [Supabase, Firebase]
+    feature_flags: gradual_rollout
+
+    components:
+      firestore:
+        collections:
+          - users: user_profiles
+          - heroes: character_data_with_subcollections
+          - stories: story_metadata_with_scenes
+          - custom_events: user_events
+          - sync_events: cross_device_coordination
+
+      storage:
+        buckets: [hero-avatars, story-audio, story-illustrations, event-pictograms]
+
+      authentication:
+        provider: Firebase_Auth
+        migration: from_Supabase_Auth
+
+      cloud_functions:
+        all_edge_functions: migrated_to_cloud_functions
+
+# =============================================================================
+# SECURITY ARCHITECTURE
+# =============================================================================
+
+security:
+  content_safety:
+    multi_layer_filtering:
+      layer_1_input:
+        - character_name_screening
+        - description_sanitization
+        - age_appropriate_language
+
+      layer_2_prompt:
+        - safety_instructions_embedded
+        - positive_framing_requirements
+        - companionship_mandates
+
+      layer_3_ai:
+        - gpt_5_mini_content_review
+        - sentiment_analysis
+        - context_evaluation
+
+      layer_4_output:
+        - keyword_screening
+        - pattern_matching
+        - manual_review_triggers
+
+    language_specific:
+      supported: [English, Spanish, French, German, Italian]
+      safety_terms:
+        violence: language_specific_indicators
+        isolation: companionship_enforcement
+        negative_emotions: tone_moderation
+        inappropriate: content_blocking
+
+  authentication:
+    device_level:
+      - biometric: FaceID_TouchID
+      - keychain: sensitive_data_storage
+      - certificate_pinning: api_communications
+
+    application_level:
+      - jwt_tokens: session_management
+      - token_refresh: automatic_rotation
+      - session_timeout: configurable
+
+    api_level:
+      - row_level_security: database_isolation
+      - function_permissions: role_based_access
+      - request_signing: api_verification
+
+  data_protection:
+    encryption:
+      at_rest: AES_256
+      in_transit: TLS_1.3
+      api_keys: Keychain_storage
+      sensitive_data: row_level_security
+
+    privacy_compliance:
+      COPPA:
+        - no_personal_data_from_children
+        - parental_consent_mechanisms
+        - transparent_usage_policies
+        - right_to_deletion
+
+      GDPR:
+        - data_portability
+        - consent_management
+        - privacy_by_design
+        - data_minimization
+
+  rate_limiting:
+    api_limits:
+      story_generation: 10_per_hour_per_user
+      audio_synthesis: 20_per_hour_per_user
+      avatar_generation: 5_per_day_per_user
+      scene_illustrations: 50_per_day_per_user
+
+    implementation:
+      algorithm: token_bucket
+      storage: database_table
+      enforcement: edge_function_middleware
+
+# =============================================================================
+# PERFORMANCE OPTIMIZATION
+# =============================================================================
+
+performance:
+  caching_strategy:
+    client_side:
+      swiftdata: local_persistence
+      audio_files: Documents_directory_permanent
+      images: NSCache_memory_management
+      avatars: permanent_storage
+
+    edge_function:
+      database_backed: cache_table
+      ttl_based: expiration
+      cache_warming: popular_content
+
+    cdn:
+      integration: CloudFlare_or_Fastly
+      geographic: distribution
+      invalidation: automatic
+
+  optimization_strategies:
+    frontend:
+      lazy_loading:
+        - story_library: paginated_20_initially
+        - audio_download: on_demand
+        - images: progressive_loading
+
+      caching:
+        - swiftdata: persistence
+        - audio_files: local_storage
+        - images: memory_cache
+
+      ui_performance:
+        - async_await: non_blocking_operations
+        - combine: reactive_updates
+        - adaptive_animations: device_based
+
+    backend:
+      query_optimization:
+        - indexed_queries: user_id_created_at
+        - batch_operations: bulk_updates
+        - connection_pooling: database_efficiency
+
+      caching:
+        - content_based_keys: deterministic
+        - intelligent_ttl: usage_patterns
+        - cache_warming: preload_popular
+
+      resource_management:
+        - function_concurrency: limits
+        - memory_optimization: minimal_footprint
+        - cold_start_mitigation: keep_warm
+
+  scalability:
+    horizontal_scaling:
+      stateless_functions: edge_deployment
+      database_replicas: read_scaling
+      cdn_distribution: geographic
+      queue_processing: async_operations
+
+    performance_targets:
+      story_generation: under_3_seconds
+      audio_generation: under_5_seconds
+      image_generation: under_8_seconds
+      api_gateway: under_100ms_overhead
+
+    cost_management:
+      per_user_economics:
+        monthly_cost: $0.55-$0.75_per_10_stories
+        story_generation: $0.015-$0.025
+        audio_synthesis: $0.008-$0.015
+        avatar_generation: $0.035
+        illustrations: $0.15-$0.25_per_story
+
+      optimization:
+        - caching: 40%_reduction_in_api_calls
+        - batch_processing: illustrations_sequential
+        - selective_features: usage_based_tiers
+
+# =============================================================================
+# DEPLOYMENT ARCHITECTURE
+# =============================================================================
+
+deployment:
+  environments:
+    development:
+      database: Local_PostgreSQL
+      edge_functions: Local_Deno
+      storage: Local_filesystem
+      authentication: Test_accounts
+
+    staging:
+      database: Shared_PostgreSQL
+      edge_functions: Preview_deploy
+      storage: Shared_buckets
+      authentication: Test_environment
+
+    production:
+      database: Dedicated_PostgreSQL
+      edge_functions: Production_edge
+      storage: Production_buckets
+      authentication: Live_users
+
+  ci_cd_pipeline:
+    code_quality:
+      - linting: SwiftLint_ESLint
+      - type_checking: Swift_TypeScript
+      - security_scanning: automated
+
+    testing:
+      - unit_tests: service_layer
+      - integration_tests: api_contracts
+      - e2e_tests: critical_flows
+      - performance_tests: load_testing
+
+    deployment:
+      - database_migrations: versioned
+      - function_deployment: atomic
+      - ios_distribution: TestFlight_App_Store
+      - rollback_procedures: automated
+
+  monitoring:
+    logging:
+      structure: [timestamp, level, category, message, context, metadata]
+      levels: [DEBUG, INFO, WARN, ERROR]
+      categories: [story, audio, avatar, illustration, api, cache, ui]
+      storage: structured_logs_searchable
+
+    metrics:
+      application:
+        - story_generation_count
+        - audio_playback_statistics
+        - user_engagement_metrics
+        - feature_adoption_rates
+
+      performance:
+        - api_response_times
+        - database_query_performance
+        - cache_hit_rates
+        - error_rates
+
+      business:
+        - daily_active_users
+        - stories_per_user
+        - voice_preference_distribution
+        - custom_event_creation
+
+    alerting:
+      thresholds:
+        - error_rate: over_5%
+        - response_time: over_10_seconds
+        - availability: under_99.5%
+
+      channels: [email, slack, pagerduty]
+
+# =============================================================================
+# TECHNOLOGY STACK
+# =============================================================================
+
+technology_stack:
+  frontend:
+    language: Swift_5.9+
+    ui_framework: SwiftUI_5.0
+    data_persistence: SwiftData
+    networking: URLSession_async_await
+    audio: AVFoundation
+    state_management: [Combine, @Observable]
+    testing: [XCTest, XCUITest]
+    dependencies:
+      - Firebase_SDK: 11.2.0
+      - Supabase_Swift: 2.33.1
+      - RocketSimConnect: debug_only
+
+  backend:
+    runtime: Deno_1.37+
+    language: TypeScript_5.0+
+    api_gateway: Supabase_Edge_Functions_or_Firebase_Cloud_Functions
+    database: [PostgreSQL_15, Firestore]
+    storage: [Supabase_Storage, Firebase_Storage]
+    authentication: [Supabase_Auth, Firebase_Auth]
+    testing: Deno_Test
+
+  external_services:
+    ai_provider: OpenAI
+    models:
+      - gpt_5_mini: text_generation_configurable_reasoning
+      - gpt_4o_mini_tts: enhanced_quality_audio
+      - gpt_5: images_improved_instruction_following
+
+    cdn: CloudFlare
+    monitoring: Supabase_Analytics
+    error_tracking: Sentry_planned
+
+  development_tools:
+    version_control: Git_GitHub
+    ci_cd: GitHub_Actions
+    project_management: GitHub_Projects
+    documentation: Markdown_Mermaid
+    api_testing: Postman_Thunder_Client
+    database_management: [Supabase_Studio, Firebase_Console]
+
+# =============================================================================
+# FUTURE ENHANCEMENTS
+# =============================================================================
+
+roadmap:
+  phase_1_q1_2025:
+    - websocket_support: real_time_features
+    - offline_mode: sync_when_online
+    - multiple_languages: expansion
+    - voice_input: story_preferences
+
+  phase_2_q2_2025:
+    - web_application: browser_based_access
+    - android_app: mobile_expansion
+    - parental_dashboard: monitoring_controls
+    - educational_curriculum: learning_integration
+
+  phase_3_q3_2025:
+    - multiplayer_creation: collaborative_stories
+    - social_sharing: story_distribution
+    - template_marketplace: community_events
+    - analytics_dashboard: advanced_insights
+
+  technology_upgrades:
+    - graphql_api: flexible_queries
+    - redis_caching: high_performance
+    - kubernetes: container_orchestration
+    - kafka_streaming: event_processing
+    - ml_pipeline: personalization_engine
+
+# =============================================================================
+# COST AND ECONOMICS
+# =============================================================================
+
+economics:
+  per_story_costs:
+    story_generation:
+      model: gpt-5-mini
+      tokens: 1800-2500
+      cost: $0.015-$0.025
+
+    scene_extraction:
+      model: gpt-4o
+      tokens: 1000-1500
+      cost: $0.005-$0.010
+
+    audio_synthesis:
+      model: gpt-4o-mini-tts
+      characters: 1200-1400
+      cost: $0.008-$0.015
+
+    avatar_generation:
+      model: gpt-5
+      images: 1
+      cost: $0.035
+
+    scene_illustrations:
+      model: gpt-5
+      images: 3-8_per_story
+      cost: $0.105-$0.280
+
+    total_per_story: $0.168-$0.365
+
+  per_user_economics:
+    assumptions:
+      stories_per_month: 10
+      active_users: 1000
+
+    monthly_costs:
+      per_user: $0.55-$0.75
+      total_1000_users: $550-$750
+
+    optimization_savings:
+      caching: 40%_reduction
+      batch_processing: 15%_reduction
+      total_savings: approximately_50%
+
+  revenue_model:
+    freemium:
+      free_tier: 5_stories_per_month
+      premium: unlimited_stories_$4.99_per_month
+
+    break_even:
+      users_needed: 150_premium_subscribers
+      margin: 85%_after_costs
+
+# =============================================================================
+# DEVELOPMENT GUIDELINES
+# =============================================================================
+
+development_guidelines:
+  code_standards:
+    swift:
+      - style: official_swift_style_guide
+      - indentation: 4_spaces
+      - line_length: 120_characters
+      - documentation: comprehensive_comments
+      - organization: MARK_sections
+
+    typescript:
+      - style: airbnb_typescript
+      - indentation: 2_spaces
+      - line_length: 100_characters
+      - documentation: JSDoc_comments
+
+  testing_strategy:
+    unit_tests:
+      - service_layer: 80%_coverage
+      - business_logic: 90%_coverage
+      - utilities: 100%_coverage
+
+    integration_tests:
+      - api_contracts: all_endpoints
+      - database_operations: critical_queries
+      - external_integrations: mocked
+
+    e2e_tests:
+      - critical_user_flows: complete_coverage
+      - regression_tests: automated
+
+  git_workflow:
+    branching:
+      - main: production_ready
+      - develop: integration_branch
+      - feature/*: new_features
+      - bugfix/*: bug_fixes
+      - release/*: release_candidates
+
+    commit_messages:
+      format: conventional_commits
+      types: [feat, fix, docs, style, refactor, test, chore]
+
+    pull_requests:
+      - approval_required: 1_reviewer
+      - ci_checks: must_pass
+      - tests_required: for_new_features
+      - documentation: updated
+
+  security_practices:
+    - no_hardcoded_secrets: use_environment_variables
+    - api_keys: keychain_storage
+    - https_only: all_communications
+    - input_validation: sanitize_all_inputs
+    - error_handling: no_sensitive_data_in_errors
+    - dependency_updates: regular_security_patches
+
+  accessibility_requirements:
+    - voiceover_support: all_ui_elements
+    - dynamic_type: text_scaling
+    - color_contrast: WCAG_AA_compliance
+    - touch_targets: 44pt_minimum
+    - motion_reduction: respect_preferences
+
+# =============================================================================
+# KNOWN LIMITATIONS AND IMPROVEMENTS
+# =============================================================================
+
+limitations_and_improvements:
+  current_limitations:
+    - openai_dependency: no_offline_mode
+    - network_required: for_generation
+    - storage_consumption: local_mp3_and_images
+    - ios_scheduling: background_task_constraints
+    - rate_limiting: partial_retry_implementation
+    - illustration_caching: limited_strategy
+    - generation_speed: slow_for_complex_scenes
+
+  planned_improvements:
+    - exponential_backoff: rate_limit_handling
+    - request_queuing: non_chained_illustrations
+    - usage_monitoring: token_based_tracking
+    - content_caching: illustration_optimization
+    - file_optimization: size_and_compression
+    - preloading: illustration_performance
+    - offline_stories: cached_playback
+    - bulk_operations: batch_illustration_generation
+
+# =============================================================================
+# METADATA AND VERSIONING
+# =============================================================================
+
+metadata:
+  dsl_version: 1.0.0
+  last_updated: 2025-10-03
+  next_review: Q4_2025
+
+  contributors:
+    - architecture_analysis: [ios-engineer, firebase-engineer, senior-software-architect]
+    - documentation: claude_sonnet_4.5
+
+  references:
+    - architecture_doc: /ARCHITECTURE.md
+    - api_documentation: /API_DOCUMENTATION.md
+    - readme: /README.md
+    - backend_report: /BACKEND_ARCHITECTURE_REPORT.md
+
+  change_log:
+    - version: 1.0.0
+      date: 2025-10-03
+      changes: Initial comprehensive DSL creation
+      author: claude_sonnet_4.5

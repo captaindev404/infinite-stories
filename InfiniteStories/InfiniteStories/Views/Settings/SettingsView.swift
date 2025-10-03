@@ -197,6 +197,29 @@ struct SettingsView: View {
                     }
 
                     Section {
+                        // Backend Selection Toggle
+                        VStack(alignment: .leading, spacing: 8) {
+                            Toggle("Use Firebase Backend", isOn: Binding(
+                                get: { AIServiceFactory.useFirebaseBackend },
+                                set: { newValue in
+                                    AIServiceFactory.enableFirebaseBackend(newValue)
+                                    // Post notification for any active services to refresh
+                                    NotificationCenter.default.post(name: .aiServiceChanged, object: nil)
+                                }
+                            ))
+
+                            Text("Current: \(AIServiceFactory.currentServiceName)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+
+                            Text("Switch between Supabase Edge Functions and Firebase Cloud Functions. This is for migration testing purposes.")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+
+                        Divider()
+
                         Button(action: { showingEraseConfirmation = true }) {
                             HStack {
                                 Image(systemName: "exclamationmark.triangle.fill")
@@ -207,7 +230,7 @@ struct SettingsView: View {
                     } header: {
                         Text("Advanced")
                     } footer: {
-                        Text("Erasing all data will permanently delete all heroes and stories.")
+                        Text("Backend selection allows gradual migration testing. Erasing all data will permanently delete all heroes and stories.")
                             .font(.caption)
                     }
 

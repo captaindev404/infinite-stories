@@ -1,0 +1,38 @@
+[
+  {
+    "origin": ["*"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Cache-Control",
+      "Access-Control-Allow-Origin"
+    ]
+  },
+  {
+    "origin": [
+      "http://localhost:3000",
+      "http://localhost:8080",
+      "http://localhost:5000",
+      "https://*.firebaseapp.com",
+      "https://*.web.app",
+      "capacitor://localhost",
+      "ionic://localhost",
+      "http://localhost",
+      "http://localhost:8100"
+    ],
+    "method": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Content-Length",
+      "Cache-Control",
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Methods",
+      "Access-Control-Allow-Headers",
+      "Access-Control-Max-Age",
+      "x-goog-resumable",
+      "x-goog-meta-*"
+    ]
+  }
+]

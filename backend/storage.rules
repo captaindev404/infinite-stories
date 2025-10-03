@@ -1,0 +1,148 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidImageFile() {
+      return request.resource != null &&
+        request.resource.contentType.matches('image/(png|jpeg|jpg|webp)') &&
+        request.resource.size <= 10 * 1024 * 1024; // 10MB max
+    }
+
+    function isValidAudioFile() {
+      return request.resource != null &&
+        request.resource.contentType.matches('audio/(mpeg|mp3|mp4|m4a)') &&
+        request.resource.size <= 50 * 1024 * 1024; // 50MB max
+    }
+
+    // ============================================================================
+    // USER AVATARS - User profile pictures
+    // Path: /users/{userId}/avatar/{filename}
+    // ============================================================================
+    match /users/{userId}/avatar/{filename} {
+      // Users can read their own avatars and public can read any avatar
+      allow read: if true;
+
+      // Users can upload/update their own avatar
+      allow write: if isOwner(userId) && isValidImageFile();
+
+      // Users can delete their own avatar
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================================================
+    // STORY AUDIO - Generated TTS audio files for stories
+    // Path: /stories/{storyId}/audio/{filename}
+    // ============================================================================
+    match /stories/{storyId}/audio/{filename} {
+      // Anyone can read story audio files (public content)
+      allow read: if true;
+
+      // Only authenticated users can upload audio (through cloud functions)
+      allow create: if isAuthenticated() && isValidAudioFile();
+
+      // Prevent updates and deletes for data integrity
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ============================================================================
+    // HERO AVATARS - Generated character avatars for stories
+    // Path: /heroes/{heroId}/avatar/{filename}
+    // ============================================================================
+    match /heroes/{heroId}/avatar/{filename} {
+      // Anyone can read hero avatars (public content)
+      allow read: if true;
+
+      // Only authenticated users can upload hero avatars
+      allow create: if isAuthenticated() && isValidImageFile();
+
+      // Prevent updates and deletes for consistency
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ============================================================================
+    // STORY ILLUSTRATIONS - Generated scene illustrations
+    // Path: /stories/{storyId}/scenes/{sceneId}/illustration/{filename}
+    // ============================================================================
+    match /stories/{storyId}/scenes/{sceneId}/illustration/{filename} {
+      // Anyone can read scene illustrations (public content)
+      allow read: if true;
+
+      // Only authenticated users can upload illustrations
+      allow create: if isAuthenticated() && isValidImageFile();
+
+      // Prevent updates and deletes for consistency
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ============================================================================
+    // USER PRIVATE CONTENT - Private user files
+    // Path: /users/{userId}/private/{allPaths=**}
+    // ============================================================================
+    match /users/{userId}/private/{allPaths=**} {
+      // Only the owner can read their private files
+      allow read: if isOwner(userId);
+
+      // Only the owner can write their private files
+      allow write: if isOwner(userId) &&
+        request.resource.size <= 50 * 1024 * 1024; // 50MB max
+
+      // Only the owner can delete their private files
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================================================
+    // TEMPORARY UPLOADS - For staging files before processing
+    // Path: /temp/{userId}/{sessionId}/{filename}
+    // Auto-cleaned after 24 hours via lifecycle rules
+    // ============================================================================
+    match /temp/{userId}/{sessionId}/{filename} {
+      // Only the owner can read their temp files
+      allow read: if isOwner(userId);
+
+      // Only the owner can upload temp files
+      allow create: if isOwner(userId) &&
+        request.resource.size <= 100 * 1024 * 1024; // 100MB max for temp
+
+      // Allow updates during processing
+      allow update: if isOwner(userId);
+
+      // Allow cleanup
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================================================
+    // SYSTEM ASSETS - App resources and default assets
+    // Path: /system/{allPaths=**}
+    // ============================================================================
+    match /system/{allPaths=**} {
+      // Anyone can read system assets (app resources)
+      allow read: if true;
+
+      // Only admin can write system assets (would need custom claim check)
+      // This would be managed through Firebase Admin SDK
+      allow write: if false;
+    }
+
+    // ============================================================================
+    // DEFAULT DENY RULE
+    // Deny all other paths not explicitly defined above
+    // ============================================================================
+    match /{allPaths=**} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}
