@@ -47,3 +47,4 @@ Desktop.ini
 # Test artifacts
 /test-data/
 /tmp/
+.fastembed_cache/

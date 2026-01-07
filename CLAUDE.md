@@ -172,6 +172,7 @@ Available PRD Skills:
 - `/prd-agent-management` - Create agents, assign tasks, sync work
 - `/prd-automation` - Git integration, hooks, file watching
 - `/prd-database-management` - Initialize DB, run migrations
+- `/prd-vector-search` - Semantic search across tasks, code, and docs
 - `/breakdown` - Break down tasks into smaller subtasks
 - `/auto-vibe` - Iterate through next tasks automatically
 
