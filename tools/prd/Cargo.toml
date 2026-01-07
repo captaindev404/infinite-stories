@@ -1,0 +1,59 @@
+[package]
+name = "prd-tool"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "prd_tool"
+path = "src/lib.rs"
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled"] }
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+uuid = { version = "1.10", features = ["v4", "serde"] }
+colored = "2.1"
+tabled = "0.15"
+dialoguer = "0.11"
+indicatif = "0.17"
+csv = "1.3"
+glob = "0.3"
+regex = "1.10"
+serde_yaml = "0.9"
+ratatui = "0.26"
+crossterm = "0.27"
+notify-rust = "4.10"
+toml = "0.8"
+shell-words = "1.1"
+notify = "6.1"
+ctrlc = "3.4"
+git2 = "0.18"
+
+# Vector/embedding support
+fastembed = "4"           # Local embeddings (BAAI/bge-small-en-v1.5)
+walkdir = "2.5"           # Directory traversal for indexing
+ignore = "0.4"            # .gitignore-aware file walking
+sha2 = "0.10"             # Content hashing for change detection
+byteorder = "1.5"         # Binary encoding for vectors
+
+[dev-dependencies]
+tempfile = "3.8"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+nix = { version = "0.27", features = ["signal"] }
+
+[[bin]]
+name = "prd"
+path = "src/main.rs"
+
+[[example]]
+name = "simple_agent"
+path = "examples/simple_agent.rs"
+
+[[example]]
+name = "multi_agent_workflow"
+path = "examples/multi_agent_workflow.rs"

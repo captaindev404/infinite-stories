@@ -1,0 +1,49 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Desktop.ini
+.directory
+.Trash-*
+
+# PRD Tool specific
+/docs/tasks/**/*.complete.yaml
+/docs/tasks/**/*.complete.yml
+.prd-daemon.pid
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Backup files
+*.bak
+*.backup
+
+# Test artifacts
+/test-data/
+/tmp/
