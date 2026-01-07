@@ -129,7 +129,7 @@ User Action → Repository → APIClient → Backend API → Update View State
 
 **Development Guide:** See `docs/DEVELOPMENT.md` for build commands, configuration, and best practices.
 
-**Task Management:** See `docs/PRD_TOOLS.md` for PRD CLI tool usage (always use PRD Skills first).
+**Task Management:** Use PRD Skills (e.g., `/prd-task-management`, `/prd-project-overview`) for task management. See `tools/prd/README.md` for CLI details.
 
 ## Key Technologies
 
@@ -162,9 +162,23 @@ See code for detailed structure.
 - **No Mocks**: Backend API only, never mock services
 - **Security**: API keys in Keychain, never hardcode
 
-**Task Management:**
-- **Always** use PRD Skills first (not direct Bash commands)
+**Task Management with PRD Skills:**
+Use PRD Skills (slash commands) for all task management - they provide the correct context and formatting.
+
+Available PRD Skills:
+- `/prd-task-management` - Create, update, list tasks with priorities and statuses
+- `/prd-project-overview` - View project stats, epic progress, task summaries
+- `/prd-dependencies` - Manage task dependencies and blockers
+- `/prd-agent-management` - Create agents, assign tasks, sync work
+- `/prd-automation` - Git integration, hooks, file watching
+- `/prd-database-management` - Initialize DB, run migrations
+- `/breakdown` - Break down tasks into smaller subtasks
+- `/auto-vibe` - Iterate through next tasks automatically
+
+Quick Reference:
 - Database: `tools/prd.db`
+- Binary: `tools/prd/target/release/prd`
+- Always prefer skills over direct CLI commands
 
 **Best Practices:**
 - URLCache handles media caching automatically
