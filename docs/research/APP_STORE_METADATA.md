@@ -31,13 +31,13 @@ Revolutionary AI-generated illustrations bring every story to life! Watch as bea
 Design unlimited hero characters with unique personalities and appearances. Our AI generates stunning avatar illustrations that maintain consistency across all stories. Every hero is visually unique, reflecting your child's imagination perfectly.
 
 ■ ENHANCED CHILD SAFETY 🛡️
-Industry-leading content filtering in 5 languages ensures 100% safe content. Multi-layer safety checks on all text, audio, and images. Parent-approved themes only. Review all illustrations before your child sees them. Peace of mind guaranteed with comprehensive safety controls.
+Industry-leading content filtering ensures 100% safe content. Multi-layer safety checks on all text, audio, and images. Parent-approved themes only. Review all illustrations before your child sees them. Peace of mind guaranteed with comprehensive safety controls.
 
 ■ PERSONALIZED AI STORIES
 Every illustrated story is original and created just for your child. Stories intelligently adapt to your hero's personality and chosen scenarios. Beautiful scenes extracted and illustrated at perfect story moments.
 
-■ MULTI-LANGUAGE MAGIC
-Available in English, Spanish, French, German, and Italian. Each language features native-speaking AI narrators for authentic storytelling. Stories are culturally adapted, not just translated, ensuring they resonate with your family's heritage.
+■ LANGUAGE OPTIONS
+Available in English and French with native-speaking AI narrators for authentic storytelling. Stories are culturally adapted, not just translated. Additional languages coming in future updates!
 
 ■ READING JOURNEY TRACKING
 Celebrate your child's love of stories with comprehensive progress tracking. Monitor listening streaks, total story time, and favorite heroes. Beautiful charts show reading patterns and milestones. Unlock achievements as your family's story collection grows.
@@ -77,7 +77,7 @@ PERFECT FOR:
 • Creating special family memories
 
 PRIVACY & SAFETY:
-Your family's safety is our #1 priority. Industry-leading content filtering in 5 languages ensures every story, illustration, and audio is 100% child-safe. Multi-layer safety checks on all AI-generated content. Parent review options for complete peace of mind. Stories stored locally on your device. We never track children or collect personal information. No ads, no inappropriate content, ever.
+Your family's safety is our #1 priority. Industry-leading content filtering ensures every story, illustration, and audio is 100% child-safe. Multi-layer safety checks on all AI-generated content. Parent review options for complete peace of mind. Stories stored locally on your device. We never track children or collect personal information. No ads, no inappropriate content, ever.
 
 WHY INFINITESTORIES?
 Unlike audio-only apps, we provide a complete visual storytelling experience. Every story includes beautiful, consistent illustrations that captivate young imaginations. Our comprehensive safety system gives parents complete confidence. This isn't just another story app - it's a magical window into your child's imagination.
@@ -93,13 +93,13 @@ Website: www.infinitestories.app
 
 ### What's New (4000 characters)
 ```
-Version 1.0 - Visual Storytelling Has Arrived!
+Version 1.0.1 - Visual Storytelling Has Arrived!
 
 Welcome to InfiniteStories - the FIRST app to combine AI storytelling with beautiful, synchronized illustrations! Your children's bedtime will never be the same.
 
 REVOLUTIONARY FEATURES:
 • 🎨 AI-Generated Illustrations - Every story comes to life with stunning visuals
-• 🛡️ Industry-Leading Safety - 5-language content filtering for 100% safe content
+• 🛡️ Industry-Leading Safety - Comprehensive content filtering for 100% safe content
 • 👤 Visual Hero Consistency - Characters look the same across all stories
 • 📚 Illustration Carousel - Interactive visual experience during playback
 • 🎯 Smart Scene Extraction - Perfect timing for every illustration
@@ -108,7 +108,7 @@ REVOLUTIONARY FEATURES:
 
 COMPLETE FEATURE SET:
 • Custom hero creation with AI avatars
-• Unique illustrated stories in 5 languages
+• Unique illustrated stories in English and French
 • Professional audio narration (7 voices)
 • Visual Reading Journey tracking
 • Export illustrated stories as keepsakes
@@ -119,9 +119,9 @@ Be among the first to experience the magic of visual storytelling!
 
 ### Promotional Text (170 characters)
 ```
-🎨 NEW: AI-illustrated stories! Every tale includes beautiful, safe visuals synced with audio. Industry-leading safety in 5 languages!
+🎨 NEW: AI-illustrated stories! Every tale includes beautiful, safe visuals synced with audio. Available in English & French!
 ```
-*Character Count: 139*
+*Character Count: 126*
 
 ### Support URL
 ```
@@ -140,7 +140,9 @@ https://www.infinitestories.app/privacy
 
 ---
 
-## Spanish (ES/MX)
+## Spanish (ES/MX) - ⏳ FUTURE RELEASE (Not for v1.0.1)
+
+> **Note**: Spanish localization will be available in a future release. This content is prepared but not active for v1.0.1.
 
 ### App Name
 **Selected**: InfiniteStories - Cuentos IA
@@ -165,7 +167,7 @@ cuentos,dormir,niños,historias,audio,sueño,héroe,aventura,personalizado,IA,m�
 
 ---
 
-## French (FR)
+## French (FR) - ✅ ACTIVE for v1.0.1
 
 ### App Name
 **Selected**: InfiniteStories - Contes IA
@@ -183,7 +185,9 @@ histoires,coucher,enfants,contes,audio,sommeil,héros,aventure,personnalisé,IA,
 
 ---
 
-## German (DE)
+## German (DE) - ⏳ FUTURE RELEASE (Not for v1.0.1)
+
+> **Note**: German localization will be available in a future release. This content is prepared but not active for v1.0.1.
 
 ### App Name
 **Selected**: InfiniteStories - KI Märchen
@@ -201,7 +205,9 @@ geschichten,kinder,märchen,schlafen,audio,held,abenteuer,ki,magisch,gute,nacht,
 
 ---
 
-## Italian (IT)
+## Italian (IT) - ⏳ FUTURE RELEASE (Not for v1.0.1)
+
+> **Note**: Italian localization will be available in a future release. This content is prepared but not active for v1.0.1.
 
 ### App Name
 **Selected**: InfiniteStories - Fiabe IA
@@ -232,10 +238,15 @@ IMPORTANT: This is the FIRST app to combine AI storytelling with synchronized il
 
 KEY DIFFERENTIATORS:
 1. AI-generated illustrations synchronized with audio narration
-2. Industry-leading safety: Multi-layer content filtering in 5 languages for text, audio, AND images
+2. Industry-leading safety: Multi-layer content filtering for text, audio, AND images
 3. Visual consistency: Hero appearance maintained across all illustrations
 4. Parent controls: Option to review all visual content before children see it
 5. Scene extraction: Intelligent identification of key story moments for illustration
+
+LANGUAGE SUPPORT (v1.0.1):
+• English and French fully supported
+• Native-speaking AI narrators for authentic storytelling
+• Additional languages planned for future releases
 
 SAFETY FEATURES:
 • Comprehensive content filtering prevents inappropriate content in ANY language
@@ -284,7 +295,7 @@ Contact for test API key: infinitestories.review@example.com
 
 ### Screenshot 4 - Safety Dashboard
 **Headline**: "100% Child-Safe Content"
-**Subtext**: "5-language filtering for complete peace of mind"
+**Subtext**: "Comprehensive filtering for complete peace of mind"
 
 ### Screenshot 5 - Parent Review Controls
 **Headline**: "You're in Control"
@@ -339,7 +350,7 @@ NEW IN 1.1:
 • Improved safety filters based on parent feedback
 • New visual themes and styles
 • Performance optimizations for smoother carousel
-• Additional language support coming soon
+• Spanish, German, and Italian language support
 
 Thank you for making us the #1 visual storytelling app for kids!
 ```
