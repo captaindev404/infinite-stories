@@ -1,0 +1,130 @@
+// Prisma schema for infinite-stories-content-generator
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum BriefStatus {
+  DRAFT
+  PARSED
+}
+
+enum GenerationStatus {
+  PENDING
+  QUEUED
+  SCRIPT_GEN
+  AVATAR_GEN
+  VIDEO_GEN
+  COMPOSITING
+  UPLOADING
+  COMPLETED
+  FAILED
+}
+
+enum VideoStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum QualityStatus {
+  PENDING
+  PASSED
+  FLAGGED
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+/// Brief - User's natural language input and parsed structure
+model Brief {
+  id         String      @id @default(cuid())
+  rawInput   String      @db.Text
+  parsedData Json?
+  status     BriefStatus @default(DRAFT)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  generations Generation[]
+
+  @@map("briefs")
+}
+
+/// Generation - A batch of video generation from a brief
+model Generation {
+  id                 String           @id @default(cuid())
+  briefId            String
+  parentGenerationId String?
+  targetCount        Int
+  status             GenerationStatus @default(PENDING)
+  totalCost          Decimal          @default(0) @db.Decimal(10, 4)
+  createdAt          DateTime         @default(now())
+
+  // Relations
+  brief            Brief        @relation(fields: [briefId], references: [id], onDelete: Cascade)
+  parentGeneration Generation?  @relation("GenerationLineage", fields: [parentGenerationId], references: [id])
+  childGenerations Generation[] @relation("GenerationLineage")
+  videos           Video[]
+
+  @@index([briefId])
+  @@index([parentGenerationId])
+  @@map("generations")
+}
+
+/// Video - Individual generated video with quality tracking
+model Video {
+  id               String        @id @default(cuid())
+  generationId     String
+  videoUrl         String?
+  generationParams Json
+  avatarProvider   String?
+  scriptProvider   String?
+  status           VideoStatus   @default(PENDING)
+  qualityStatus    QualityStatus @default(PENDING)
+  qualityNote      String?       @db.Text
+  totalCost        Decimal       @default(0) @db.Decimal(10, 4)
+  createdAt        DateTime      @default(now())
+
+  // Relations
+  generation Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  costLogs   CostLog[]
+
+  @@index([generationId])
+  @@index([qualityStatus])
+  @@map("videos")
+}
+
+/// CostLog - Tracks costs for each AI operation
+model CostLog {
+  id          String   @id @default(cuid())
+  videoId     String?
+  serviceType String // "script" | "avatar" | "video" | "storage"
+  provider    String
+  operation   String
+  inputUnits  Int      @default(0)
+  outputUnits Int      @default(0)
+  unitType    String // "tokens" | "seconds" | "bytes"
+  cost        Decimal  @db.Decimal(10, 6)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  video Video? @relation(fields: [videoId], references: [id], onDelete: SetNull)
+
+  @@index([videoId])
+  @@index([serviceType])
+  @@index([createdAt])
+  @@map("cost_logs")
+}
