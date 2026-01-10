@@ -1,0 +1,4 @@
+# Landing Pages Output Directory
+
+This directory contains generated landing page variants.
+Run `/landing-page:generate` in Claude Code to generate new variants.
