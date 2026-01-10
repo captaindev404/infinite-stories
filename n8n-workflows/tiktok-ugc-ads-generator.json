@@ -1,0 +1,596 @@
+{
+  "name": "TikTok UGC Ads Generator - InfiniteStories",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-tiktok-ad",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Receive Briefing",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "tiktok-ad-generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate and structure the briefing input\nconst input = $input.first().json;\n\nconst briefing = {\n  product_name: input.body?.product_name || 'InfiniteStories',\n  target_audience: input.body?.target_audience || 'Parents with children aged 2-10',\n  key_benefits: input.body?.key_benefits || [\n    'Personalized AI-generated bedtime stories',\n    'Child becomes the hero of the story',\n    'Beautiful illustrations synced with audio',\n    'Multiple languages supported',\n    'Safe content for children'\n  ],\n  tone: input.body?.tone || 'warm, authentic, relatable',\n  duration_seconds: input.body?.duration_seconds || 30,\n  language: input.body?.language || 'fr',\n  hook_type: input.body?.hook_type || 'problem-solution',\n  cta: input.body?.cta || 'Telecharge InfiniteStories maintenant!',\n  custom_instructions: input.body?.custom_instructions || ''\n};\n\n// Validate required fields\nif (!briefing.product_name) {\n  throw new Error('product_name is required');\n}\n\nreturn [{ json: briefing }];"
+      },
+      "id": "validate-input",
+      "name": "Validate & Structure Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Tu es un expert en creation de scripts publicitaires UGC (User Generated Content) pour TikTok. Tu crees des scripts authentiques, engageants et qui convertissent.\n\nRegles importantes:\n- Style conversationnel et naturel (comme si quelqu'un parlait a un ami)\n- Commencer par un hook accrocheur dans les 3 premieres secondes\n- Utiliser des emotions et des histoires personnelles\n- Inclure des pauses naturelles pour le montage\n- Terminer par un CTA clair\n- Adapter la longueur au temps demande (environ 3 mots par seconde)\n\nFormat de sortie JSON:\n{\n  \"hook\": \"Phrase d'accroche (3 sec max)\",\n  \"script_scenes\": [\n    {\n      \"scene_number\": 1,\n      \"duration_seconds\": 5,\n      \"voiceover_text\": \"Texte a dire\",\n      \"visual_description\": \"Description de ce qu'on voit\",\n      \"emotion\": \"emotion du moment\"\n    }\n  ],\n  \"cta\": \"Call to action final\",\n  \"hashtags\": [\"hashtag1\", \"hashtag2\"],\n  \"music_suggestion\": \"Type de musique recommandee\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Cree un script UGC TikTok pour:\n\nProduit: {{ $json.product_name }}\nAudience cible: {{ $json.target_audience }}\nBenefices cles: {{ $json.key_benefits.join(', ') }}\nTon: {{ $json.tone }}\nDuree: {{ $json.duration_seconds }} secondes\nLangue: {{ $json.language }}\nType de hook: {{ $json.hook_type }}\nCTA souhaite: {{ $json.cta }}\n\nInstructions supplementaires: {{ $json.custom_instructions }}\n\nGenere un script UGC authentique qui donne l'impression que c'est un vrai parent qui partage sa decouverte."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.8,
+          "maxTokens": 2000,
+          "responseFormat": "json_object"
+        }
+      },
+      "id": "generate-script",
+      "name": "OpenAI - Generate UGC Script",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [690, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the script and prepare for video generation\nconst scriptResponse = $input.first().json;\nconst briefing = $('Validate & Structure Input').first().json;\n\nlet script;\ntry {\n  script = typeof scriptResponse.message?.content === 'string' \n    ? JSON.parse(scriptResponse.message.content) \n    : scriptResponse.message?.content || scriptResponse;\n} catch (e) {\n  throw new Error('Failed to parse script JSON: ' + e.message);\n}\n\n// Prepare scenes for parallel processing\nconst scenes = script.script_scenes.map((scene, index) => ({\n  ...scene,\n  index,\n  language: briefing.language,\n  product_name: briefing.product_name\n}));\n\nreturn [{\n  json: {\n    script,\n    scenes,\n    briefing,\n    full_voiceover: script.hook + ' ' + script.script_scenes.map(s => s.voiceover_text).join(' ') + ' ' + script.cta\n  }\n}];"
+      },
+      "id": "parse-script",
+      "name": "Parse Script & Prepare Scenes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-scenes",
+      "name": "Split Into Scenes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Tu es un expert en direction artistique pour les publicites TikTok. Tu dois transformer une description de scene en un prompt DALL-E optimise pour generer une image de style UGC/lifestyle.\n\nRegles:\n- Style: photo realiste, eclairage naturel, ambiance chaleureuse\n- Cadrage: adapte au format vertical TikTok (9:16)\n- Eviter: texte, logos, contenu non-adapte aux enfants\n- Inclure: emotions authentiques, moments de vie, interactions parent-enfant\n\nReponds uniquement avec le prompt DALL-E en anglais, optimise pour la generation d'image."
+            },
+            {
+              "role": "user",
+              "content": "=Scene {{ $json.scene_number }}: {{ $json.visual_description }}\nEmotion: {{ $json.emotion }}\nProduit: {{ $json.product_name }} (app de stories pour enfants)"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 500
+        }
+      },
+      "id": "generate-image-prompt",
+      "name": "OpenAI - Generate Image Prompt",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1350, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generate",
+        "prompt": "={{ $json.message.content }}",
+        "options": {
+          "model": "dall-e-3",
+          "size": "1024x1792",
+          "quality": "hd",
+          "style": "natural"
+        }
+      },
+      "id": "generate-image",
+      "name": "OpenAI - Generate Scene Image",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1570, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect generated image and scene data\nconst scene = $('Split Into Scenes').first().json;\nconst imageResult = $input.first().json;\n\nreturn [{\n  json: {\n    scene_number: scene.scene_number,\n    duration_seconds: scene.duration_seconds,\n    voiceover_text: scene.voiceover_text,\n    image_url: imageResult.data?.[0]?.url || imageResult.url,\n    image_prompt: $('OpenAI - Generate Image Prompt').first().json.message?.content\n  }\n}];"
+      },
+      "id": "collect-scene-data",
+      "name": "Collect Scene Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1790, 100]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "aggregate-scenes",
+      "name": "Aggregate All Scenes",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1130, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/{{ $json.voice_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $('Parse Script & Prepare Scenes').first().json.full_voiceover }}\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.8,\n    \"style\": 0.4,\n    \"use_speaker_boost\": true\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "generate-voiceover",
+      "name": "ElevenLabs - Generate Voiceover",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1130, 550],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "elevenlabs-api",
+          "name": "ElevenLabs API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Select voice based on language\nconst briefing = $('Parse Script & Prepare Scenes').first().json.briefing;\n\n// ElevenLabs voice IDs by language (these are example IDs - replace with actual)\nconst voiceMap = {\n  'fr': 'pFZP5JQG7iQjIQuC4Bku', // French female voice\n  'en': 'EXAVITQu4vr4xnSDxMaL', // English female voice\n  'es': 'ErXwobaYiN019PkySvjV', // Spanish female voice\n  'de': 'yoZ06aMxZJJ28mfd3POQ', // German female voice\n  'it': 'jBpfuIE2acCO8z3wKNLl'  // Italian female voice\n};\n\nconst voice_id = voiceMap[briefing.language] || voiceMap['fr'];\n\nreturn [{ json: { voice_id } }];"
+      },
+      "id": "select-voice",
+      "name": "Select Voice by Language",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 550]
+    },
+    {
+      "parameters": {
+        "url": "https://api.shotstack.io/v1/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"timeline\": {\n    \"soundtrack\": {\n      \"src\": \"{{ $('Upload Voiceover').first().json.audio_url }}\",\n      \"effect\": \"fadeOut\"\n    },\n    \"background\": \"#000000\",\n    \"tracks\": [\n      {\n        \"clips\": {{ JSON.stringify($('Aggregate All Scenes').first().json.data.map((scene, i) => ({\n          \"asset\": {\n            \"type\": \"image\",\n            \"src\": scene.image_url\n          },\n          \"start\": $('Aggregate All Scenes').first().json.data.slice(0, i).reduce((sum, s) => sum + s.duration_seconds, 0),\n          \"length\": scene.duration_seconds,\n          \"effect\": \"zoomIn\",\n          \"transition\": {\n            \"in\": \"fade\",\n            \"out\": \"fade\"\n          }\n        }))) }}\n      },\n      {\n        \"clips\": [\n          {\n            \"asset\": {\n              \"type\": \"title\",\n              \"text\": \"{{ $('Parse Script & Prepare Scenes').first().json.script.cta }}\",\n              \"style\": \"chunk\",\n              \"size\": \"medium\"\n            },\n            \"start\": {{ $('Aggregate All Scenes').first().json.data.reduce((sum, s) => sum + s.duration_seconds, 0) - 3 }},\n            \"length\": 3,\n            \"transition\": {\n              \"in\": \"fade\"\n            }\n          }\n        ]\n      }\n    ]\n  },\n  \"output\": {\n    \"format\": \"mp4\",\n    \"resolution\": \"1080\",\n    \"aspectRatio\": \"9:16\",\n    \"fps\": 30\n  }\n}",
+        "options": {}
+      },
+      "id": "create-video",
+      "name": "Shotstack - Create Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1570, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "shotstack-api",
+          "name": "Shotstack API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shotstack.io/v1/render/{{ $json.response.id }}",
+        "options": {}
+      },
+      "id": "poll-video-status",
+      "name": "Poll Video Render Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1790, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "shotstack-api",
+          "name": "Shotstack API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "render-done",
+              "leftValue": "={{ $json.response.status }}",
+              "rightValue": "done",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-render-status",
+      "name": "Check If Render Done",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2010, 400]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "wait-for-render",
+      "name": "Wait 5s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2230, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compile final response\nconst script = $('Parse Script & Prepare Scenes').first().json.script;\nconst briefing = $('Parse Script & Prepare Scenes').first().json.briefing;\nconst renderResult = $input.first().json;\nconst scenes = $('Aggregate All Scenes').first().json.data;\n\nreturn [{\n  json: {\n    success: true,\n    video_url: renderResult.response?.url,\n    render_id: renderResult.response?.id,\n    script: {\n      hook: script.hook,\n      cta: script.cta,\n      hashtags: script.hashtags,\n      music_suggestion: script.music_suggestion,\n      scenes: script.script_scenes\n    },\n    generated_assets: {\n      scene_images: scenes.map(s => ({\n        scene_number: s.scene_number,\n        image_url: s.image_url,\n        duration: s.duration_seconds\n      }))\n    },\n    metadata: {\n      product: briefing.product_name,\n      language: briefing.language,\n      duration_seconds: briefing.duration_seconds,\n      generated_at: new Date().toISOString()\n    },\n    tiktok_ready: {\n      caption: script.hook + '\\n\\n' + script.hashtags.map(h => '#' + h).join(' '),\n      suggested_sounds: script.music_suggestion\n    }\n  }\n}];"
+      },
+      "id": "compile-response",
+      "name": "Compile Final Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2230, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond-success",
+      "name": "Respond With Video",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2450, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"{{ $json.error || 'An error occurred during video generation' }}\",\n  \"details\": {{ JSON.stringify($json) }}\n}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond With Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2450, 550]
+    },
+    {
+      "parameters": {
+        "url": "https://api.cloudinary.com/v1_1/{{ $credentials.cloudName }}/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "parameterType": "formBinaryData",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "tiktok_ads"
+            },
+            {
+              "name": "resource_type",
+              "value": "video"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "upload-voiceover",
+      "name": "Upload Voiceover",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1350, 550],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cloudinary-api",
+          "name": "Cloudinary API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $json.error || 'Video generation failed' }}"
+      },
+      "id": "handle-error",
+      "name": "Handle Error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [2010, 550]
+    }
+  ],
+  "connections": {
+    "Webhook - Receive Briefing": {
+      "main": [
+        [
+          {
+            "node": "Validate & Structure Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Structure Input": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate UGC Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate UGC Script": {
+      "main": [
+        [
+          {
+            "node": "Parse Script & Prepare Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Script & Prepare Scenes": {
+      "main": [
+        [
+          {
+            "node": "Split Into Scenes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Select Voice by Language",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Scenes": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aggregate All Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Scene Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Scene Image": {
+      "main": [
+        [
+          {
+            "node": "Collect Scene Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Scene Data": {
+      "main": [
+        [
+          {
+            "node": "Split Into Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Voice by Language": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs - Generate Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs - Generate Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Upload Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Shotstack - Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate All Scenes": {
+      "main": [
+        [
+          {
+            "node": "Shotstack - Create Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shotstack - Create Video": {
+      "main": [
+        [
+          {
+            "node": "Poll Video Render Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Video Render Status": {
+      "main": [
+        [
+          {
+            "node": "Check If Render Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Render Done": {
+      "main": [
+        [
+          {
+            "node": "Compile Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s": {
+      "main": [
+        [
+          {
+            "node": "Poll Video Render Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile Final Response": {
+      "main": [
+        [
+          {
+            "node": "Respond With Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Error": {
+      "main": [
+        [
+          {
+            "node": "Respond With Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "infinite-stories-tiktok-ads"
+  },
+  "tags": [
+    {
+      "name": "marketing",
+      "id": "1"
+    },
+    {
+      "name": "tiktok",
+      "id": "2"
+    },
+    {
+      "name": "video-generation",
+      "id": "3"
+    }
+  ]
+}
