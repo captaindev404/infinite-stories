@@ -87,7 +87,7 @@ struct HeroSelectionForStoryView: View {
                     ForEach(heroes, id: \.id) { hero in
                         HeroSelectionCard(
                             hero: hero,
-                            storyCount: 0, // TODO: Fetch from API
+                            storyCount: hero.storyCount,
                             isSelected: selectedHero?.id == hero.id,
                             onSelect: {
                                 selectedHero = hero

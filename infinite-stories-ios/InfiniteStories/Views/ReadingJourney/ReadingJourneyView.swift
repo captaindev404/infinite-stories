@@ -112,10 +112,6 @@ struct ReadingJourneyTabContent: View {
                     RecentActivitySection(stories: recentStories)
                 }
 
-                // Favorite Stories Collection
-                if !favoriteStories.isEmpty {
-                    FavoriteStoriesSection(favorites: favoriteStories)
-                }
 
                 // Reading Insights
                 if let insights = insights {
@@ -361,10 +357,6 @@ struct ReadingJourneyView: View {
                     RecentActivitySection(stories: recentStories)
                 }
 
-                // Favorite Stories Collection
-                if !favoriteStories.isEmpty {
-                    FavoriteStoriesSection(favorites: favoriteStories)
-                }
 
                 // Reading Insights
                 if let insights = insights {

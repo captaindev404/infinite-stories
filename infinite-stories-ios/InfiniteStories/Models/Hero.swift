@@ -23,6 +23,7 @@ final class Hero: Identifiable {
     var avatarPrompt: String?
     var avatarGeneratedAt: Date?
     var avatarGenerationId: String? // GPT-Image-1 generation ID for multi-turn consistency
+    @Transient var storyCount: Int = 0
 
     @Relationship(deleteRule: .nullify) var stories: [Story] = []
     // NOTE: visualProfile is now fetched from API, not stored in SwiftData

@@ -20,6 +20,10 @@ struct SettingsTabContent: View {
     @StateObject private var localizationManager = LocalizationManager.shared
 
     @State private var showingEraseConfirmation = false
+    @State private var showingDeleteAccountConfirmation = false
+    @State private var showingDeleteAccountFinalConfirmation = false
+    @State private var showingDeleteAccountError = false
+    @State private var isDeletingAccount = false
     @State private var showingAuthView = false
     @State private var showingRestartAlert = false
     @State private var debugTestUserEmail = "test@example.com"
@@ -289,6 +293,19 @@ struct SettingsTabContent: View {
                         }
                         .foregroundColor(.red)
                     }
+
+                    Button(action: { showingDeleteAccountConfirmation = true }) {
+                        HStack {
+                            Image(systemName: "person.crop.circle.badge.minus")
+                            Text("settings.deleteAccount")
+                            if isDeletingAccount {
+                                Spacer()
+                                ProgressView()
+                            }
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .disabled(isDeletingAccount)
                 } header: {
                     Text("settings.advanced")
                 } footer: {
@@ -313,6 +330,30 @@ struct SettingsTabContent: View {
                         }
                     }
                     .padding(.vertical, 8)
+
+                    Link(destination: URL(string: "https://www.infinitestories.app/privacy")!) {
+                        HStack {
+                            Image(systemName: "hand.raised.fill")
+                            Text("settings.privacyPolicy")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .font(.caption)
+                        }
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(String(localized: "settings.privacyPolicy"))
+
+                    Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
+                        HStack {
+                            Image(systemName: "doc.text.fill")
+                            Text("settings.termsOfService")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .font(.caption)
+                        }
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(String(localized: "settings.termsOfService"))
                 } header: {
                     Text("settings.appInfo")
                 }
@@ -328,12 +369,49 @@ struct SettingsTabContent: View {
             } message: {
                 Text("settings.eraseAllData.confirm.message")
             }
+            .alert("settings.deleteAccount.confirm.title", isPresented: $showingDeleteAccountConfirmation) {
+                Button("settings.deleteAccount.confirm.button", role: .destructive) {
+                    showingDeleteAccountFinalConfirmation = true
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.confirm.message")
+            }
+            .alert("settings.deleteAccount.final.title", isPresented: $showingDeleteAccountFinalConfirmation) {
+                Button("settings.deleteAccount.final.button", role: .destructive) {
+                    performAccountDeletion()
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.final.message")
+            }
+            .alert("settings.deleteAccount.error.title", isPresented: $showingDeleteAccountError) {
+                Button("common.retry") {
+                    performAccountDeletion()
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.error.message")
+            }
             .alert("settings.restartRequired.title", isPresented: $showingRestartAlert) {
                 Button("common.ok") {
                     localizationManager.acknowledgeRestartNeeded()
                 }
             } message: {
                 Text("settings.restartRequired.message")
+            }
+        }
+    }
+
+    private func performAccountDeletion() {
+        isDeletingAccount = true
+        Task {
+            do {
+                try await APIClient.shared.requestVoid(.deleteAccount)
+                settingsEraseAllData()
+            } catch {
+                isDeletingAccount = false
+                showingDeleteAccountError = true
             }
         }
     }
@@ -423,6 +501,10 @@ struct SettingsView: View {
     @EnvironmentObject private var authState: AuthStateManager
 
     @State private var showingEraseConfirmation = false
+    @State private var showingDeleteAccountConfirmation = false
+    @State private var showingDeleteAccountFinalConfirmation = false
+    @State private var showingDeleteAccountError = false
+    @State private var isDeletingAccount = false
     @State private var showingAuthView = false
     @State private var debugTestUserEmail = "test@example.com"
     @State private var debugTestUserPassword = "password123"
@@ -665,6 +747,19 @@ struct SettingsView: View {
                         }
                         .foregroundColor(.red)
                     }
+
+                    Button(action: { showingDeleteAccountConfirmation = true }) {
+                        HStack {
+                            Image(systemName: "person.crop.circle.badge.minus")
+                            Text("settings.deleteAccount")
+                            if isDeletingAccount {
+                                Spacer()
+                                ProgressView()
+                            }
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .disabled(isDeletingAccount)
                 } header: {
                     Text("settings.advanced")
                 } footer: {
@@ -689,6 +784,30 @@ struct SettingsView: View {
                         }
                     }
                     .padding(.vertical, 8)
+
+                    Link(destination: URL(string: "https://www.infinitestories.app/privacy")!) {
+                        HStack {
+                            Image(systemName: "hand.raised.fill")
+                            Text("settings.privacyPolicy")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .font(.caption)
+                        }
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(String(localized: "settings.privacyPolicy"))
+
+                    Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
+                        HStack {
+                            Image(systemName: "doc.text.fill")
+                            Text("settings.termsOfService")
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .font(.caption)
+                        }
+                        .frame(minHeight: 44)
+                    }
+                    .accessibilityLabel(String(localized: "settings.termsOfService"))
                 } header: {
                     Text("settings.appInfo")
                 }
@@ -711,6 +830,43 @@ struct SettingsView: View {
                 Button("common.cancel", role: .cancel) { }
             } message: {
                 Text("settings.eraseAllData.confirm.message")
+            }
+            .alert("settings.deleteAccount.confirm.title", isPresented: $showingDeleteAccountConfirmation) {
+                Button("settings.deleteAccount.confirm.button", role: .destructive) {
+                    showingDeleteAccountFinalConfirmation = true
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.confirm.message")
+            }
+            .alert("settings.deleteAccount.final.title", isPresented: $showingDeleteAccountFinalConfirmation) {
+                Button("settings.deleteAccount.final.button", role: .destructive) {
+                    performAccountDeletion()
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.final.message")
+            }
+            .alert("settings.deleteAccount.error.title", isPresented: $showingDeleteAccountError) {
+                Button("common.retry") {
+                    performAccountDeletion()
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("settings.deleteAccount.error.message")
+            }
+        }
+    }
+
+    private func performAccountDeletion() {
+        isDeletingAccount = true
+        Task {
+            do {
+                try await APIClient.shared.requestVoid(.deleteAccount)
+                eraseAllData()
+            } catch {
+                isDeletingAccount = false
+                showingDeleteAccountError = true
             }
         }
     }

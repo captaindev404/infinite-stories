@@ -375,6 +375,7 @@ class HeroRepository: HeroRepositoryProtocol {
         }
         hero.avatarGenerationId = response.avatarGenerationId
         hero.avatarGeneratedAt = response.updatedAt
+        hero.storyCount = response._count?.stories ?? 0
 
         return hero
     }

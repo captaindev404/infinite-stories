@@ -557,9 +557,12 @@ class StoryViewModel: ObservableObject {
         playAudioFile(fileName: audioFileName, story: story)
         story.incrementPlayCount()
 
-        // Play count update would need backend API support
-        // For now, play counts are tracked locally in story object
-        // TODO: Add updatePlayCount API endpoint
+        // Report play count to backend
+        if let storyBackendId = story.backendId {
+            Task {
+                try? await APIClient.shared.requestVoid(.updatePlayCount(storyId: storyBackendId))
+            }
+        }
 
         // Update Now Playing info
         updateNowPlayingForStory(story)

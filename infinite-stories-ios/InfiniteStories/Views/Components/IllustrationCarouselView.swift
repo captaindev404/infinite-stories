@@ -440,11 +440,11 @@ struct IllustrationCarouselView: View {
             Color(.secondarySystemBackground)
 
             VStack(spacing: 16) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 60))
-                    .foregroundColor(.white.opacity(0.8))
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(1.5)
 
-                Text("illustration.carousel.comingSoon")
+                Text("illustration.carousel.generating")
                     .font(.headline)
                     .foregroundColor(.white)
 

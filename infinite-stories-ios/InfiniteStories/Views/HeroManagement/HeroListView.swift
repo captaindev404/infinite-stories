@@ -105,7 +105,7 @@ struct HeroListView: View {
                     ForEach(heroes, id: \.id) { hero in
                         HeroManagementCard(
                             hero: hero,
-                            storyCount: 0, // TODO: Fetch from API
+                            storyCount: hero.storyCount,
                             onEdit: {
                                 heroToEdit = hero
                             },

@@ -1,0 +1,24 @@
+schema: spec-driven
+
+context: |
+  InfiniteStories — SwiftUI iOS app for AI-powered audio bedtime stories.
+  Tech stack: SwiftUI, SwiftData, AVFoundation, Combine, URLSession, Charts
+  Backend: REST API (API-only architecture, no local persistence for Hero/Story)
+  AI: OpenAI GPT-4o (stories), gpt-4o-mini-tts (audio), DALL-E (illustrations)
+  Key constraints:
+    - Network required; offline blocks usage
+    - SwiftData only for preferences (HeroVisualProfile, CustomStoryEvent, StoryIllustration)
+    - API keys in Keychain, never hardcode
+    - Child-safe content filtering (multi-language)
+    - 44pt min touch targets, VoiceOver, Dynamic Type (WCAG AA)
+
+rules:
+  proposal:
+    - Always include a "Non-goals" section
+    - Reference affected specs by name
+  tasks:
+    - Each task must be completable independently
+    - Include acceptance criteria
+  design:
+    - Consider API-only architecture constraints
+    - Address error handling and loading states

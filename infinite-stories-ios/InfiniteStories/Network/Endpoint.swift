@@ -56,6 +56,8 @@ enum Endpoint {
     case getUserProfile
     case updateUserProfile(data: UserProfileUpdateRequest)
     case getUserUsage
+    case deleteAccount
+    case updatePlayCount(storyId: String)
 
     // MARK: - Health
     case healthCheck
@@ -149,6 +151,10 @@ enum Endpoint {
             return "/api/v1/user/profile"
         case .getUserUsage:
             return "/api/v1/user/usage"
+        case .deleteAccount:
+            return "/api/v1/user/account"
+        case .updatePlayCount(let storyId):
+            return "/api/v1/stories/\(storyId)/play"
 
         // Health
         case .healthCheck:
@@ -186,7 +192,8 @@ enum Endpoint {
              .createHero, .createStory, .createCustomEvent,
              .generateAvatar, .generateAudio, .generateIllustrations,
              .enhanceCustomEvent, .reportListeningSession,
-             .createVisualProfile, .extractVisualProfile:
+             .createVisualProfile, .extractVisualProfile,
+             .updatePlayCount:
             return .POST
 
         // PATCH requests
@@ -196,7 +203,7 @@ enum Endpoint {
 
         // DELETE requests
         case .deleteHero, .deleteStory, .deleteCustomEvent,
-             .deleteVisualProfile:
+             .deleteVisualProfile, .deleteAccount:
             return .DELETE
         }
     }
