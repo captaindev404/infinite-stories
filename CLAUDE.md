@@ -113,6 +113,8 @@ User Action → Repository → APIClient → Backend API → Update View State
 
 **Task Management:** Use PRD Skills (e.g., `/prd-task-management`, `/prd-project-overview`) for task management. See `tools/prd/README.md` for CLI details.
 
+**App Store Connect CLI (`asc`):** Installed via Homebrew (`rudrankriyam/tap/asc`). Credentials stored in system keychain under the name "InfiniteStories". Environment variables available in `.env` at project root (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH`). Private key: `AuthKey_PJ74ZJSU5Z.p8` (gitignored).
+
 ## Key Technologies
 
 SwiftUI, SwiftData, AVFoundation, MediaPlayer, BackgroundTasks, Combine, URLSession, Network, Security (Keychain), Charts

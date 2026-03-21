@@ -36,7 +36,7 @@ struct StoryGenerationView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
 
-                    Text("story.generation.subtitle")
+                    Text(String(localized: "story.generation.subtitle.\(hero.name)"))
                         .font(.headline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)

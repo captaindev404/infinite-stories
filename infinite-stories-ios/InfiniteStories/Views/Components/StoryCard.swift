@@ -660,3 +660,27 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+
+// MARK: - Previews
+
+#Preview("Full Variant") {
+    let story = Story(
+        title: "Luna's Magical Adventure",
+        content: "Once upon a time in a magical forest, Luna the brave hero discovered a secret that would change everything...",
+        event: .bedtime,
+        hero: Hero(name: "Luna", primaryTrait: .brave, secondaryTrait: .magical)
+    )
+    StoryCard(story: story, onTap: {})
+        .padding()
+}
+
+#Preview("Compact Variant") {
+    let story = Story(
+        title: "Luna's Magical Adventure",
+        content: "Once upon a time in a magical forest...",
+        event: .bedtime,
+        hero: Hero(name: "Luna", primaryTrait: .brave, secondaryTrait: .magical)
+    )
+    StoryCard(story: story, onTap: {}, variant: .compact)
+        .padding()
+}

@@ -263,3 +263,13 @@ struct FailedIllustrationRow: View {
         .padding(.vertical, 4)
     }
 }
+
+#Preview {
+    let story = Story(
+        title: "Luna's Magical Adventure",
+        content: "Once upon a time in a magical forest...",
+        event: .bedtime,
+        hero: Hero(name: "Luna", primaryTrait: .brave, secondaryTrait: .magical)
+    )
+    IllustrationGenerationProgressView(viewModel: StoryViewModel(), story: story)
+}

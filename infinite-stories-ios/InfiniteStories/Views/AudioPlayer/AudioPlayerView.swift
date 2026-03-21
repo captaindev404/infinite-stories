@@ -18,7 +18,6 @@ struct AudioPlayerView: View {
     @Environment(\.modelContext) private var modelContext
 
     @StateObject private var viewModel = StoryViewModel()
-    @State private var showingFullText = false
     @State private var showingEditView = false
     @State private var showingShareSheet = false
     @State private var audioFileURL: URL?
@@ -285,8 +284,7 @@ struct AudioPlayerView: View {
                     Divider()
 
                     // Audio Controls Section
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: isCompact ? 12 : 20) {
+                    VStack(spacing: isCompact ? 12 : 20) {
                             // Interactive Progress Slider
                             if viewModel.duration > 0 {
                                 VStack(spacing: 6) {
@@ -508,9 +506,10 @@ struct AudioPlayerView: View {
                                 .accessibilityHint(String(localized: "audio.player.stop.hint"))
                             }
                             .padding(.horizontal, 20)
+                    }
 
-                            // Story Text Preview (if illustrations are hidden or unavailable)
-                            if !showIllustrations || !currentStory.hasIllustrations {
+                    // Story Text Preview (if illustrations are hidden or unavailable)
+                    if !showIllustrations || !currentStory.hasIllustrations {
                                 VStack(spacing: 8) {
                                     HStack {
                                         Image(systemName: "text.book.closed")
@@ -519,15 +518,6 @@ struct AudioPlayerView: View {
                                             .font(.caption)
                                             .fontWeight(.medium)
                                         Spacer()
-                                        if !currentStory.content.isEmpty {
-                                            Button(action: {
-                                                showingFullText = true
-                                            }) {
-                                                Text(String(localized: "audio.player.button.read.full"))
-                                                    .font(.caption)
-                                                    .foregroundColor(.purple)
-                                            }
-                                        }
                                     }
                                     .padding(.horizontal, 20)
 
@@ -538,7 +528,6 @@ struct AudioPlayerView: View {
                                             .padding(16)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
-                                    .frame(maxHeight: isCompact ? 200 : 300)
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color(.systemGray6).opacity(0.5))
@@ -546,9 +535,11 @@ struct AudioPlayerView: View {
                                     .padding(.horizontal, 20)
                                 }
                                 .padding(.top, 8)
-                            }
+                    } else {
+                        Spacer()
+                    }
 
-                            // Story metadata
+                    // Story metadata
                             HStack {
                                 Text(String(localized: "audio.player.created.\(currentStory.formattedDate)"))
                                     .lineLimit(1)
@@ -564,8 +555,6 @@ struct AudioPlayerView: View {
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 20)
                             .padding(.bottom, 8)
-                        }
-                    }
                 } // End of VStack(spacing: 0) - Portrait Layout
             } // End of else (portrait)
         } // End of GeometryReader
@@ -625,41 +614,6 @@ struct AudioPlayerView: View {
             }
             .sheet(isPresented: $showingEditView) {
                 StoryEditView(story: currentStory)
-            }
-            .sheet(isPresented: $showingFullText) {
-                NavigationView {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(currentStory.title)
-                                .font(.title2)
-                                .fontWeight(.bold)
-
-                            if let hero = currentStory.hero {
-                                Text(String(localized: "audio.player.featuring.\(hero.name)"))
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Divider()
-
-                            Text(currentStory.content)
-                                .font(.system(.body, design: .serif))
-                                .lineSpacing(6)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .navigationTitle(String(localized: "audio.player.full.story.title"))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .glassNavigation()
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button(String(localized: "audio.player.button.done")) {
-                                showingFullText = false
-                            }
-                        }
-                    }
-                }
             }
             .sheet(isPresented: $showingShareSheet) {
                 if let audioFileURL = audioFileURL {

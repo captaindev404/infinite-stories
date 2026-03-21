@@ -871,3 +871,7 @@ struct EditModeToolbar: View {
         }
     }
 }
+
+#Preview {
+    ImprovedStoryLibraryView()
+}

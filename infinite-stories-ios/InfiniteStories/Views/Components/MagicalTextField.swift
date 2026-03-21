@@ -75,3 +75,12 @@ struct MagicalTextField: View {
         }
     }
 }
+
+#Preview {
+    @Previewable @State var text = ""
+    VStack(spacing: 16) {
+        MagicalTextField(icon: "envelope", placeholder: "Email", text: $text, isSecure: false, keyboardType: .emailAddress)
+        MagicalTextField(icon: "lock", placeholder: "Password", text: $text, isSecure: true, keyboardType: .default)
+    }
+    .padding()
+}
