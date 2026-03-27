@@ -24,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CE02A54F2F76CA1800396D10 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
 		CE13B94E2EB2CC2A003A8740 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
 		CE3AA1B92E71C97D00236398 /* InfiniteStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InfiniteStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE3AA1C82E71C97E00236398 /* InfiniteStoriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InfiniteStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +96,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE02A5562F76CA1800396D10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CE13B9522EB2CC2A003A8740 /* Products */ = {
 			isa = PBXGroup;
 			name = Products;
@@ -329,6 +337,10 @@
 				{
 					ProductGroup = CE7C45902F054B8E00F8AC99 /* Products */;
 					ProjectRef = CE7C458C2F054B8E00F8AC99 /* InfiniteStories.xcodeproj */;
+				},
+				{
+					ProductGroup = CE02A5562F76CA1800396D10 /* Products */;
+					ProjectRef = CE02A54F2F76CA1800396D10 /* InfiniteStories.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -587,6 +599,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;
@@ -620,6 +633,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;
@@ -653,6 +667,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;

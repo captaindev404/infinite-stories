@@ -3,6 +3,15 @@ import { bearer } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@/lib/prisma/client";
 
+const appleCredentialsConfigured = !!(
+  process.env.APPLE_CLIENT_ID &&
+  process.env.APPLE_CLIENT_SECRET
+);
+
+if (!appleCredentialsConfigured) {
+  console.warn("⚠️ Apple Sign-In credentials not configured. Apple authentication will be unavailable.");
+}
+
 if (!process.env.BETTER_AUTH_SECRET) {
   throw new Error('Missing BETTER_AUTH_SECRET environment variable');
 }
@@ -22,6 +31,14 @@ export const auth = betterAuth({
     maxPasswordLength: 128,
   },
 
+  socialProviders: appleCredentialsConfigured ? {
+    apple: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER || "com.captaindev.InfiniteStories",
+    },
+  } : undefined,
+
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60 * 24, // Update every 24 hours
@@ -37,7 +54,7 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["email"],
+      trustedProviders: ["email", "apple"],
     },
   },
 
@@ -77,6 +94,7 @@ export const auth = betterAuth({
     "http://localhost:3000",
     "capacitor://localhost", // For Capacitor apps
     "ionic://localhost", // For Ionic apps
+    "https://appleid.apple.com", // Sign in with Apple
     process.env.BETTER_AUTH_URL || "",
   ],
 });

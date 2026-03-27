@@ -5,7 +5,7 @@ TBD - created by archiving change migrate-custom-events-api. Update Purpose afte
 ## Requirements
 ### Requirement: Custom Events CRUD API
 
-The backend SHALL provide RESTful endpoints for managing custom story events with user ownership.
+The backend SHALL provide RESTful endpoints for managing custom story events with user ownership. The PictogramGenerationView SHALL NOT be accessible to users until pictogram generation is implemented.
 
 #### Scenario: User lists their custom events
 
@@ -160,4 +160,9 @@ The iOS app SHALL use the backend API for all custom event operations.
 **When** the user attempts to create, edit, or delete a custom event
 **Then** the operation is blocked
 **And** an offline message is displayed
+
+#### Scenario: Pictogram generation view is hidden
+- **WHEN** user navigates the custom event creation flow
+- **THEN** the PictogramGenerationView is not reachable
+- **AND** no "coming soon" text is displayed anywhere in the flow
 
