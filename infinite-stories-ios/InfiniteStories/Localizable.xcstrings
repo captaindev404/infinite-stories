@@ -2864,6 +2864,42 @@
         }
       }
     },
+    "auth.error.appleSignIn" : {
+      "comment" : "Auth: Apple Sign In failed error",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmeldung mit Apple fehlgeschlagen. Bitte versuche es erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with Apple failed. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al iniciar sesión con Apple. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La connexion avec Apple a échoué. Veuillez réessayer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesso con Apple non riuscito. Riprova."
+          }
+        }
+      }
+    },
     "auth.error.userExists" : {
       "comment" : "Auth: User already exists error",
       "extractionState" : "manual",
@@ -3184,6 +3220,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accedi"
+          }
+        }
+      }
+    },
+    "auth.or" : {
+      "comment" : "Auth: Divider text between email and Apple sign-in",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "oder"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "or"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "o"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ou"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "o"
           }
         }
       }
@@ -20097,13 +20169,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voice selection uses OpenAI's enhanced voice synthesis with narration instructions. Coral and Fable are recommended for bedtime stories."
+            "value" : "Voice selection uses AI-powered voice synthesis with narration instructions. Coral and Fable are recommended for bedtime stories."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La sélection de voix utilise la synthèse vocale améliorée d'OpenAI avec des instructions de narration. Coral et Fable sont recommandés pour les histoires du coucher."
+            "value" : "La sélection de voix utilise la synthèse vocale améliorée par IA avec des instructions de narration. Coral et Fable sont recommandés pour les histoires du coucher."
           }
         }
       }
@@ -20277,31 +20349,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Stimmauswahl verwendet OpenAIs erweiterte Text-zu-Sprache mit Erzählanweisungen. Coral und Fable werden für Gutenachtgeschichten empfohlen."
+            "value" : "Die Stimmauswahl verwendet KI-gestützte Text-zu-Sprache mit Erzählanweisungen. Coral und Fable werden für Gutenachtgeschichten empfohlen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voice selection uses OpenAI's enhanced text-to-speech with storytelling instructions. Coral and Fable are recommended for bedtime stories."
+            "value" : "Voice selection uses AI-powered text-to-speech with storytelling instructions. Coral and Fable are recommended for bedtime stories."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La selección de voz utiliza el texto a voz mejorado de OpenAI con instrucciones de narración. Coral y Fable se recomiendan para historias antes de dormir."
+            "value" : "La selección de voz utiliza texto a voz mejorado por IA con instrucciones de narración. Coral y Fable se recomiendan para historias antes de dormir."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La sélection de voix utilise la synthèse vocale améliorée d'OpenAI avec des instructions de narration. Coral et Fable sont recommandés pour les histoires du coucher."
+            "value" : "La sélection de voix utilise la synthèse vocale améliorée par IA avec des instructions de narration. Coral et Fable sont recommandés pour les histoires du coucher."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La selezione della voce utilizza il text-to-speech avanzato di OpenAI con istruzioni narrative. Coral e Fable sono consigliati per le storie della buonanotte."
+            "value" : "La selezione della voce utilizza il text-to-speech avanzato con IA con istruzioni narrative. Coral e Fable sono consigliati per le storie della buonanotte."
           }
         }
       }
@@ -21165,31 +21237,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihre Geschichte wurde erfolgreich aktualisiert. Das Audio wird mit OpenAI neu generiert, wenn Sie die Geschichte abspielen."
+            "value" : "Ihre Geschichte wurde erfolgreich aktualisiert. Das Audio wird neu generiert, wenn Sie die Geschichte abspielen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your story has been updated successfully. The audio will be regenerated using OpenAI when you play the story."
+            "value" : "Your story has been updated successfully. The audio will be regenerated when you play the story."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu historia se ha actualizado correctamente. El audio se regenerará con OpenAI cuando reproduzcas la historia."
+            "value" : "Tu historia se ha actualizado correctamente. El audio se regenerará cuando reproduzcas la historia."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre histoire a été mise à jour avec succès. L'audio sera régénéré avec OpenAI lorsque vous lirez l'histoire."
+            "value" : "Votre histoire a été mise à jour avec succès. L'audio sera régénéré lorsque vous lirez l'histoire."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La tua storia è stata aggiornata con successo. L'audio verrà rigenerato con OpenAI quando riproduci la storia."
+            "value" : "La tua storia è stata aggiornata con successo. L'audio verrà rigenerato quando riproduci la storia."
           }
         }
       }

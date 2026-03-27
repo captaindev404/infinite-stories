@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct AuthenticationView: View {
     @EnvironmentObject var authState: AuthStateManager
@@ -178,6 +179,36 @@ struct AuthenticationView: View {
                         .opacity(isFormValid ? 1.0 : 0.6)
                         .padding(.horizontal, 30)
 
+                        // Divider
+                        HStack {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 1)
+                            Text("auth.or")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 1)
+                        }
+                        .padding(.horizontal, 30)
+
+                        // Sign in with Apple
+                        SignInWithAppleButton(
+                            isSignUp ? .signUp : .signIn,
+                            onRequest: { request in
+                                request.requestedScopes = [.fullName, .email]
+                            },
+                            onCompletion: { result in
+                                handleAppleSignIn(result: result)
+                            }
+                        )
+                        .signInWithAppleButtonStyle(.black)
+                        .frame(height: 50)
+                        .cornerRadius(25)
+                        .padding(.horizontal, 30)
+                        .disabled(viewModel.isLoading)
+
                         // Test buttons (development only)
                         #if DEBUG
                         HStack(spacing: 12) {
@@ -273,6 +304,51 @@ struct AuthenticationView: View {
         focusedField = nil
     }
 
+    private func handleAppleSignIn(result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let authorization):
+            guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let identityTokenData = appleIDCredential.identityToken,
+                  let identityToken = String(data: identityTokenData, encoding: .utf8) else {
+                errorMessage = String(localized: "auth.error.appleSignIn")
+                showError = true
+                return
+            }
+
+            let fullName = appleIDCredential.fullName
+            let displayName = [fullName?.givenName, fullName?.familyName]
+                .compactMap { $0 }
+                .joined(separator: " ")
+
+            Task {
+                do {
+                    let (token, userId) = try await viewModel.signInWithApple(
+                        identityToken: identityToken,
+                        name: displayName.isEmpty ? nil : displayName
+                    )
+                    await MainActor.run {
+                        authState.signIn(token: token, userId: userId)
+                        let successFeedback = UINotificationFeedbackGenerator()
+                        successFeedback.notificationOccurred(.success)
+                    }
+                } catch {
+                    await MainActor.run {
+                        errorMessage = error.localizedDescription
+                        showError = true
+                        let errorFeedback = UINotificationFeedbackGenerator()
+                        errorFeedback.notificationOccurred(.error)
+                    }
+                }
+            }
+
+        case .failure(let error):
+            // User cancelled — don't show error for cancellation
+            if (error as? ASAuthorizationError)?.code == .canceled { return }
+            errorMessage = error.localizedDescription
+            showError = true
+        }
+    }
+
     private func handleAuthentication() {
         guard isFormValid else { return }
 
@@ -364,6 +440,85 @@ class AuthenticationViewModel: ObservableObject {
     @Published var isAuthenticated = false
 
     private let baseURL = AppConfiguration.backendBaseURL
+
+    func signInWithApple(identityToken: String, name: String?) async throws -> (String, String) {
+        isLoading = true
+        defer { isLoading = false }
+
+        let url = URL(string: "\(baseURL)/api/auth/sign-in/social")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(baseURL, forHTTPHeaderField: "Origin")
+        request.setValue("InfiniteStories/1.0", forHTTPHeaderField: "User-Agent")
+
+        var body: [String: Any] = [
+            "provider": "apple",
+            "idToken": identityToken,
+            "callbackURL": "\(baseURL)/api/auth/callback/apple"
+        ]
+        if let name = name {
+            body["name"] = name
+        }
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthenticationError.networkError
+        }
+
+        guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 else {
+            #if DEBUG
+            print("Apple sign-in failed with status \(httpResponse.statusCode)")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("Response: \(responseString)")
+            }
+            #endif
+            throw AuthenticationError.invalidCredentials
+        }
+
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw AuthenticationError.invalidResponse
+        }
+
+        // Parse token from response (same structure as email sign-in)
+        var token: String?
+        var userId: String?
+
+        if let session = json["session"] as? [String: Any] {
+            token = session["token"] as? String ?? session["sessionToken"] as? String ?? session["id"] as? String
+        }
+        if token == nil {
+            token = json["token"] as? String ?? json["sessionToken"] as? String ?? json["accessToken"] as? String
+        }
+        if token == nil, let data = json["data"] as? [String: Any] {
+            if let session = data["session"] as? [String: Any] {
+                token = session["token"] as? String ?? session["sessionToken"] as? String ?? session["id"] as? String
+            }
+            token = token ?? data["token"] as? String
+        }
+
+        guard let token = token else {
+            throw AuthenticationError.invalidResponse
+        }
+
+        if let user = json["user"] as? [String: Any] {
+            userId = user["id"] as? String
+        } else if let data = json["data"] as? [String: Any],
+                  let user = data["user"] as? [String: Any] {
+            userId = user["id"] as? String
+        } else {
+            userId = json["userId"] as? String ?? json["id"] as? String
+        }
+
+        guard let userId = userId else {
+            throw AuthenticationError.invalidResponse
+        }
+
+        isAuthenticated = true
+        return (token, userId)
+    }
 
     func signIn(email: String, password: String) async throws -> (String, String) {
         isLoading = true
@@ -608,6 +763,7 @@ enum AuthenticationError: LocalizedError {
     case userAlreadyExists
     case signUpFailed
     case invalidResponse
+    case appleSignInFailed
 
     var errorDescription: String? {
         switch self {
@@ -621,6 +777,8 @@ enum AuthenticationError: LocalizedError {
             return String(localized: "auth.error.signUpFailed")
         case .invalidResponse:
             return String(localized: "auth.error.serverResponse")
+        case .appleSignInFailed:
+            return String(localized: "auth.error.appleSignIn")
         }
     }
 }
