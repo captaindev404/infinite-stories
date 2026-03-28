@@ -25,6 +25,8 @@
 
 /* Begin PBXFileReference section */
 		CE02A54F2F76CA1800396D10 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
+		CE02A92B2F76CA7D00396D10 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
+		CE02AA312F78140E00396D10 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
 		CE13B94E2EB2CC2A003A8740 /* InfiniteStories.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = InfiniteStories.xcodeproj; sourceTree = "<group>"; };
 		CE3AA1B92E71C97D00236398 /* InfiniteStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InfiniteStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE3AA1C82E71C97E00236398 /* InfiniteStoriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InfiniteStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +99,20 @@
 
 /* Begin PBXGroup section */
 		CE02A5562F76CA1800396D10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE02A9322F76CA7D00396D10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE02AA382F78140E00396D10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -319,6 +335,10 @@
 					ProjectRef = CE9DB6D32EF592C700DDD268 /* InfiniteStories.xcodeproj */;
 				},
 				{
+					ProductGroup = CE02AA382F78140E00396D10 /* Products */;
+					ProjectRef = CE02AA312F78140E00396D10 /* InfiniteStories.xcodeproj */;
+				},
+				{
 					ProductGroup = CE70BB772EB95D6A00DBE3C9 /* Products */;
 					ProjectRef = CE70BB742EB95D6A00DBE3C9 /* InfiniteStories.xcodeproj */;
 				},
@@ -333,6 +353,10 @@
 				{
 					ProductGroup = CE4F69AD2EBE4A0B00C84C35 /* Products */;
 					ProjectRef = CE4F69AA2EBE4A0B00C84C35 /* InfiniteStories.xcodeproj */;
+				},
+				{
+					ProductGroup = CE02A9322F76CA7D00396D10 /* Products */;
+					ProjectRef = CE02A92B2F76CA7D00396D10 /* InfiniteStories.xcodeproj */;
 				},
 				{
 					ProductGroup = CE7C45902F054B8E00F8AC99 /* Products */;
@@ -599,7 +623,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;
@@ -621,6 +646,7 @@
 				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.captaindev.InfiniteStories;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -633,7 +659,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;
@@ -655,6 +682,7 @@
 				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.captaindev.InfiniteStories;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -667,7 +695,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98395466N2;
@@ -689,6 +718,7 @@
 				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.captaindev.InfiniteStories;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

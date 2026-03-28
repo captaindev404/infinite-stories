@@ -452,14 +452,15 @@ class AuthenticationViewModel: ObservableObject {
         request.setValue(baseURL, forHTTPHeaderField: "Origin")
         request.setValue("InfiniteStories/1.0", forHTTPHeaderField: "User-Agent")
 
-        var body: [String: Any] = [
+        var idTokenObject: [String: Any] = ["token": identityToken]
+        if let name = name {
+            idTokenObject["name"] = name
+        }
+        let body: [String: Any] = [
             "provider": "apple",
-            "idToken": identityToken,
+            "idToken": idTokenObject,
             "callbackURL": "\(baseURL)/api/auth/callback/apple"
         ]
-        if let name = name {
-            body["name"] = name
-        }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response) = try await URLSession.shared.data(for: request)
