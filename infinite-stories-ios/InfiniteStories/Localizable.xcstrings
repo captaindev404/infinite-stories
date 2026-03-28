@@ -2684,6 +2684,42 @@
         }
       }
     },
+    "auth.error.appleSignIn" : {
+      "comment" : "Auth: Apple Sign In failed error",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmeldung mit Apple fehlgeschlagen. Bitte versuche es erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with Apple failed. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al iniciar sesión con Apple. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La connexion avec Apple a échoué. Veuillez réessayer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accesso con Apple non riuscito. Riprova."
+          }
+        }
+      }
+    },
     "auth.error.invalidCredentials" : {
       "comment" : "Auth: Invalid credentials error",
       "extractionState" : "manual",
@@ -2860,42 +2896,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Errore di autenticazione"
-          }
-        }
-      }
-    },
-    "auth.error.appleSignIn" : {
-      "comment" : "Auth: Apple Sign In failed error",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anmeldung mit Apple fehlgeschlagen. Bitte versuche es erneut."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sign in with Apple failed. Please try again."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error al iniciar sesión con Apple. Inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La connexion avec Apple a échoué. Veuillez réessayer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accesso con Apple non riuscito. Riprova."
           }
         }
       }
@@ -3116,6 +3116,42 @@
         }
       }
     },
+    "auth.or" : {
+      "comment" : "Auth: Divider text between email and Apple sign-in",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "oder"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "or"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "o"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ou"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "o"
+          }
+        }
+      }
+    },
     "auth.password" : {
       "comment" : "Auth: Password field placeholder",
       "extractionState" : "manual",
@@ -3220,42 +3256,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accedi"
-          }
-        }
-      }
-    },
-    "auth.or" : {
-      "comment" : "Auth: Divider text between email and Apple sign-in",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "oder"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "or"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "o"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ou"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "o"
           }
         }
       }
@@ -13697,6 +13697,24 @@
         }
       }
     },
+    "illustration.carousel.generating" : {
+      "comment" : "Illustration carousel: generating placeholder",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating illustration…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Génération de l'illustration…"
+          }
+        }
+      }
+    },
     "illustration.carousel.jumpingTo" : {
       "comment" : "Illustration carousel: Jumping to timestamp feedback",
       "extractionState" : "manual",
@@ -15092,9 +15110,6 @@
     "illustration.sync.scene %lld" : {
       "comment" : "A label displaying the scene number and timestamp of a particular illustration sync event. The first argument is the scene number of the event. The second argument is the timestamp of the event.",
       "isCommentAutoGenerated" : true
-    },
-    "Illustrations" : {
-
     },
     "InfiniteStories" : {
       "comment" : "The title of the home screen.",
@@ -17595,9 +17610,6 @@
       "comment" : "A button label that, when tapped, presents a view allowing the user to manage their heroes.",
       "isCommentAutoGenerated" : true
     },
-    "Max" : {
-
-    },
     "Minutes" : {
       "comment" : "Label for the y-axis in the listening activity chart.",
       "isCommentAutoGenerated" : true
@@ -19277,6 +19289,168 @@
         }
       }
     },
+    "settings.deleteAccount" : {
+      "comment" : "Settings: Delete account button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le compte"
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.confirm.button" : {
+      "comment" : "Settings: Delete account confirmation button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.confirm.message" : {
+      "comment" : "Settings: Delete account confirmation message",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will permanently delete your account and all your data, including heroes, stories, and audio files. This action cannot be undone."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela supprimera définitivement votre compte et toutes vos données, y compris les héros, les histoires et les fichiers audio. Cette action est irréversible."
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.confirm.title" : {
+      "comment" : "Settings: Delete account confirmation title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le compte ?"
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.error.message" : {
+      "comment" : "Settings: Delete account error message",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not delete your account. Please check your connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de supprimer votre compte. Veuillez vérifier votre connexion et réessayer."
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.error.title" : {
+      "comment" : "Settings: Delete account error title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deletion Failed"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de la suppression"
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.final.button" : {
+      "comment" : "Settings: Delete account final button",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete My Account"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer mon compte"
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.final.message" : {
+      "comment" : "Settings: Delete account final confirmation message",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All your data will be permanently deleted from our servers. You will be signed out immediately."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes vos données seront définitivement supprimées de nos serveurs. Vous serez déconnecté immédiatement."
+          }
+        }
+      }
+    },
+    "settings.deleteAccount.final.title" : {
+      "comment" : "Settings: Delete account final confirmation title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Êtes-vous sûr ?"
+          }
+        }
+      }
+    },
     "settings.eraseAllData" : {
       "comment" : "Settings: Erase all data button",
       "extractionState" : "manual",
@@ -19453,240 +19627,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancellare tutti i dati eliminerà permanentemente tutti gli eroi, le storie, i file e ti disconnetterà. Verrai reindirizzato alla schermata di registrazione."
-          }
-        }
-      }
-    },
-    "settings.deleteAccount" : {
-      "comment" : "Settings: Delete account button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete Account"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer le compte"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.confirm.title" : {
-      "comment" : "Settings: Delete account confirmation title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete Account?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer le compte ?"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.confirm.message" : {
-      "comment" : "Settings: Delete account confirmation message",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This will permanently delete your account and all your data, including heroes, stories, and audio files. This action cannot be undone."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela supprimera définitivement votre compte et toutes vos données, y compris les héros, les histoires et les fichiers audio. Cette action est irréversible."
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.confirm.button" : {
-      "comment" : "Settings: Delete account confirmation button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.final.title" : {
-      "comment" : "Settings: Delete account final confirmation title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Êtes-vous sûr ?"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.final.message" : {
-      "comment" : "Settings: Delete account final confirmation message",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All your data will be permanently deleted from our servers. You will be signed out immediately."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toutes vos données seront définitivement supprimées de nos serveurs. Vous serez déconnecté immédiatement."
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.final.button" : {
-      "comment" : "Settings: Delete account final button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete My Account"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer mon compte"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.error.title" : {
-      "comment" : "Settings: Delete account error title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deletion Failed"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Échec de la suppression"
-          }
-        }
-      }
-    },
-    "settings.deleteAccount.error.message" : {
-      "comment" : "Settings: Delete account error message",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Could not delete your account. Please check your connection and try again."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de supprimer votre compte. Veuillez vérifier votre connexion et réessayer."
-          }
-        }
-      }
-    },
-    "common.retry" : {
-      "comment" : "Common: Retry button",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retry"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réessayer"
-          }
-        }
-      }
-    },
-    "settings.privacyPolicy" : {
-      "comment" : "Settings: Privacy policy link",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy Policy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Politique de confidentialité"
-          }
-        }
-      }
-    },
-    "settings.termsOfService" : {
-      "comment" : "Settings: Terms of service link",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terms of Service"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conditions d'utilisation"
-          }
-        }
-      }
-    },
-    "illustration.carousel.generating" : {
-      "comment" : "Illustration carousel: generating placeholder",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating illustration…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Génération de l'illustration…"
           }
         }
       }
@@ -20054,6 +19994,24 @@
         }
       }
     },
+    "settings.privacyPolicy" : {
+      "comment" : "Settings: Privacy policy link",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Politique de confidentialité"
+          }
+        }
+      }
+    },
     "settings.restartRequired.message" : {
       "comment" : "Settings: Restart required alert message",
       "extractionState" : "manual",
@@ -20374,6 +20332,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La selezione della voce utilizza il text-to-speech avanzato con IA con istruzioni narrative. Coral e Fable sono consigliati per le storie della buonanotte."
+          }
+        }
+      }
+    },
+    "settings.termsOfService" : {
+      "comment" : "Settings: Terms of service link",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms of Service"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conditions d'utilisation"
           }
         }
       }
