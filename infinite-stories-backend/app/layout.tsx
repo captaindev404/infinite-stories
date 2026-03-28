@@ -13,8 +13,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InfiniteStories API",
-  description: "Backend API for InfiniteStories",
+  title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+  description:
+    "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
+  metadataBase: new URL("https://infinitestories.app"),
+  openGraph: {
+    title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+    description:
+      "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
+    url: "https://infinitestories.app",
+    siteName: "InfiniteStories",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+    description:
+      "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
