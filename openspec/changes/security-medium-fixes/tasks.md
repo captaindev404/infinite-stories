@@ -49,6 +49,6 @@
 ## 10. Verification
 
 - [x] 10.1 Verify `npm run build` passes
-- [ ] 10.2 Deploy to dev and verify
-- [ ] 10.3 Deploy to staging and verify
-- [ ] 10.4 Deploy to production
+- [x] 10.2 Deploy to dev and verify
+- [x] 10.3 Deploy to staging and verify
+- [x] 10.4 Deploy to production
