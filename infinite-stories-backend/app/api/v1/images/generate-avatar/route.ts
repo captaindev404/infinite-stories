@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { AvatarGenerationRequest, ImageGenerationResponse } from '@/types/openai';
+import type { ImageGenerationResponse } from '@/types/openai';
 import { SanitizationService } from '@/lib/prompts';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { ImageGenerateAvatarSchema, type ImageGenerateAvatarInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, ImageGenerateAvatarSchema, 'avatar_generation', async (_user, body: ImageGenerateAvatarInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -13,15 +15,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: AvatarGenerationRequest = await request.json();
-    const { prompt, hero, size = '1024x1024', quality = 'high', previousGenerationId } = body;
-
-    if (!prompt || !hero) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
+    const { prompt, size = '1024x1024', quality = 'high', previousGenerationId } = body;
 
     // Apply centralized sanitization
     const sanitizationResult = SanitizationService.sanitize(prompt, 'en');
@@ -101,11 +95,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Avatar generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
-import { getOrCreateUser } from '@/lib/auth/session';
-import { successResponse, errorResponse, handleApiError } from '@/lib/utils/api-response';
+import { withAuth } from '@/lib/api/with-auth';
+import { successResponse, errorResponse } from '@/lib/utils/api-response';
 import { generateSignedUrl } from '@/lib/storage/signed-url';
 
 /**
@@ -12,8 +12,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ heroId: string }> }
 ) {
-  try {
-    const user = await getOrCreateUser();
+  return withAuth(req, async (user) => {
     const { heroId } = await params;
 
     // Get the hero to verify ownership and get avatar
@@ -178,7 +177,5 @@ Be specific and detailed. This data will be used to maintain visual consistency 
         : 'Visual profile extracted successfully',
       hero.visualProfile ? 200 : 201
     );
-  } catch (error) {
-    return handleApiError(error);
-  }
+  });
 }

@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-interface TitleGenerationRequest {
-  description: string;
-  language?: string;
-}
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { GenerateTitleSchema, type GenerateTitleInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, GenerateTitleSchema, 'story_generation', async (_user, body: GenerateTitleInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -16,15 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: TitleGenerationRequest = await request.json();
     const { description, language = 'en' } = body;
-
-    if (!description) {
-      return NextResponse.json(
-        { error: 'Description is required' },
-        { status: 400 }
-      );
-    }
 
     const prompt = `Generate a short, catchy title (3-6 words) for a custom bedtime story event based on this description:
 
@@ -64,11 +53,5 @@ Return only the title, nothing else.`;
     const title = data.choices[0].message.content.trim();
 
     return NextResponse.json({ title });
-  } catch (error) {
-    console.error('Title generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

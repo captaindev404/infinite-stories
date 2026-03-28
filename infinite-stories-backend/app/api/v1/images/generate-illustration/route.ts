@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ImageGenerationRequest, ImageGenerationResponse, Hero } from '@/types/openai';
+import type { ImageGenerationResponse } from '@/types/openai';
 import { SanitizationService, ILLUSTRATION_STYLE_GUIDANCE, buildCharacterConsistencyPrompt } from '@/lib/prompts';
-
-interface IllustrationRequest extends ImageGenerationRequest {
-  hero: Hero;
-}
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { ImageGenerateIllustrationSchema, type ImageGenerateIllustrationInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, ImageGenerateIllustrationSchema, 'illustration_generation', async (_user, body: ImageGenerateIllustrationInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -17,15 +15,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: IllustrationRequest = await request.json();
     const { prompt, hero, previousGenerationId } = body;
-
-    if (!prompt || !hero) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
 
     // Apply centralized sanitization to the scene prompt
     const sanitizationResult = SanitizationService.sanitize(prompt, 'en');
@@ -110,11 +100,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Illustration generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma/client';
 import { successResponse, errorResponse } from '@/lib/utils/api-response';
 
 /**
- * GET /api/health
+ * GET /api/v1/health
  * Health check endpoint for uptime monitoring
  */
 export async function GET(req: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     // Check database connectivity
     await prisma.$queryRaw`SELECT 1`;
 
-    // Check environment variables
+    // Check environment variables (log missing ones server-side only)
     const requiredEnvVars = [
       'DATABASE_URL',
       'BETTER_AUTH_SECRET',
@@ -22,9 +22,11 @@ export async function GET(req: NextRequest) {
     const missingEnvVars = requiredEnvVars.filter((v: string) => !process.env[v]);
 
     if (missingEnvVars.length > 0) {
+      // Log specifics server-side only — never expose env var names to clients
+      console.error(`Health check: missing environment variables: ${missingEnvVars.join(', ')}`);
       return errorResponse(
-        'ConfigurationError',
-        `Missing environment variables: ${missingEnvVars.join(', ')}`,
+        'ServiceUnavailable',
+        'Service is unhealthy',
         503
       );
     }
@@ -33,17 +35,14 @@ export async function GET(req: NextRequest) {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       database: 'connected',
-      environment: process.env.NODE_ENV || 'development',
       version: '1.0.0',
     });
   } catch (error) {
+    console.error('Health check failed:', (error as Error).message);
     return errorResponse(
       'ServiceUnavailable',
       'Health check failed',
-      503,
-      {
-        error: (error as Error).message,
-      }
+      503
     );
   }
 }

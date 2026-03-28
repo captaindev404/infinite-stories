@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { AudioGenerationRequest } from '@/types/openai';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { AudioGenerateSchema, type AudioGenerateInput } from '@/lib/api/schemas';
 
 const VOICE_INSTRUCTIONS: Record<string, string> = {
   coral: 'Speak with a warm, gentle, and nurturing tone perfect for bedtime stories. Use a calm and soothing pace with clear pronunciation. Add subtle emotional expressions to bring characters to life while maintaining a peaceful atmosphere that helps children relax and drift off to sleep.',
@@ -20,7 +21,7 @@ const LANGUAGE_INSTRUCTIONS: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, AudioGenerateSchema, 'audio_generation', async (_user, body: AudioGenerateInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -30,15 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: AudioGenerationRequest = await request.json();
     const { text, voice, language } = body;
-
-    if (!text || !voice || !language) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
 
     // Build voice instructions
     const baseInstructions = VOICE_INSTRUCTIONS[voice.toLowerCase()] || VOICE_INSTRUCTIONS.coral;
@@ -75,11 +68,5 @@ export async function POST(request: NextRequest) {
       format: 'mp3',
       size: audioBuffer.byteLength,
     });
-  } catch (error) {
-    console.error('Audio generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

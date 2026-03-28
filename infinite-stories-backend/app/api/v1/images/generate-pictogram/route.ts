@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ImageGenerationRequest, ImageGenerationResponse } from '@/types/openai';
-import { requireAuth } from '@/lib/auth/session';
-import { errorResponse } from '@/lib/utils/api-response';
+import type { ImageGenerationResponse } from '@/types/openai';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { ImageGeneratePictogramSchema, type ImageGeneratePictogramInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
-    // Require authentication
-    const authUser = await requireAuth();
-    if (!authUser) {
-      return errorResponse('Unauthorized', 'Authentication required', 401);
-    }
-
+  return withAuthAndValidation(request, ImageGeneratePictogramSchema, 'illustration_generation', async (_user, body: ImageGeneratePictogramInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -20,15 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: ImageGenerationRequest = await request.json();
     const { prompt } = body;
-
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
 
     // Enhance prompt for pictogram style
     const pictogramPrompt = `${prompt}
@@ -80,11 +66,5 @@ Style: Simple, colorful pictogram/icon style illustration suitable for children.
     }
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Pictogram generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

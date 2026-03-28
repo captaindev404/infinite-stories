@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-interface KeywordRequest {
-  event: string;
-  description: string;
-}
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { GenerateKeywordsSchema, type GenerateKeywordsInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, GenerateKeywordsSchema, 'story_generation', async (_user, body: GenerateKeywordsInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -16,15 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: KeywordRequest = await request.json();
     const { event, description } = body;
-
-    if (!event || !description) {
-      return NextResponse.json(
-        { error: 'Event and description are required' },
-        { status: 400 }
-      );
-    }
 
     const prompt = `Generate 5-8 relevant keywords for this bedtime story event:
 
@@ -76,11 +65,5 @@ Return only the keywords separated by commas, nothing else.`;
       .slice(0, 8);
 
     return NextResponse.json({ keywords });
-  } catch (error) {
-    console.error('Keyword generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

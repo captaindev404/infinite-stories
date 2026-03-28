@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { StoryGenerationRequest, StoryGenerationResponse } from '@/types/openai';
+import type { StoryGenerationResponse } from '@/types/openai';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { StoryGenerateSchema, type StoryGenerateInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, StoryGenerateSchema, 'story_generation', async (_user, body: StoryGenerateInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -12,16 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: StoryGenerationRequest = await request.json();
     const { hero, event, targetDuration, language } = body;
-
-    // Validate required fields
-    if (!hero || !event || !targetDuration || !language) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
 
     // Build story generation prompt
     const targetMinutes = Math.floor(targetDuration / 60);
@@ -89,11 +82,5 @@ IMPORTANT INSTRUCTIONS:
     };
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Story generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

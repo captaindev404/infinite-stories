@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { SceneExtractionRequest, StoryScene } from '@/types/openai';
 import type { StoryTokenizer } from '@/app/utils/tokenizer';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { ExtractScenesSchema, type ExtractScenesInput } from '@/lib/api/schemas';
 
 interface SceneJSON {
   sceneNumber: number;
@@ -39,7 +41,7 @@ const CHUNK_SIZE = MAX_INPUT_TOKENS - PROMPT_OVERHEAD;
 const MAX_RETRIES = 3;            // Maximum retry attempts per chunk
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, ExtractScenesSchema, 'story_generation', async (_user, body: ExtractScenesInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -49,15 +51,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: SceneExtractionRequest = await request.json();
     const { storyContent, storyDuration, hero, eventContext } = body;
-
-    if (!storyContent || !storyDuration || !hero || !eventContext) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
 
     // Dynamically import tokenizer to avoid WASM issues at build time
     const { StoryTokenizer } = await import('@/app/utils/tokenizer');
@@ -68,26 +62,22 @@ export async function POST(request: NextRequest) {
       const storyTokens = tokenizer.countTokens(storyContent);
       console.log(`Story contains ${storyTokens} tokens`);
 
+      const sceneRequest: SceneExtractionRequest = { storyContent, storyDuration, hero, eventContext };
+
       if (storyTokens <= CHUNK_SIZE) {
         // Story fits in one request - use existing logic
         console.log('Story fits in single request - using standard extraction');
-        return await extractScenesFromFullStory(body, apiKey);
+        return await extractScenesFromFullStory(sceneRequest, apiKey);
       } else {
         // Story needs chunking - use new chunked approach
         console.log('Story requires chunking - using chunked extraction');
-        return await extractScenesFromChunkedStory(body, apiKey, tokenizer);
+        return await extractScenesFromChunkedStory(sceneRequest, apiKey, tokenizer);
       }
     } finally {
       // Always free the encoder when done (important for memory management)
       tokenizer.free();
     }
-  } catch (error) {
-    console.error('Scene extraction error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }
 
 /**

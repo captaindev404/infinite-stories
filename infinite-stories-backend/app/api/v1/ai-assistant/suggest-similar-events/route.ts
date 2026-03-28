@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-interface SimilarEventsRequest {
-  description: string;
-}
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { SuggestSimilarEventsSchema, type SuggestSimilarEventsInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, SuggestSimilarEventsSchema, 'story_generation', async (_user, body: SuggestSimilarEventsInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -15,15 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: SimilarEventsRequest = await request.json();
     const { description } = body;
-
-    if (!description) {
-      return NextResponse.json(
-        { error: 'Description is required' },
-        { status: 400 }
-      );
-    }
 
     const prompt = `Based on this story event description, suggest 3 similar but distinct bedtime story event ideas:
 
@@ -73,11 +63,5 @@ Return only the 3 suggestions separated by | characters, nothing else.`;
       .slice(0, 3);
 
     return NextResponse.json({ suggestions });
-  } catch (error) {
-    console.error('Similar events suggestion error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }

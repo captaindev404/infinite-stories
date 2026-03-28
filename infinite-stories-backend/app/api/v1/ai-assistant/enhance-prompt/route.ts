@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { AIAssistantRequest } from '@/types/openai';
+import { withAuthAndValidation } from '@/lib/api/with-auth';
+import { EnhancePromptSchema, type EnhancePromptInput } from '@/lib/api/schemas';
 
 export async function POST(request: NextRequest) {
-  try {
+  return withAuthAndValidation(request, EnhancePromptSchema, 'story_generation', async (_user, body: EnhancePromptInput) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
@@ -12,15 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: AIAssistantRequest = await request.json();
     const { title, description, category, ageRange, tone } = body;
-
-    if (!title || !description) {
-      return NextResponse.json(
-        { error: 'Title and description are required' },
-        { status: 400 }
-      );
-    }
 
     const prompt = `Enhance this bedtime story event into a detailed, engaging story prompt:
 
@@ -71,11 +64,5 @@ Keep it under 150 words. Focus on creating a vivid, engaging narrative framework
     const enhancedPrompt = data.choices[0].message.content.trim();
 
     return NextResponse.json({ enhancedPrompt });
-  } catch (error) {
-    console.error('Prompt enhancement error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+  });
 }
