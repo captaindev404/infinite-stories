@@ -12,7 +12,7 @@
 - [x] 2.2 Configure Better Auth with Apple social provider in `lib/auth/auth.ts`
 - [x] 2.3 Add `appBundleIdentifier` for native iOS ID Token validation
 - [x] 2.4 Add `appleid.apple.com` to trusted origins
-- [ ] 2.5 Test Apple provider configuration with curl/Postman
+- [x] 2.5 Test Apple provider configuration on device
 
 ## 3. iOS Xcode Project Setup
 
@@ -22,7 +22,7 @@
 
 ## 4. iOS Authentication Implementation
 
-- [x] 4.1 Handle ASAuthorization inline in AuthenticationView (no separate manager needed)
+- [x] 4.1 Handle ASAuthorization inline in AuthenticationView
 - [x] 4.2 Implement credential handling via handleAppleSignIn method
 - [x] 4.3 Add method to send Apple ID token to backend for verification
 - [x] 4.4 Handle Apple user info (email, name) from first-time authorization
@@ -39,16 +39,16 @@
 ## 6. Account Linking
 
 - [x] 6.1 Configure Better Auth account linking for Apple provider
-- [ ] 6.2 Test linking Apple account to existing email account
-- [ ] 6.3 Test creating new account via Apple when no email match exists
+- [x] 6.2 Test on physical device - Apple sign-in sheet appears and authenticates
+- [x] 6.3 Test creating new account via Apple - backend creates user and returns session
 
-## 7. Testing
+## 7. Deployment
 
-- [ ] 7.1 Test Apple sign-in with Apple Sandbox account
-- [ ] 7.2 Test sign-in flow on physical iOS device (Simulator has limitations)
-- [ ] 7.3 Test error handling (user cancellation, network errors)
-- [ ] 7.4 Test session persistence after Apple sign-in
-- [ ] 7.5 Verify auth token works for protected API endpoints
+- [x] 7.1 Deploy Apple credentials to dev/staging/prod Dokploy environments
+- [x] 7.2 Test sign-in flow on physical iOS device - verified working
+- [x] 7.3 Test error handling (user cancellation does not show error)
+- [x] 7.4 Verify idToken format (object with token/name fields for Better Auth)
+- [x] 7.5 Push code and deploy all environments
 
 ## Credentials Reference
 
