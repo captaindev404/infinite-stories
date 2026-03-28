@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+  title: "InfiniteStories -- Personalized Bedtime Stories for Kids",
   description:
     "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
   metadataBase: new URL("https://infinitestories.app"),
   openGraph: {
-    title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+    title: "InfiniteStories -- Personalized Bedtime Stories for Kids",
     description:
       "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
     url: "https://infinitestories.app",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "InfiniteStories — Personalized Bedtime Stories for Kids",
+    title: "InfiniteStories -- Personalized Bedtime Stories for Kids",
     description:
       "Create magical bedtime moments with personalized stories featuring your child as the hero. AI-powered adventures that strengthen the parent-child bond.",
   },
@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
