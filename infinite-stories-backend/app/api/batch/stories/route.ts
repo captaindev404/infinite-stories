@@ -9,6 +9,7 @@ import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma/client';
 import type { PrismaClient } from '@prisma/client';
+import { R2_PUBLIC_URL } from '@/lib/storage/r2-client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,11 +62,10 @@ export async function POST(request: NextRequest) {
             throw new Error('Hero not found or unauthorized');
           }
 
-          // Validate audioUrl if provided — must match R2 storage pattern
+          // Validate audioUrl if provided — must match R2 storage pattern (prevent SSRF)
           let validatedAudioUrl = storyData.audioUrl;
-          if (validatedAudioUrl) {
-            const r2PublicUrl = process.env.R2_PUBLIC_URL || '';
-            if (r2PublicUrl && !validatedAudioUrl.startsWith(r2PublicUrl)) {
+          if (validatedAudioUrl && R2_PUBLIC_URL) {
+            if (!validatedAudioUrl.startsWith(R2_PUBLIC_URL)) {
               throw new Error('Invalid audioUrl: must be a valid storage URL');
             }
           }
