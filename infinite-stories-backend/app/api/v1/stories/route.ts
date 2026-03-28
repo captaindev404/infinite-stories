@@ -8,6 +8,7 @@ import {
   validateRequiredFields,
 } from '@/lib/utils/api-response';
 import { generateStory, extractScenesFromStory } from '@/lib/openai/story-generator';
+import { clampPagination } from '@/lib/api/pagination';
 import { enforceRateLimit, recordApiUsage } from '@/lib/rate-limit/db-rate-limiter';
 import { signStoryUrls, signHeroUrls } from '@/lib/storage/signed-url';
 import type { SupportedLanguage } from '@/lib/openai/client';
@@ -231,8 +232,7 @@ export async function GET(req: NextRequest) {
     const language = searchParams.get('language');
     const isFavorite = searchParams.get('isFavorite') === 'true';
     const updatedAfter = searchParams.get('updatedAfter'); // ISO8601 timestamp for incremental sync
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const { limit, offset } = clampPagination(searchParams.get('limit'), searchParams.get('offset'));
 
     // Build where clause
     const where: any = {

@@ -61,6 +61,15 @@ export async function POST(request: NextRequest) {
             throw new Error('Hero not found or unauthorized');
           }
 
+          // Validate audioUrl if provided — must match R2 storage pattern
+          let validatedAudioUrl = storyData.audioUrl;
+          if (validatedAudioUrl) {
+            const r2PublicUrl = process.env.R2_PUBLIC_URL || '';
+            if (r2PublicUrl && !validatedAudioUrl.startsWith(r2PublicUrl)) {
+              throw new Error('Invalid audioUrl: must be a valid storage URL');
+            }
+          }
+
           const story = await tx.story.create({
             data: {
               heroId: storyData.heroId,
@@ -71,7 +80,7 @@ export async function POST(request: NextRequest) {
               customEventId: storyData.customEventId,
               language: storyData.language || 'en',
               isFavorite: storyData.isFavorite || false,
-              audioUrl: storyData.audioUrl,
+              audioUrl: validatedAudioUrl,
               audioDuration: storyData.audioDuration,
             },
           });

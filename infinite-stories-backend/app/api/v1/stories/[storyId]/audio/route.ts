@@ -127,13 +127,14 @@ export async function POST(
       'Audio generated successfully'
     );
   } catch (error) {
-    // Update story with error
+    // Log full error server-side, store sanitized message in DB
+    console.error('[Audio Generation Error]', error);
     const { storyId } = await params;
     await prisma.story.update({
       where: { id: storyId },
       data: {
         audioGenerationStatus: 'failed',
-        audioGenerationError: (error as Error).message,
+        audioGenerationError: 'Audio generation failed',
       },
     }).catch(() => {});
 

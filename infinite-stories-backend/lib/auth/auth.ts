@@ -26,7 +26,10 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Set to true in production with email service
+    // Email verification deferred: Apple Sign-In (primary auth) verifies emails.
+    // To enable: 1) Add email service (Resend/SendGrid), 2) Set requireEmailVerification: true,
+    // 3) Add verification email template, 4) Update DNS records for sender domain.
+    requireEmailVerification: false,
     minPasswordLength: 8,
     maxPasswordLength: 128,
   },

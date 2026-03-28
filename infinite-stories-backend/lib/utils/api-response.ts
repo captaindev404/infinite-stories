@@ -92,8 +92,13 @@ export function handleApiError(error: unknown): NextResponse<ApiError> {
       return errorResponse('ValidationError', error.message, 400);
     }
 
-    // Generic error with message
-    return errorResponse('InternalServerError', error.message, 500);
+    // Generic error — hide internal details in production
+    const isProduction = process.env.NODE_ENV === 'production';
+    return errorResponse(
+      'InternalServerError',
+      isProduction ? 'An unexpected error occurred' : error.message,
+      500,
+    );
   }
 
   // Unknown error

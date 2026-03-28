@@ -7,6 +7,7 @@ import {
   handleApiError,
   validateRequiredFields,
 } from '@/lib/utils/api-response';
+import { clampPagination } from '@/lib/api/pagination';
 
 /**
  * POST /api/v1/analytics/sessions
@@ -237,11 +238,7 @@ export async function GET(req: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
     const completedParam = searchParams.get('completed');
-    const limit = Math.min(
-      parseInt(searchParams.get('limit') || '50'),
-      100
-    );
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const { limit, offset } = clampPagination(searchParams.get('limit'), searchParams.get('offset'));
 
     // Build where clause
     const where: any = {
@@ -249,6 +246,14 @@ export async function GET(req: NextRequest) {
     };
 
     if (storyId) {
+      // Verify the story belongs to the requesting user (prevent IDOR)
+      const story = await prisma.story.findUnique({
+        where: { id: storyId },
+        select: { userId: true },
+      });
+      if (!story || story.userId !== user.id) {
+        return errorResponse('Forbidden', 'You do not have access to this story', 403);
+      }
       where.storyId = storyId;
     }
 

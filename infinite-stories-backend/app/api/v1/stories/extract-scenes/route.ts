@@ -3,6 +3,8 @@ import type { SceneExtractionRequest, StoryScene } from '@/types/openai';
 import type { StoryTokenizer } from '@/app/utils/tokenizer';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { ExtractScenesSchema, type ExtractScenesInput } from '@/lib/api/schemas';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
 
 interface SceneJSON {
   sceneNumber: number;
@@ -99,11 +101,11 @@ Analyze the following story and identify ALL important scenes for illustration. 
 - Story pacing (distribute scenes evenly throughout)
 - Generate as many illustrations as needed to fully capture the story
 
-Story Context: ${eventContext}
+Story Context: ${wrapUserInput(eventContext)}
 Story Duration: ${Math.floor(storyDuration)} seconds
 
 STORY TEXT:
-${storyContent}
+${wrapUserInput(storyContent)}
 
 INSTRUCTIONS:
 1. Identify ALL key scenes in this story - there is no limit on the number of scenes
@@ -154,7 +156,7 @@ Return your analysis as a JSON object matching this structure:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert at visual storytelling and scene analysis for children\'s books.',
+          content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are an expert at visual storytelling and scene analysis for children's books.`,
         },
         {
           role: 'user',
@@ -168,8 +170,7 @@ Return your analysis as a JSON object matching this structure:
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    return NextResponse.json(error, { status: response.status });
+    return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
   }
 
   const data = await response.json();
@@ -323,11 +324,11 @@ async function extractScenesFromChunk(
   // Modified prompt for chunk processing
   const prompt = `You are analyzing part ${chunkIndex + 1} of ${totalChunks} of a children's bedtime story.
 
-Story Context: ${eventContext}
+Story Context: ${wrapUserInput(eventContext)}
 Chunk Duration: ${Math.floor(chunkDuration)} seconds
 
 STORY CHUNK:
-${chunkText}
+${wrapUserInput(chunkText)}
 
 INSTRUCTIONS:
 1. Identify key scenes in THIS SECTION ONLY
@@ -381,7 +382,7 @@ Return your analysis as a JSON object matching this structure:
       messages: [
         {
           role: 'system',
-          content: 'You are an expert at visual storytelling and scene analysis for children\'s books.',
+          content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are an expert at visual storytelling and scene analysis for children's books.`,
         },
         {
           role: 'user',

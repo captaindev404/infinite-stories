@@ -9,6 +9,7 @@ import {
 import { signHeroUrls, signStoryUrls } from '@/lib/storage/signed-url';
 import { withAuthAndValidation, type AuthUser } from '@/lib/api/with-auth';
 import { CreateHeroSchema, type CreateHeroInput } from '@/lib/api/schemas';
+import { clampPagination } from '@/lib/api/pagination';
 
 /**
  * GET /api/heroes
@@ -34,8 +35,7 @@ export async function GET(req: NextRequest) {
     // Parse query parameters
     const { searchParams } = new URL(req.url);
     const includeStories = searchParams.get('includeStories') === 'true';
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const { limit, offset } = clampPagination(searchParams.get('limit'), searchParams.get('offset'));
     const updatedAfter = searchParams.get('updatedAfter'); // ISO8601 timestamp for incremental sync
 
     // Build where clause
