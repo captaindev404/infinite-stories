@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { AudioGenerateSchema, type AudioGenerateInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
 
 const VOICE_INSTRUCTIONS: Record<string, string> = {
   coral: 'Speak with a warm, gentle, and nurturing tone perfect for bedtime stories. Use a calm and soothing pace with clear pronunciation. Add subtle emotional expressions to bring characters to life while maintaining a peaceful atmosphere that helps children relax and drift off to sleep.',
@@ -55,8 +56,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI TTS error: ${response.status}`));
     }
 
     // Get audio data as buffer

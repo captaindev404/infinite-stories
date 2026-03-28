@@ -5,9 +5,10 @@ import {
   successResponse,
   errorResponse,
   handleApiError,
-  validateRequiredFields,
 } from '@/lib/utils/api-response';
 import { signHeroUrls, signStoryUrls } from '@/lib/storage/signed-url';
+import { withAuthAndValidation, type AuthUser } from '@/lib/api/with-auth';
+import { CreateHeroSchema, type CreateHeroInput } from '@/lib/api/schemas';
 
 /**
  * GET /api/heroes
@@ -111,16 +112,10 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/heroes
- * Create a new hero
+ * Create a new hero (Zod-validated, mass-assignment safe)
  */
 export async function POST(req: NextRequest) {
-  try {
-    // Check authentication
-    const authUser = await requireAuth();
-    if (!authUser) {
-      return errorResponse('Unauthorized', 'Authentication required', 401);
-    }
-
+  return withAuthAndValidation(req, CreateHeroSchema, 'ai_assistant', async (authUser: AuthUser, body: CreateHeroInput) => {
     // Get full user from database
     const user = await prisma.user.findUnique({
       where: { id: authUser.id },
@@ -130,52 +125,20 @@ export async function POST(req: NextRequest) {
       return errorResponse('NotFound', 'User not found', 404);
     }
 
-    const body = await req.json();
-
-    // Validate required fields
-    const validation = validateRequiredFields(body, ['name', 'age', 'traits']);
-    if (!validation.valid) {
-      return errorResponse(
-        'ValidationError',
-        `Missing required fields: ${validation.missing?.join(', ')}`,
-        400
-      );
-    }
-
-    // Validate age
-    if (body.age < 3 || body.age > 12) {
-      return errorResponse(
-        'ValidationError',
-        'Age must be between 3 and 12',
-        400
-      );
-    }
-
-    // Validate traits is an array
-    if (!Array.isArray(body.traits) || body.traits.length === 0) {
-      return errorResponse(
-        'ValidationError',
-        'Traits must be a non-empty array',
-        400
-      );
-    }
-
-    // Create the hero
+    // Create the hero with only allowlisted fields
     const hero = await prisma.hero.create({
       data: {
         name: body.name,
         age: body.age,
         traits: body.traits,
         userId: user.id,
-        hairColor: body.hairColor || null,
-        eyeColor: body.eyeColor || null,
-        skinTone: body.skinTone || null,
-        height: body.height || null,
-        specialAbilities: body.specialAbilities || null,
-        appearance: body.appearance || null,
-        avatarUrl: body.avatarUrl || null,
-        avatarPrompt: body.avatarPrompt || null,
-        avatarGenerationId: body.avatarGenerationId || null,
+        ...(body.hairColor && { hairColor: body.hairColor }),
+        ...(body.eyeColor && { eyeColor: body.eyeColor }),
+        ...(body.skinTone && { skinTone: body.skinTone }),
+        ...(body.height && { height: body.height }),
+        ...(body.specialAbilities && { specialAbilities: body.specialAbilities }),
+        ...(body.appearance && { appearance: body.appearance }),
+        // avatarUrl, avatarPrompt, avatarGenerationId deliberately excluded
       },
       include: {
         visualProfile: true,
@@ -186,7 +149,5 @@ export async function POST(req: NextRequest) {
     const signedHero = await signHeroUrls(hero);
 
     return successResponse(signedHero, 'Hero created successfully', 201);
-  } catch (error) {
-    return handleApiError(error);
-  }
+  });
 }

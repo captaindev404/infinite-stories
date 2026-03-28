@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { GenerateTitleSchema, type GenerateTitleInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, GenerateTitleSchema, 'story_generation', async (_user, body: GenerateTitleInput) => {
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     const prompt = `Generate a short, catchy title (3-6 words) for a custom bedtime story event based on this description:
 
-"${description}"
+${wrapUserInput(description)}
 
 Return only the title, nothing else.`;
 
@@ -32,7 +34,7 @@ Return only the title, nothing else.`;
         messages: [
           {
             role: 'system',
-            content: `You are a creative children's story title generator. Generate titles that are engaging and appropriate for children in ${language}.`,
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are a creative children's story title generator. Generate titles that are engaging and appropriate for children in ${language}.`,
           },
           {
             role: 'user',
@@ -45,8 +47,7 @@ Return only the title, nothing else.`;
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

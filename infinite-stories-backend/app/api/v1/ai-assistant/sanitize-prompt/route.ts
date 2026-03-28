@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SAFE_REWRITER_SYSTEM_PROMPT } from '@/lib/prompts';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { SanitizePromptSchema, type SanitizePromptInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, SanitizePromptSchema, 'story_generation', async (_user, body: SanitizePromptInput) => {
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
           },
           {
             role: 'user',
-            content: prompt,
+            content: wrapUserInput(prompt),
           },
         ],
         max_tokens: 500,
@@ -41,8 +43,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

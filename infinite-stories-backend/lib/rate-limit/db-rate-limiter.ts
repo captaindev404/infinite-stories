@@ -18,27 +18,40 @@ export interface RateLimitResult {
   limit: number;
 }
 
-// Rate limit configurations
-// TODO: move rate limits in config
+/**
+ * Parse an environment variable as a positive integer, returning fallback if invalid.
+ */
+function parseEnvInt(key: string, fallback: number): number {
+  const val = parseInt(process.env[key] || '', 10);
+  if (isNaN(val) || val <= 0) return fallback;
+  return val;
+}
+
+// Rate limit configurations — defaults are safe; override via env vars per environment
 export const RATE_LIMITS: Record<string, RateLimitConfig> = {
   story_generation: {
     operation: 'story_generation',
-    maxRequests: 1000,
+    maxRequests: parseEnvInt('RATE_LIMIT_STORY_GENERATION', 5),
     windowMs: 60 * 60 * 1000, // 1 hour
   },
   audio_generation: {
     operation: 'audio_generation',
-    maxRequests: 1000,
+    maxRequests: parseEnvInt('RATE_LIMIT_AUDIO_GENERATION', 10),
     windowMs: 60 * 60 * 1000, // 1 hour
   },
   avatar_generation: {
     operation: 'avatar_generation',
-    maxRequests: 1000,
+    maxRequests: parseEnvInt('RATE_LIMIT_AVATAR_GENERATION', 3),
     windowMs: 60 * 60 * 1000, // 1 hour
   },
   illustration_generation: {
     operation: 'illustration_generation',
-    maxRequests: 1000,
+    maxRequests: parseEnvInt('RATE_LIMIT_ILLUSTRATION_GENERATION', 20),
+    windowMs: 60 * 60 * 1000, // 1 hour
+  },
+  ai_assistant: {
+    operation: 'ai_assistant',
+    maxRequests: parseEnvInt('RATE_LIMIT_AI_ASSISTANT', 30),
     windowMs: 60 * 60 * 1000, // 1 hour
   },
 };

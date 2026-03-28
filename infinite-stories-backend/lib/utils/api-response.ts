@@ -1,5 +1,16 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * Typed error class for authentication failures.
+ * Ensures auth errors always map to 401, regardless of message wording.
+ */
+export class AuthenticationError extends Error {
+  constructor(message = 'Authentication required') {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
 export interface ApiError {
   error: string;
   message: string;
@@ -52,6 +63,11 @@ export function successResponse<T>(
  */
 export function handleApiError(error: unknown): NextResponse<ApiError> {
   console.error('API Error:', error);
+
+  // Typed authentication errors always return 401
+  if (error instanceof AuthenticationError) {
+    return errorResponse('Unauthorized', error.message, 401);
+  }
 
   if (error instanceof Error) {
     // Handle specific error types

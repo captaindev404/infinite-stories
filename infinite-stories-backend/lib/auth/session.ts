@@ -1,6 +1,7 @@
 import { auth } from "./auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma/client";
+import { AuthenticationError } from "@/lib/utils/api-response";
 
 /**
  * Get the current session from Better Auth
@@ -44,7 +45,7 @@ export async function requireAuthOrThrow() {
   const user = await requireAuth();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    throw new AuthenticationError();
   }
 
   return user;
@@ -57,7 +58,7 @@ export async function getOrCreateUser() {
   const sessionUser = await requireAuth();
 
   if (!sessionUser) {
-    throw new Error("Unauthorized: User not authenticated");
+    throw new AuthenticationError();
   }
 
   // Get user from database
@@ -79,7 +80,7 @@ export async function verifyResourceOwnership(resourceUserId: string) {
   const user = await requireAuth();
 
   if (!user) {
-    throw new Error("Unauthorized: User not authenticated");
+    throw new AuthenticationError();
   }
 
   if (user.id !== resourceUserId) {
@@ -96,7 +97,7 @@ export async function getUserId(): Promise<string> {
   const user = await requireAuth();
 
   if (!user) {
-    throw new Error("Unauthorized: User not authenticated");
+    throw new AuthenticationError();
   }
 
   return user.id;

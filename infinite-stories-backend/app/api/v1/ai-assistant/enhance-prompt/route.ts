@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { EnhancePromptSchema, type EnhancePromptInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, EnhancePromptSchema, 'story_generation', async (_user, body: EnhancePromptInput) => {
@@ -17,11 +19,11 @@ export async function POST(request: NextRequest) {
 
     const prompt = `Enhance this bedtime story event into a detailed, engaging story prompt:
 
-Title: ${title}
-Description: ${description}
-Category: ${category || 'General'}
-Age Range: ${ageRange || '4-10'}
-Tone: ${tone || 'Peaceful'}
+Title: ${wrapUserInput(title)}
+Description: ${wrapUserInput(description)}
+Category: ${wrapUserInput(category || 'General')}
+Age Range: ${wrapUserInput(ageRange || '4-10')}
+Tone: ${wrapUserInput(tone || 'Peaceful')}
 
 Create a rich, detailed story prompt that a storyteller can use to generate an engaging bedtime story. Include:
 - Setting details
@@ -43,7 +45,7 @@ Keep it under 150 words. Focus on creating a vivid, engaging narrative framework
         messages: [
           {
             role: 'system',
-            content: 'You are an expert at crafting detailed story prompts for children\'s bedtime stories.',
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are an expert at crafting detailed story prompts for children's bedtime stories.`,
           },
           {
             role: 'user',
@@ -56,8 +58,7 @@ Keep it under 150 words. Focus on creating a vivid, engaging narrative framework
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

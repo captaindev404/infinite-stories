@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { StoryGenerationResponse } from '@/types/openai';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { StoryGenerateCustomSchema, type StoryGenerateCustomInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, StoryGenerateCustomSchema, 'story_generation', async (_user, body: StoryGenerateCustomInput) => {
@@ -21,20 +23,20 @@ export async function POST(request: NextRequest) {
       hero.appearance || 'lovable appearance'
     }, ${hero.specialAbility || 'warm heart'}`;
 
-    let prompt = `Create a ${targetMinutes}-minute bedtime story for a child about ${hero.name}, who is ${traits}.
+    let prompt = `Create a ${targetMinutes}-minute bedtime story for a child about ${wrapUserInput(hero.name)}, who is ${wrapUserInput(traits)}.
 
-Story context: ${customEvent.promptSeed}`;
+Story context: ${wrapUserInput(customEvent.promptSeed)}`;
 
     // Add keywords if available
     if (customEvent.keywords && customEvent.keywords.length > 0) {
-      prompt += `\n\nPlease include these elements in the story: ${customEvent.keywords.join(', ')}`;
+      prompt += `\n\nPlease include these elements in the story: ${wrapUserInput(customEvent.keywords.join(', '))}`;
     }
 
     // Add tone guidance
-    prompt += `\n\nThe story should have a ${customEvent.tone.toLowerCase()} tone.`;
+    prompt += `\n\nThe story should have a ${wrapUserInput(customEvent.tone.toLowerCase())} tone.`;
 
     // Add age-appropriate guidance
-    prompt += `\nMake sure the story is appropriate for children aged ${customEvent.ageRange}.`;
+    prompt += `\nMake sure the story is appropriate for children aged ${wrapUserInput(customEvent.ageRange)}.`;
 
     prompt += `\n\nIMPORTANT INSTRUCTIONS:
 - Write a complete, flowing story without any formatting markers
@@ -56,7 +58,7 @@ Story context: ${customEvent.promptSeed}`;
         messages: [
           {
             role: 'system',
-            content: `You are a skilled children's bedtime storyteller who creates engaging, age-appropriate stories in ${language}.`,
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are a skilled children's bedtime storyteller who creates engaging, age-appropriate stories in ${language}.`,
           },
           {
             role: 'user',
@@ -69,8 +71,7 @@ Story context: ${customEvent.promptSeed}`;
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

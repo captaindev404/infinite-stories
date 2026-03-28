@@ -161,3 +161,36 @@ export type ExtractScenesInput = z.infer<typeof ExtractScenesSchema>;
 //     (no body — uses heroId from URL params)
 // ──────────────────────────────────────────────
 // This endpoint has no request body. Auth is applied via withAuth (no schema).
+
+// ──────────────────────────────────────────────
+// 14. POST /api/v1/heroes  (create hero — mass assignment prevention)
+// ──────────────────────────────────────────────
+export const CreateHeroSchema = z.object({
+  name: z.string().min(1).max(200),
+  age: z.number().int().min(3).max(12),
+  traits: z.array(z.string().max(100)).min(1).max(20),
+  hairColor: z.string().max(50).optional(),
+  eyeColor: z.string().max(50).optional(),
+  skinTone: z.string().max(50).optional(),
+  height: z.string().max(50).optional(),
+  specialAbilities: z.array(z.string().max(200)).max(10).optional(), // Prisma Json? field
+  appearance: z.string().max(500).optional(),
+  // avatarUrl, avatarPrompt, avatarGenerationId deliberately excluded
+});
+export type CreateHeroInput = z.infer<typeof CreateHeroSchema>;
+
+// ──────────────────────────────────────────────
+// 15. PATCH /api/v1/custom-events/[eventId]  (mass assignment prevention)
+// ──────────────────────────────────────────────
+export const UpdateCustomEventSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(2000).optional(),
+  promptSeed: z.string().min(1).max(2000).optional(),
+  category: z.string().max(100).optional(),
+  ageRange: z.string().max(20).optional(),
+  tone: z.string().max(50).optional(),
+  keywords: z.array(z.string().max(50)).max(20).optional(),
+  isFavorite: z.boolean().optional(),
+  // usageCount and lastUsedAt deliberately excluded
+});
+export type UpdateCustomEventInput = z.infer<typeof UpdateCustomEventSchema>;

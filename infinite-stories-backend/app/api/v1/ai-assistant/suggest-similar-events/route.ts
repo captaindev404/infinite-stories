@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { SuggestSimilarEventsSchema, type SuggestSimilarEventsInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, SuggestSimilarEventsSchema, 'story_generation', async (_user, body: SuggestSimilarEventsInput) => {
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     const prompt = `Based on this story event description, suggest 3 similar but distinct bedtime story event ideas:
 
-"${description}"
+${wrapUserInput(description)}
 
 Each suggestion should be:
 - Different from the original but thematically related
@@ -37,7 +39,7 @@ Return only the 3 suggestions separated by | characters, nothing else.`;
         messages: [
           {
             role: 'system',
-            content: 'You are a creative children\'s story consultant who suggests related story ideas.',
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are a creative children's story consultant who suggests related story ideas.`,
           },
           {
             role: 'user',
@@ -50,8 +52,7 @@ Return only the 3 suggestions separated by | characters, nothing else.`;
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

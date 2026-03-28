@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
 import { getOrCreateUser } from '@/lib/auth/session';
 import { successResponse, errorResponse, handleApiError } from '@/lib/utils/api-response';
+import { withAuthAndValidation, type AuthUser } from '@/lib/api/with-auth';
+import { UpdateCustomEventSchema, type UpdateCustomEventInput } from '@/lib/api/schemas';
 
 /**
  * GET /api/v1/custom-events/[eventId]
@@ -37,16 +39,14 @@ export async function GET(
 
 /**
  * PATCH /api/v1/custom-events/[eventId]
- * Update a custom event
+ * Update a custom event (Zod-validated, mass-assignment safe)
  */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ eventId: string }> }
 ) {
-  try {
-    const user = await getOrCreateUser();
+  return withAuthAndValidation(req, UpdateCustomEventSchema, 'ai_assistant', async (user: AuthUser, body: UpdateCustomEventInput) => {
     const { eventId } = await params;
-    const body = await req.json();
 
     // Get the custom event first to verify ownership
     const existingEvent = await prisma.customStoryEvent.findUnique({
@@ -61,29 +61,7 @@ export async function PATCH(
       return errorResponse('Forbidden', 'You do not have access to this custom event', 403);
     }
 
-    // Validate title length if provided
-    if (body.title !== undefined) {
-      if (body.title.length < 1 || body.title.length > 200) {
-        return errorResponse(
-          'ValidationError',
-          'Title must be between 1 and 200 characters',
-          400
-        );
-      }
-    }
-
-    // Validate promptSeed length if provided
-    if (body.promptSeed !== undefined) {
-      if (body.promptSeed.length < 1 || body.promptSeed.length > 2000) {
-        return errorResponse(
-          'ValidationError',
-          'Prompt seed must be between 1 and 2000 characters',
-          400
-        );
-      }
-    }
-
-    // Update the custom event
+    // Update with only the validated, allowlisted fields
     const updatedEvent = await prisma.customStoryEvent.update({
       where: { id: eventId },
       data: {
@@ -95,15 +73,11 @@ export async function PATCH(
         ...(body.tone !== undefined && { tone: body.tone }),
         ...(body.keywords !== undefined && { keywords: body.keywords }),
         ...(body.isFavorite !== undefined && { isFavorite: body.isFavorite }),
-        ...(body.usageCount !== undefined && { usageCount: body.usageCount }),
-        ...(body.lastUsedAt !== undefined && { lastUsedAt: new Date(body.lastUsedAt) }),
       },
     });
 
     return successResponse(updatedEvent, 'Custom event updated successfully');
-  } catch (error) {
-    return handleApiError(error);
-  }
+  });
 }
 
 /**

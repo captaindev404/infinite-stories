@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { StoryGenerationResponse } from '@/types/openai';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { StoryGenerateSchema, type StoryGenerateInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, StoryGenerateSchema, 'story_generation', async (_user, body: StoryGenerateInput) => {
@@ -22,9 +24,9 @@ export async function POST(request: NextRequest) {
       hero.appearance || 'lovable appearance'
     }, ${hero.specialAbility || 'warm heart'}`;
 
-    const prompt = `Create a ${targetMinutes}-minute bedtime story for a child about ${hero.name}, who is ${traits}.
+    const prompt = `Create a ${targetMinutes}-minute bedtime story for a child about ${wrapUserInput(hero.name)}, who is ${wrapUserInput(traits)}.
 
-Story context: ${event.promptSeed}
+Story context: ${wrapUserInput(event.promptSeed)}
 
 IMPORTANT INSTRUCTIONS:
 - Write a complete, flowing story without any formatting markers
@@ -47,7 +49,7 @@ IMPORTANT INSTRUCTIONS:
         messages: [
           {
             role: 'system',
-            content: `You are a skilled children's bedtime storyteller who creates engaging, age-appropriate stories in ${language}.`,
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are a skilled children's bedtime storyteller who creates engaging, age-appropriate stories in ${language}.`,
           },
           {
             role: 'user',
@@ -60,8 +62,7 @@ IMPORTANT INSTRUCTIONS:
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();

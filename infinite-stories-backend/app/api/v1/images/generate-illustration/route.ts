@@ -3,6 +3,7 @@ import type { ImageGenerationResponse } from '@/types/openai';
 import { SanitizationService, ILLUSTRATION_STYLE_GUIDANCE, buildCharacterConsistencyPrompt } from '@/lib/prompts';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { ImageGenerateIllustrationSchema, type ImageGenerateIllustrationInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, ImageGenerateIllustrationSchema, 'illustration_generation', async (_user, body: ImageGenerateIllustrationInput) => {
@@ -68,8 +69,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI Image API error: ${response.status}`));
     }
 
     const data = await response.json();

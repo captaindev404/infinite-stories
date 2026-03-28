@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuthAndValidation } from '@/lib/api/with-auth';
 import { GenerateKeywordsSchema, type GenerateKeywordsInput } from '@/lib/api/schemas';
+import { sanitizeAIError } from '@/lib/api/ai-errors';
+import { wrapUserInput, UNTRUSTED_INPUT_INSTRUCTION } from '@/lib/api/prompt-safety';
 
 export async function POST(request: NextRequest) {
   return withAuthAndValidation(request, GenerateKeywordsSchema, 'story_generation', async (_user, body: GenerateKeywordsInput) => {
@@ -17,8 +19,8 @@ export async function POST(request: NextRequest) {
 
     const prompt = `Generate 5-8 relevant keywords for this bedtime story event:
 
-Event: ${event}
-Description: ${description}
+Event: ${wrapUserInput(event)}
+Description: ${wrapUserInput(description)}
 
 Keywords should be:
 - Single words or short phrases (1-3 words)
@@ -39,7 +41,7 @@ Return only the keywords separated by commas, nothing else.`;
         messages: [
           {
             role: 'system',
-            content: 'You are an expert at identifying relevant keywords for children\'s stories.',
+            content: `${UNTRUSTED_INPUT_INSTRUCTION}\n\nYou are an expert at identifying relevant keywords for children's stories.`,
           },
           {
             role: 'user',
@@ -52,8 +54,7 @@ Return only the keywords separated by commas, nothing else.`;
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(error, { status: response.status });
+      return sanitizeAIError(new Error(`OpenAI API error: ${response.status}`));
     }
 
     const data = await response.json();
