@@ -5919,7 +5919,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer un Événement Personnalisé"
+            "value" : "Créer un événement"
           }
         },
         "it" : {
@@ -7791,7 +7791,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Événements Personnalisés"
+            "value" : "Mes événements"
           }
         },
         "it" : {
