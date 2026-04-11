@@ -7,12 +7,36 @@
 
 import SwiftUI
 
+/// BUG-24/26/29/30: Centralized text input so every call site gets
+/// accessibility labels, correct text content type, autocorrect disabled
+/// where needed, autocapitalization, and the decorative icon hidden from
+/// VoiceOver — fixing SF-symbol-names-leak-as-a11y-label, password-manager
+/// hijack and identifier autocorrect issues in one place.
 struct MagicalTextField: View {
     let icon: String
     let placeholder: String
     @Binding var text: String
     let isSecure: Bool
     let keyboardType: UIKeyboardType
+
+    /// Explicit VoiceOver label. When nil, we fall back to the placeholder
+    /// so at least something readable is announced (still better than the
+    /// raw SF Symbol name iOS auto-translates into French nonsense).
+    var accessibilityLabel: String? = nil
+
+    /// Maps to `.textContentType(_:)`. Use `.password` for sign-in, `.newPassword`
+    /// for sign-up so iOS doesn't hijack the field with a strong-password prompt
+    /// on existing accounts (BUG-29).
+    var textContentType: UITextContentType? = nil
+
+    /// When true, the field disables autocorrection. Required on emails,
+    /// passwords and identifier-like fields where autocorrect mangles input
+    /// (BUG-30: `test@example.com` -> `test2exq,plz:co,`).
+    var autocorrectionDisabled: Bool = false
+
+    /// Autocapitalization behavior. `.never` for emails/passwords, `.words`
+    /// for names (hero name capitalizes each word like a proper noun).
+    var textInputAutocapitalization: TextInputAutocapitalization? = nil
 
     @State private var isEditing = false
 
@@ -22,39 +46,14 @@ struct MagicalTextField: View {
                 .font(.system(size: 18))
                 .foregroundColor(isEditing ? .accentColor : .secondary)
                 .frame(width: 25)
+                // BUG-26: icon is purely decorative — never let VoiceOver
+                // announce the raw SF Symbol name.
+                .accessibilityHidden(true)
 
             if isSecure {
-                if #available(iOS 18.0, *) {
-                    SecureField(placeholder, text: $text)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .writingToolsBehavior(.disabled)
-                        .onTapGesture {
-                            isEditing = true
-                        }
-                } else {
-                    SecureField(placeholder, text: $text)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .onTapGesture {
-                            isEditing = true
-                        }
-                }
+                secureFieldView
             } else {
-                if #available(iOS 18.0, *) {
-                    TextField(placeholder, text: $text)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .keyboardType(keyboardType)
-                        .writingToolsBehavior(.disabled)
-                        .onTapGesture {
-                            isEditing = true
-                        }
-                } else {
-                    TextField(placeholder, text: $text)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .keyboardType(keyboardType)
-                        .onTapGesture {
-                            isEditing = true
-                        }
-                }
+                plainFieldView
             }
         }
         .padding()
@@ -74,13 +73,103 @@ struct MagicalTextField: View {
             isEditing = false
         }
     }
+
+    // MARK: - Inner field builders
+
+    @ViewBuilder
+    private var secureFieldView: some View {
+        Group {
+            if #available(iOS 18.0, *) {
+                SecureField(placeholder, text: $text)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .writingToolsBehavior(.disabled)
+                    .onTapGesture { isEditing = true }
+            } else {
+                SecureField(placeholder, text: $text)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .onTapGesture { isEditing = true }
+            }
+        }
+        .modifier(
+            SharedTextFieldModifiers(
+                accessibilityLabel: accessibilityLabel ?? placeholder,
+                textContentType: textContentType,
+                autocorrectionDisabled: autocorrectionDisabled,
+                textInputAutocapitalization: textInputAutocapitalization
+            )
+        )
+    }
+
+    @ViewBuilder
+    private var plainFieldView: some View {
+        Group {
+            if #available(iOS 18.0, *) {
+                TextField(placeholder, text: $text)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .keyboardType(keyboardType)
+                    .writingToolsBehavior(.disabled)
+                    .onTapGesture { isEditing = true }
+            } else {
+                TextField(placeholder, text: $text)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .keyboardType(keyboardType)
+                    .onTapGesture { isEditing = true }
+            }
+        }
+        .modifier(
+            SharedTextFieldModifiers(
+                accessibilityLabel: accessibilityLabel ?? placeholder,
+                textContentType: textContentType,
+                autocorrectionDisabled: autocorrectionDisabled,
+                textInputAutocapitalization: textInputAutocapitalization
+            )
+        )
+    }
+}
+
+/// Shared suite of modifiers so TextField and SecureField branches stay in
+/// lockstep without duplicating every single `.textContentType` /
+/// `.autocorrectionDisabled` / `.accessibilityLabel` line.
+private struct SharedTextFieldModifiers: ViewModifier {
+    let accessibilityLabel: String
+    let textContentType: UITextContentType?
+    let autocorrectionDisabled: Bool
+    let textInputAutocapitalization: TextInputAutocapitalization?
+
+    func body(content: Content) -> some View {
+        content
+            .accessibilityLabel(accessibilityLabel)
+            .textContentType(textContentType)
+            .autocorrectionDisabled(autocorrectionDisabled)
+            .textInputAutocapitalization(textInputAutocapitalization)
+    }
 }
 
 #Preview {
     @Previewable @State var text = ""
     VStack(spacing: 16) {
-        MagicalTextField(icon: "envelope", placeholder: "Email", text: $text, isSecure: false, keyboardType: .emailAddress)
-        MagicalTextField(icon: "lock", placeholder: "Password", text: $text, isSecure: true, keyboardType: .default)
+        MagicalTextField(
+            icon: "envelope",
+            placeholder: "Email",
+            text: $text,
+            isSecure: false,
+            keyboardType: .emailAddress,
+            accessibilityLabel: "E-mail",
+            textContentType: .emailAddress,
+            autocorrectionDisabled: true,
+            textInputAutocapitalization: .never
+        )
+        MagicalTextField(
+            icon: "lock",
+            placeholder: "Password",
+            text: $text,
+            isSecure: true,
+            keyboardType: .default,
+            accessibilityLabel: "Mot de passe",
+            textContentType: .password,
+            autocorrectionDisabled: true,
+            textInputAutocapitalization: .never
+        )
     }
     .padding()
 }

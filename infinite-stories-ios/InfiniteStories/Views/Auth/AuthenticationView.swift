@@ -25,7 +25,14 @@ struct AuthenticationView: View {
     }
 
     var body: some View {
-        ZStack {
+        // BUG-10: Wrap in NavigationStack with an empty inline title so iOS
+        // draws a thin opaque `.bar` material above the scroll content. The
+        // `Histoires Infinies` hero text lives inside the ScrollView on
+        // purpose (brand), so we keep an always-visible opaque nav-bar
+        // material above it to prevent the hero from bleeding into the
+        // Dynamic Island / clock when the user scrolls up.
+        NavigationStack {
+            ZStack {
             // System background
             Color(.systemBackground)
                 .ignoresSafeArea()
@@ -40,6 +47,9 @@ struct AuthenticationView: View {
                         Image(systemName: "sparkles.rectangle.stack.fill")
                             .font(.system(size: 60))
                             .foregroundColor(.accentColor)
+                            // BUG-26: decorative header icon; title+subtitle
+                            // already carry the meaningful label.
+                            .accessibilityHidden(true)
 
                         Text("auth.appTitle")
                             .font(.largeTitle)
@@ -92,6 +102,13 @@ struct AuthenticationView: View {
                     .padding(.horizontal, 30)
 
                     // Form fields
+                    // BUG-24/26/29/30: every field now carries an explicit
+                    // accessibility label (matching the visible FR label /
+                    // placeholder), the correct textContentType (so the
+                    // sign-up password gets `.newPassword` instead of
+                    // hijacking the user with the strong-password prompt),
+                    // autocorrect disabled on identifier-like inputs, and
+                    // .never capitalization on email/password.
                     VStack(spacing: 14) {
                         if isSignUp {
                             MagicalTextField(
@@ -99,7 +116,11 @@ struct AuthenticationView: View {
                                 placeholder: String(localized: "auth.field.fullName"),
                                 text: $name,
                                 isSecure: false,
-                                keyboardType: .default
+                                keyboardType: .default,
+                                accessibilityLabel: String(localized: "auth.field.fullName"),
+                                textContentType: .name,
+                                autocorrectionDisabled: false,
+                                textInputAutocapitalization: .words
                             )
                             .focused($focusedField, equals: .name)
                             .submitLabel(.next)
@@ -113,10 +134,13 @@ struct AuthenticationView: View {
                             placeholder: String(localized: "auth.field.email"),
                             text: $email,
                             isSecure: false,
-                            keyboardType: .emailAddress
+                            keyboardType: .emailAddress,
+                            accessibilityLabel: String(localized: "auth.field.email"),
+                            textContentType: .emailAddress,
+                            autocorrectionDisabled: true,
+                            textInputAutocapitalization: .never
                         )
                         .focused($focusedField, equals: .email)
-                        .textInputAutocapitalization(.never)
                         .submitLabel(.next)
                         .onSubmit {
                             focusedField = .password
@@ -127,7 +151,11 @@ struct AuthenticationView: View {
                             placeholder: String(localized: "auth.field.password"),
                             text: $password,
                             isSecure: true,
-                            keyboardType: .default
+                            keyboardType: .default,
+                            accessibilityLabel: String(localized: "auth.field.password"),
+                            textContentType: isSignUp ? .newPassword : .password,
+                            autocorrectionDisabled: true,
+                            textInputAutocapitalization: .never
                         )
                         .focused($focusedField, equals: .password)
                         .submitLabel(isSignUp ? .next : .done)
@@ -145,7 +173,11 @@ struct AuthenticationView: View {
                                 placeholder: String(localized: "auth.field.confirmPassword"),
                                 text: $confirmPassword,
                                 isSecure: true,
-                                keyboardType: .default
+                                keyboardType: .default,
+                                accessibilityLabel: String(localized: "auth.field.confirmPassword"),
+                                textContentType: .newPassword,
+                                autocorrectionDisabled: true,
+                                textInputAutocapitalization: .never
                             )
                             .focused($focusedField, equals: .confirmPassword)
                             .submitLabel(.done)
@@ -169,6 +201,9 @@ struct AuthenticationView: View {
                                     Text(isSignUp ? String(localized: "auth.createAccount.button") : String(localized: "auth.signIn.button"))
                                         .font(.headline)
                                     Image(systemName: "arrow.right.circle.fill")
+                                        // BUG-26: decorative chevron inside
+                                        // a text-labeled button.
+                                        .accessibilityHidden(true)
                                 }
                             }
                         }
@@ -228,6 +263,11 @@ struct AuthenticationView: View {
                 }
             }
             .scrollDismissesKeyboard(.interactively)
+            }
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Material.bar, for: .navigationBar)
         }
         .onAppear {
             // Default to sign-up for new users, sign-in for returning users

@@ -123,6 +123,9 @@ struct HeroCreationView: View {
             Image(systemName: "person.crop.circle.badge.star.fill")
                 .font(.system(size: 60))
                 .foregroundColor(.purple)
+                // BUG-26: decorative header icon; step text already
+                // carries the meaningful label.
+                .accessibilityHidden(true)
 
             Text(String(localized: "hero.creation.header.step", defaultValue: "Step \(currentStep + 1) of \(totalSteps)"))
                 .font(.subheadline)
@@ -153,18 +156,27 @@ struct HeroCreationView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            if #available(iOS 18.0, *) {
-                TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.title2)
-                    .multilineTextAlignment(.center)
-                    .writingToolsBehavior(.disabled)
-            } else {
-                TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.title2)
-                    .multilineTextAlignment(.center)
+            // BUG-24/30: hero name gets an explicit a11y label (the
+            // question sitting above it) plus autocorrect disabled and
+            // .words capitalization so `QA Hero` isn't silently rewritten
+            // to `AQ Hero`.
+            Group {
+                if #available(iOS 18.0, *) {
+                    TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
+                        .textFieldStyle(.roundedBorder)
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                        .writingToolsBehavior(.disabled)
+                } else {
+                    TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
+                        .textFieldStyle(.roundedBorder)
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
             }
+            .accessibilityLabel(String(localized: "hero.creation.name.question"))
+            .autocorrectionDisabled(true)
+            .textInputAutocapitalization(.words)
 
             Text(String(localized: "hero.creation.name.hint"))
                 .font(.subheadline)
@@ -232,14 +244,18 @@ struct HeroCreationView: View {
                     Text(String(localized: "hero.creation.appearance.question", defaultValue: "How does \(heroName) look?"))
                         .font(.headline)
 
-                    if #available(iOS 18.0, *) {
-                        TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
-                            .textFieldStyle(.roundedBorder)
-                            .writingToolsBehavior(.disabled)
-                    } else {
-                        TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
-                            .textFieldStyle(.roundedBorder)
+                    Group {
+                        if #available(iOS 18.0, *) {
+                            TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
+                                .textFieldStyle(.roundedBorder)
+                                .writingToolsBehavior(.disabled)
+                        } else {
+                            TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
+                                .textFieldStyle(.roundedBorder)
+                        }
                     }
+                    // BUG-24: match the visible question above the field.
+                    .accessibilityLabel(String(localized: "hero.creation.appearance.question", defaultValue: "How does \(heroName) look?"))
 
                     Text(String(localized: "hero.creation.appearance.hint"))
                         .font(.caption)
@@ -250,14 +266,18 @@ struct HeroCreationView: View {
                     Text(String(localized: "hero.creation.specialability.question", defaultValue: "What's \(heroName)'s special ability?"))
                         .font(.headline)
 
-                    if #available(iOS 18.0, *) {
-                        TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
-                            .textFieldStyle(.roundedBorder)
-                            .writingToolsBehavior(.disabled)
-                    } else {
-                        TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
-                            .textFieldStyle(.roundedBorder)
+                    Group {
+                        if #available(iOS 18.0, *) {
+                            TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
+                                .textFieldStyle(.roundedBorder)
+                                .writingToolsBehavior(.disabled)
+                        } else {
+                            TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
+                                .textFieldStyle(.roundedBorder)
+                        }
                     }
+                    // BUG-24: match the visible question above the field.
+                    .accessibilityLabel(String(localized: "hero.creation.specialability.question", defaultValue: "What's \(heroName)'s special ability?"))
 
                     Text(String(localized: "hero.creation.specialability.hint"))
                         .font(.caption)
@@ -278,6 +298,9 @@ struct HeroCreationView: View {
             HStack(spacing: 8) {
                 Image(systemName: "info.circle.fill")
                     .foregroundColor(.purple)
+                    // BUG-26: decorative, label is provided by the
+                    // adjacent Text.
+                    .accessibilityHidden(true)
                 Text(String(localized: "hero.creation.avatar.info"))
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -372,6 +395,9 @@ struct AvatarPromptView: View {
                 Image(systemName: "sparkles.rectangle.stack.fill")
                     .font(.system(size: 80))
                     .foregroundColor(.purple)
+                    // BUG-26: decorative — avatar prompt title/subtitle
+                    // already describe the flow.
+                    .accessibilityHidden(true)
 
                 VStack(spacing: 12) {
                     Text(String(localized: "hero.avatar.prompt.title"))
@@ -393,6 +419,9 @@ struct AvatarPromptView: View {
                     } label: {
                         HStack {
                             Image(systemName: "wand.and.stars")
+                                // BUG-26: decorative — button carries a
+                                // text label + explicit accessibilityLabel.
+                                .accessibilityHidden(true)
                             Text(String(localized: "hero.avatar.prompt.button.generate"))
                         }
                         .frame(maxWidth: .infinity)
@@ -492,6 +521,10 @@ struct HeroPreviewCard: View {
                     Image(systemName: "person.circle.fill")
                         .font(.largeTitle)
                         .foregroundColor(.purple)
+                        // BUG-26: decorative avatar stand-in in the hero
+                        // preview; the hero name right next to it is the
+                        // meaningful label.
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(name)

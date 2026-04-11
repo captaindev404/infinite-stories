@@ -287,6 +287,8 @@ struct BasicInfoStepView: View {
                     Image(systemName: "wand.and.stars")
                         .font(.system(size: 60))
                         .foregroundColor(.accentColor)
+                        // BUG-26: decorative step-header icon.
+                        .accessibilityHidden(true)
 
                     Text("customEvent.creation.step1.title")
                         .font(.title2)
@@ -301,21 +303,34 @@ struct BasicInfoStepView: View {
                         .font(.headline)
 
                     HStack {
-                        if #available(iOS 18.0, *) {
-                            TextField("customEvent.creation.step1.eventTitlePlaceholder", text: $title)
-                                .textFieldStyle(.roundedBorder)
-                                .writingToolsBehavior(.disabled)
-                        } else {
-                            TextField("customEvent.creation.step1.eventTitlePlaceholder", text: $title)
-                                .textFieldStyle(.roundedBorder)
+                        // BUG-24/30: title field gets the visible Label
+                        // above it as its a11y label + autocorrect off so
+                        // short identifier-style titles aren't mangled.
+                        Group {
+                            if #available(iOS 18.0, *) {
+                                TextField("customEvent.creation.step1.eventTitlePlaceholder", text: $title)
+                                    .textFieldStyle(.roundedBorder)
+                                    .writingToolsBehavior(.disabled)
+                            } else {
+                                TextField("customEvent.creation.step1.eventTitlePlaceholder", text: $title)
+                                    .textFieldStyle(.roundedBorder)
+                            }
                         }
+                        .accessibilityLabel(Text("customEvent.creation.step1.eventTitle"))
+                        .autocorrectionDisabled(true)
 
                         Button(action: onSuggestTitle) {
                             Image(systemName: "sparkles")
                                 .foregroundColor(.orange)
+                                // BUG-26: decorative — button carries an
+                                // explicit accessibility label below.
+                                .accessibilityHidden(true)
                         }
                         .buttonStyle(.bordered)
                         .disabled(description.isEmpty)
+                        // BUG-26: replace the SF-symbol-name leak with a
+                        // meaningful FR label. TODO: move to xcstrings.
+                        .accessibilityLabel(Text(verbatim: "Suggérer un titre"))
                     }
 
                     Text("customEvent.creation.step1.eventTitleHint")
@@ -403,6 +418,8 @@ struct CategorizationStepView: View {
                     Image(systemName: "tag.circle.fill")
                         .font(.system(size: 60))
                         .foregroundColor(.accentColor)
+                        // BUG-26: decorative step-header icon.
+                        .accessibilityHidden(true)
 
                     Text("customEvent.creation.step2.title")
                         .font(.title2)
@@ -485,6 +502,8 @@ struct AIEnhancementStepView: View {
                     Image(systemName: "sparkles.rectangle.stack")
                         .font(.system(size: 60))
                         .foregroundColor(.accentColor)
+                        // BUG-26: decorative step-header icon.
+                        .accessibilityHidden(true)
 
                     Text("customEvent.creation.step3.title")
                         .font(.title2)
@@ -597,8 +616,13 @@ struct AIEnhancementStepView: View {
                         }) {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundColor(.orange)
+                                // BUG-26: decorative — button has label below.
+                                .accessibilityHidden(true)
                         }
                         .disabled(newKeyword.isEmpty)
+                        // BUG-26: replace SF-symbol leak with FR label.
+                        // TODO: move to xcstrings.
+                        .accessibilityLabel(Text(verbatim: "Ajouter le mot-clé"))
                     }
 
                     // Keyword chips
@@ -644,6 +668,8 @@ struct PreviewStepView: View {
                     Image(systemName: "checkmark.seal.fill")
                         .font(.system(size: 60))
                         .foregroundColor(.green)
+                        // BUG-26: decorative step-header icon.
+                        .accessibilityHidden(true)
 
                     Text("customEvent.creation.step4.title")
                         .font(.title2)

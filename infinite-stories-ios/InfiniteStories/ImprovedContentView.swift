@@ -1032,6 +1032,10 @@ struct AppLogoView: View {
             Image(systemName: "book.pages.fill")
                 .font(.title2)
                 .foregroundColor(.accentColor)
+                // BUG-26: logo glyph is decorative — the adjacent
+                // `home.logo` text already carries the meaningful label.
+                // iOS was auto-reading `Book Pages Fill` / `Relever`.
+                .accessibilityHidden(true)
 
             Text("home.logo")
                 .font(logoFont)
