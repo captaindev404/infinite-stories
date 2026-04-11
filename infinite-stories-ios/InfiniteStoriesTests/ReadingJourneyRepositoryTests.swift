@@ -89,7 +89,7 @@ func createMockMilestones(unlockedCount: Int = 3, totalCount: Int = 10) -> Miles
                 "description": "Listen to your first story",
                 "emoji": "1",
                 "unlocked": true,
-                "unlockedAt": "2024-12-01T10:00:00.000Z",
+                "unlockedAt": "2024-12-01T10:00:00Z",
                 "progress": null,
                 "target": null,
                 "percentage": null
@@ -334,7 +334,24 @@ struct InsightsTests {
         let response = createMockInsights(preferredHour: 20)
         let insights = response.insights
 
-        #expect(insights.formattedPreferredTime.contains("PM") || insights.formattedPreferredTime.contains("8"))
+        // BUG-18: `formattedPreferredTime` now uses `DateFormatter.short` with
+        // the current locale, so the output varies by locale (e.g. "8:00 PM"
+        // in en_US, "20:00" in fr_FR). Build the expected value dynamically
+        // so the test stays locale-independent while still verifying that
+        // hour 20 is rendered via the same short-time formatter.
+        var components = DateComponents()
+        components.hour = 20
+        components.minute = 0
+        let date = Calendar.current.date(from: components)!
+
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        formatter.locale = .current
+        let expected = formatter.string(from: date)
+
+        #expect(insights.formattedPreferredTime == expected)
+        #expect(!insights.formattedPreferredTime.isEmpty)
     }
 
     @Test("formats listening period")
@@ -349,7 +366,12 @@ struct InsightsTests {
     func handlesNilHour() async throws {
         let response = createMockInsights(preferredHour: nil, preferredPeriod: nil)
 
-        #expect(response.insights.formattedPreferredTime == "No data yet")
+        // BUG-18: The "no data" placeholder is now localized via xcstrings,
+        // so compare against the resolved localized string rather than a
+        // hardcoded English literal.
+        let expectedNoData = String(localized: "journey.insights.preferredTime.noData")
+        #expect(response.insights.formattedPreferredTime == expectedNoData)
+        #expect(!response.insights.formattedPreferredTime.isEmpty)
         #expect(response.insights.formattedListeningPeriod == "No pattern yet")
     }
 
