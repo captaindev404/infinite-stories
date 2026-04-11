@@ -20,6 +20,7 @@ struct ReadingJourneyTabContent: View {
     @State private var heroAnalytics: HeroAnalyticsResponse?
     @State private var milestones: MilestonesResponse?
     @State private var insights: InsightsResponse?
+    @State private var heroes: [Hero] = []
     @State private var recentStories: [Story] = []
     @State private var favoriteStories: [Story] = []
 
@@ -34,6 +35,7 @@ struct ReadingJourneyTabContent: View {
     // Repositories
     private let journeyRepository = ReadingJourneyRepository()
     private let storyRepository = StoryRepository()
+    private let heroRepository = HeroRepository()
 
     var body: some View {
         NavigationStack {
@@ -142,7 +144,14 @@ struct ReadingJourneyTabContent: View {
         isLoading = true
         error = nil
 
-        // Load all data concurrently
+        // BUG-19: Fetch heroes first so stories can resolve hero.name client-side.
+        // Backend StoryResponse only returns heroId, not hero.name — without this
+        // preload, every recent activity row shows "Unknown Hero".
+        // TODO(backend): consider embedding hero summary (id, name) in StoryResponse
+        // so the client doesn't need a second round trip for a display value.
+        await loadHeroes()
+
+        // Load remaining data concurrently
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await loadSummary(forceRefresh: forceRefresh) }
             group.addTask { await loadActivityData(range: selectedTimeRange, forceRefresh: forceRefresh) }
@@ -154,6 +163,15 @@ struct ReadingJourneyTabContent: View {
         }
 
         isLoading = false
+    }
+
+    private func loadHeroes() async {
+        do {
+            heroes = try await heroRepository.fetchHeroes()
+            Logger.ui.success("Loaded \(heroes.count) heroes for story matching")
+        } catch {
+            Logger.ui.error("Failed to load heroes for journey: \(error.localizedDescription)")
+        }
     }
 
     private func loadSummary(forceRefresh: Bool) async {
@@ -206,7 +224,8 @@ struct ReadingJourneyTabContent: View {
 
     private func loadRecentStories() async {
         do {
-            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 10, offset: 0)
+            // Pass loaded heroes so StoryRepository can resolve hero.name (BUG-19)
+            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 10, offset: 0, heroes: heroes)
             recentStories = stories
             Logger.ui.success("Loaded \(stories.count) recent stories")
         } catch {
@@ -218,7 +237,7 @@ struct ReadingJourneyTabContent: View {
         do {
             // Fetch stories and filter favorites client-side
             // TODO: Add backend endpoint for favorite stories when available
-            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 50, offset: 0)
+            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 50, offset: 0, heroes: heroes)
             favoriteStories = stories.filter { $0.isFavorite }
             Logger.ui.success("Loaded \(favoriteStories.count) favorite stories")
         } catch {
@@ -259,6 +278,7 @@ struct ReadingJourneyView: View {
     @State private var heroAnalytics: HeroAnalyticsResponse?
     @State private var milestones: MilestonesResponse?
     @State private var insights: InsightsResponse?
+    @State private var heroes: [Hero] = []
     @State private var recentStories: [Story] = []
     @State private var favoriteStories: [Story] = []
 
@@ -273,6 +293,7 @@ struct ReadingJourneyView: View {
     // Repositories
     private let journeyRepository = ReadingJourneyRepository()
     private let storyRepository = StoryRepository()
+    private let heroRepository = HeroRepository()
 
     var body: some View {
         NavigationStack {
@@ -387,7 +408,12 @@ struct ReadingJourneyView: View {
         isLoading = true
         error = nil
 
-        // Load all data concurrently
+        // BUG-19: Fetch heroes first so stories can resolve hero.name client-side.
+        // Backend StoryResponse only returns heroId — without this preload every
+        // recent activity row would show "Unknown Hero".
+        await loadHeroes()
+
+        // Load remaining data concurrently
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await loadSummary(forceRefresh: forceRefresh) }
             group.addTask { await loadActivityData(range: selectedTimeRange, forceRefresh: forceRefresh) }
@@ -399,6 +425,15 @@ struct ReadingJourneyView: View {
         }
 
         isLoading = false
+    }
+
+    private func loadHeroes() async {
+        do {
+            heroes = try await heroRepository.fetchHeroes()
+            Logger.ui.success("Loaded \(heroes.count) heroes for story matching")
+        } catch {
+            Logger.ui.error("Failed to load heroes for journey: \(error.localizedDescription)")
+        }
     }
 
     private func loadSummary(forceRefresh: Bool) async {
@@ -451,7 +486,8 @@ struct ReadingJourneyView: View {
 
     private func loadRecentStories() async {
         do {
-            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 10, offset: 0)
+            // Pass loaded heroes so StoryRepository can resolve hero.name (BUG-19)
+            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 10, offset: 0, heroes: heroes)
             recentStories = stories
             Logger.ui.success("Loaded \(stories.count) recent stories")
         } catch {
@@ -463,7 +499,7 @@ struct ReadingJourneyView: View {
         do {
             // Fetch stories and filter favorites client-side
             // TODO: Add backend endpoint for favorite stories when available
-            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 50, offset: 0)
+            let stories = try await storyRepository.fetchStories(heroId: nil, limit: 50, offset: 0, heroes: heroes)
             favoriteStories = stories.filter { $0.isFavorite }
             Logger.ui.success("Loaded \(favoriteStories.count) favorite stories")
         } catch {
@@ -519,9 +555,15 @@ struct HeaderStatsSection: View {
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 15) {
+            // BUG-20: The underlying metric is `totalStoriesListened` (played stories),
+            // not the count of generated stories. Renaming the label resolves the
+            // inconsistency with "Histoires Uniques Écoutées" and "Écoutes Moyennes
+            // par Histoire". Hardcoded FR literal here — proper xcstrings entry will
+            // land with localization sweep task #5 (BUG-13..18).
+            // TODO(i18n #5): replace with `journey.storiesListened` xcstrings key.
             JourneyStatCard(
                 icon: "book.closed.fill",
-                title: String(localized: "journey.totalStories"),
+                title: "Histoires Écoutées",
                 value: "\(summary?.totalStoriesListened ?? 0)",
                 color: .blue,
                 isLarge: false
