@@ -128,12 +128,6 @@ struct HomeContentView: View {
                 }
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                AppLogoView()
-            }
-        }
         .sheet(isPresented: $showingHeroCreation, onDismiss: {
             Task {
                 await loadData()
