@@ -153,10 +153,6 @@ struct SettingsTabContent: View {
                             }
                             .pickerStyle(.menu)
                         }
-
-                        Text("settings.storyLanguage.footer")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
                     }
                 } header: {
                     Text("settings.storyPreferences")
@@ -619,10 +615,6 @@ struct SettingsView: View {
                                 }
                                 .pickerStyle(.menu)
                             }
-
-                            Text("settings.storyLanguage.footer")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
                         }
                     } header: {
                         Text("settings.storyPreferences")
