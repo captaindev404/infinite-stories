@@ -651,15 +651,30 @@ struct HeroSectionView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
                             ForEach(heroes) { hero in
-                                VStack(spacing: 4) {
-                                    HeroAvatarImageView(hero: hero, size: 40)
+                                // BUG-02: Hero avatar is now a NavigationLink
+                                // so tapping it routes to the hero's detail
+                                // (visual profile) screen instead of being
+                                // an inert AXStaticText element.
+                                NavigationLink {
+                                    HeroVisualProfileView(hero: hero)
+                                } label: {
+                                    VStack(spacing: 4) {
+                                        HeroAvatarImageView(hero: hero, size: 40)
 
-                                    Text(hero.name)
-                                        .font(.caption2)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                        .frame(minWidth: 60, maxWidth: 80)
+                                        Text(hero.name)
+                                            .font(.caption2)
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                            .frame(minWidth: 60, maxWidth: 80)
+                                    }
+                                    .frame(minWidth: 60, minHeight: 44)
+                                    .contentShape(Rectangle())
                                 }
+                                .buttonStyle(.plain)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel(hero.name)
+                                .accessibilityHint(String(localized: "home.hero.open.hint", defaultValue: "Opens \(hero.name)'s profile"))
+                                .accessibilityAddTraits(.isButton)
                             }
                         }
                         .padding(.vertical, 4)
