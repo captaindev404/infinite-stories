@@ -6,6 +6,37 @@
 //
 
 import SwiftUI
+import UIKit
+
+/// Shared in-memory cache for hero avatar images keyed by URL.
+///
+/// SwiftUI's built-in `AsyncImage` does NOT use `URLSession.shared` or
+/// `URLCache.shared`, so every time the view is re-instantiated (e.g. pushing
+/// `StoryGenerationView` while the Home grid already loaded the same avatar)
+/// it transitions through `.empty` and refetches, producing a ~1s spinner.
+///
+/// `HeroAvatarCache` gives us a warm in-process hit: the first successful load
+/// is kept in memory, and every subsequent `HeroAvatarImageView` for the same
+/// URL renders synchronously with no spinner. The underlying `URLSession.shared`
+/// request still benefits from `URLCache.shared` (configured in
+/// `InfiniteStoriesApp`) when the cache entry is evicted.
+final class HeroAvatarCache {
+    static let shared = HeroAvatarCache()
+
+    private let cache = NSCache<NSURL, UIImage>()
+
+    private init() {
+        cache.countLimit = 64
+    }
+
+    func image(for url: URL) -> UIImage? {
+        cache.object(forKey: url as NSURL)
+    }
+
+    func set(_ image: UIImage, for url: URL) {
+        cache.setObject(image, forKey: url as NSURL)
+    }
+}
 
 struct HeroAvatarImageView: View {
     let hero: Hero
@@ -15,6 +46,9 @@ struct HeroAvatarImageView: View {
 
     @State private var showingAvatarGeneration = false
     @State private var imageLoadError = false
+    @State private var loadedImage: UIImage?
+    @State private var isLoading = false
+    @State private var currentURL: URL?
 
     init(hero: Hero, size: CGFloat, showEditButton: Bool = false, onEdit: (() -> Void)? = nil) {
         self.hero = hero
@@ -51,10 +85,9 @@ struct HeroAvatarImageView: View {
 
     @ViewBuilder
     private func avatarImageView(url: URL) -> some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-                image
+        Group {
+            if let image = loadedImage ?? HeroAvatarCache.shared.image(for: url) {
+                Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size, height: size)
@@ -63,16 +96,9 @@ struct HeroAvatarImageView: View {
                         Circle()
                             .stroke(Color.purple.opacity(0.3), lineWidth: 2)
                     )
-
-            case .failure(_):
-                // Show fallback on load error
+            } else if imageLoadError {
                 fallbackAvatarView
-                    .onAppear {
-                        imageLoadError = true
-                    }
-
-            case .empty:
-                // Loading state
+            } else {
                 ZStack {
                     Circle()
                         .fill(Color(.systemGray5))
@@ -81,10 +107,64 @@ struct HeroAvatarImageView: View {
                     ProgressView()
                         .scaleEffect(size > 60 ? 1.2 : 0.8)
                 }
-
-            @unknown default:
-                fallbackAvatarView
             }
+        }
+        .task(id: url) {
+            await loadImage(from: url)
+        }
+    }
+
+    /// Loads the avatar image, preferring the in-memory cache for an instant
+    /// hit. Falls back to a `URLSession.shared` request which itself is backed
+    /// by `URLCache.shared` for warm-disk hits.
+    @MainActor
+    private func loadImage(from url: URL) async {
+        // Hot path: memory cache hit — render synchronously, no spinner.
+        if let cached = HeroAvatarCache.shared.image(for: url) {
+            if currentURL != url || loadedImage == nil {
+                loadedImage = cached
+                imageLoadError = false
+                currentURL = url
+            }
+            return
+        }
+
+        // Avoid re-triggering an in-flight load for the same URL.
+        guard currentURL != url || (loadedImage == nil && !isLoading) else { return }
+        currentURL = url
+        isLoading = true
+        defer { isLoading = false }
+
+        // Local file URLs (legacy avatar storage) — load directly.
+        if url.isFileURL {
+            if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                HeroAvatarCache.shared.set(image, for: url)
+                loadedImage = image
+                imageLoadError = false
+            } else {
+                imageLoadError = true
+            }
+            return
+        }
+
+        // Remote URL: use URLSession.shared so URLCache.shared (configured in
+        // InfiniteStoriesApp) serves warm responses from disk cache.
+        var request = URLRequest(url: url)
+        request.cachePolicy = .returnCacheDataElseLoad
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            guard currentURL == url else { return } // Stale response; ignore.
+            if let image = UIImage(data: data) {
+                HeroAvatarCache.shared.set(image, for: url)
+                loadedImage = image
+                imageLoadError = false
+            } else {
+                imageLoadError = true
+            }
+        } catch {
+            guard currentURL == url else { return }
+            imageLoadError = true
         }
     }
 
