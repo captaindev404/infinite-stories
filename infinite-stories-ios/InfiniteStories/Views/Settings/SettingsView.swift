@@ -23,6 +23,7 @@ struct SettingsTabContent: View {
     @State private var showingDeleteAccountConfirmation = false
     @State private var showingDeleteAccountFinalConfirmation = false
     @State private var showingDeleteAccountError = false
+    @State private var showingSignOutConfirmation = false
     @State private var isDeletingAccount = false
     @State private var showingAuthView = false
     @State private var showingRestartAlert = false
@@ -267,8 +268,9 @@ struct SettingsTabContent: View {
                     }
 
                     if authState.isAuthenticated {
+                        // BUG-04: Require confirmation before sign-out to prevent accidental taps.
                         Button(action: {
-                            authState.signOut()
+                            showingSignOutConfirmation = true
                         }) {
                             HStack {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -400,6 +402,18 @@ struct SettingsTabContent: View {
             } message: {
                 Text("settings.restartRequired.message")
             }
+            // BUG-04: Sign-out confirmation. TODO(task #5 FR sweep): migrate
+            // these literals to Localizable.xcstrings (e.g. `settings.signOut.confirm.*`).
+            .alert(Text("Se déconnecter ?"), isPresented: $showingSignOutConfirmation) {
+                Button(role: .destructive) {
+                    authState.signOut()
+                } label: {
+                    Text("Se déconnecter")
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("Voulez-vous vraiment vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos histoires.")
+            }
         }
     }
 
@@ -504,6 +518,7 @@ struct SettingsView: View {
     @State private var showingDeleteAccountConfirmation = false
     @State private var showingDeleteAccountFinalConfirmation = false
     @State private var showingDeleteAccountError = false
+    @State private var showingSignOutConfirmation = false
     @State private var isDeletingAccount = false
     @State private var showingAuthView = false
     @State private var debugTestUserEmail = "test@example.com"
@@ -721,8 +736,9 @@ struct SettingsView: View {
                     }
 
                     if authState.isAuthenticated {
+                        // BUG-04: Require confirmation before sign-out to prevent accidental taps.
                         Button(action: {
-                            authState.signOut()
+                            showingSignOutConfirmation = true
                         }) {
                             HStack {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -854,6 +870,18 @@ struct SettingsView: View {
                 Button("common.cancel", role: .cancel) { }
             } message: {
                 Text("settings.deleteAccount.error.message")
+            }
+            // BUG-04: Sign-out confirmation. TODO(task #5 FR sweep): migrate
+            // these literals to Localizable.xcstrings (e.g. `settings.signOut.confirm.*`).
+            .alert(Text("Se déconnecter ?"), isPresented: $showingSignOutConfirmation) {
+                Button(role: .destructive) {
+                    authState.signOut()
+                } label: {
+                    Text("Se déconnecter")
+                }
+                Button("common.cancel", role: .cancel) { }
+            } message: {
+                Text("Voulez-vous vraiment vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos histoires.")
             }
         }
     }
