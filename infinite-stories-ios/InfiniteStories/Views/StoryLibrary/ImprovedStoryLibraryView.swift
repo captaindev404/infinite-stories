@@ -219,6 +219,16 @@ struct ImprovedStoryLibraryView: View {
             )
             .glassSheet()
         }
+        .onChange(of: selectedStory) { _, newValue in
+            // BUG-09: when the audio player sheet presents, dismiss bulk-edit
+            // so the floating toolbar cannot bleed over the sheet's navigation bar.
+            if newValue != nil && isEditMode {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isEditMode = false
+                    selectedStories.removeAll()
+                }
+            }
+        }
         .sheet(item: $storyToRegenerate) { story in
             AudioRegenerationView(story: story) {
                 // On completion, play the story
@@ -395,7 +405,6 @@ struct ImprovedStoryLibraryView: View {
 
                     storyCardView(for: story)
                         .opacity(isEditMode && !selectedStories.contains(story.id) ? 0.6 : 1.0)
-                        .allowsHitTesting(!isEditMode || selectedStories.contains(story.id))
                 }
                 .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isEditMode)
             }
@@ -530,7 +539,28 @@ struct ImprovedStoryLibraryView: View {
         StoryCard(
             story: story,
             onTap: {
-                selectedStory = story
+                if isEditMode {
+                    // In selection mode, primary tap toggles selection (standard iOS pattern)
+                    withAnimation(.spring(response: 0.2, dampingFraction: 0.8)) {
+                        if selectedStories.contains(story.id) {
+                            selectedStories.remove(story.id)
+                        } else {
+                            selectedStories.insert(story.id)
+                        }
+                    }
+                } else {
+                    // BUG-03: primary tap always opens the audio player
+                    selectedStory = story
+                }
+            },
+            onLongPress: {
+                // Long-press enters bulk-edit mode and pre-selects this story
+                if !isEditMode {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isEditMode = true
+                        selectedStories.insert(story.id)
+                    }
+                }
             },
             onToggleFavorite: {
                 toggleFavorite(story)

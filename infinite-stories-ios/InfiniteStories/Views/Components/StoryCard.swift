@@ -76,6 +76,7 @@ struct StoryCardDesign {
 struct StoryCard: View {
     let story: Story
     let onTap: () -> Void
+    var onLongPress: (() -> Void)? = nil
     var onToggleFavorite: (() -> Void)? = nil
     var onShare: (() -> Void)? = nil
     var onDelete: (() -> Void)? = nil
@@ -90,6 +91,7 @@ struct StoryCard: View {
     init(
         story: Story,
         onTap: @escaping () -> Void,
+        onLongPress: (() -> Void)? = nil,
         onToggleFavorite: (() -> Void)? = nil,
         onShare: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil,
@@ -103,6 +105,7 @@ struct StoryCard: View {
     ) {
         self.story = story
         self.onTap = onTap
+        self.onLongPress = onLongPress
         self.onToggleFavorite = onToggleFavorite
         self.onShare = onShare
         self.onDelete = onDelete
@@ -115,8 +118,6 @@ struct StoryCard: View {
         self.variant = variant
     }
 
-    @State private var isPressed = false
-    @State private var showingActions = false
     @FocusState private var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityReduceMotion) var reduceMotion
@@ -187,24 +188,24 @@ struct StoryCard: View {
             cardContent
         }
         .buttonStyle(AccessibleCardButtonStyle())
-        .scaleEffect(isPressed ? 0.95 : (isFocused ? 1.02 : 1.0))
+        .scaleEffect(isFocused ? 1.02 : 1.0)
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(isFocused ? Color.blue : Color.clear, lineWidth: 3)
         )
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
-        .animation(reduceMotion ? nil : .spring(response: 0.2, dampingFraction: 0.8), value: isPressed)
         .focusable()
         .focused($isFocused)
-        .onLongPressGesture(minimumDuration: 0.5) {
-            // Haptic feedback
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            showingActions = true
-        } onPressingChanged: { pressing in
-            withAnimation(reduceMotion ? nil : .spring()) {
-                isPressed = pressing
-            }
-        }
+        // Optional long-press to enter selection mode (only when host wires it).
+        // Use a simultaneous gesture so the primary tap on the Button still fires.
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.5)
+                .onEnded { _ in
+                    guard let onLongPress = onLongPress else { return }
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    onLongPress()
+                }
+        )
         .contextMenu {
             if let onToggleFavorite = onToggleFavorite {
                 Button(action: onToggleFavorite) {
@@ -320,12 +321,10 @@ struct StoryCard: View {
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
         .shadow(
-            color: Color.black.opacity(isPressed ? 0.15 : 0.1),
-            radius: isPressed ? 4 : StoryCardDesign.Layout.cardShadowRadius,
-            y: isPressed ? 2 : StoryCardDesign.Layout.cardShadowY
+            color: Color.black.opacity(0.1),
+            radius: StoryCardDesign.Layout.cardShadowRadius,
+            y: StoryCardDesign.Layout.cardShadowY
         )
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
     }
 
     @ViewBuilder
