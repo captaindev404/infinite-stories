@@ -53,20 +53,23 @@ enum StoryGenerationStage: Equatable {
     case completed
     case failed(step: FailedGenerationStep, error: String)
 
+    // BUG-15: progress stage text shown in the StoryGenerationView header
+    // now routes through Localizable.xcstrings so FR users no longer see
+    // "Writing your story..." / "Creating audio narration..." in English.
     var displayText: String {
         switch self {
         case .idle:
             return ""
         case .generatingStory:
-            return "Writing your story..."
+            return String(localized: "story.generation.status.story")
         case .generatingAudio:
-            return "Creating audio narration..."
+            return String(localized: "story.generation.status.audio")
         case .generatingIllustrations:
-            return "Generating illustrations..."
+            return String(localized: "story.generation.status.illustrations")
         case .completed:
-            return "Complete!"
+            return String(localized: "story.generation.status.complete")
         case .failed(let step, _):
-            return "\(step.displayName) failed"
+            return String(format: String(localized: "story.generation.status.failed %@"), step.displayName)
         }
     }
 

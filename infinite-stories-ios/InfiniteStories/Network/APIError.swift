@@ -21,75 +21,80 @@ enum APIError: Error {
 }
 
 extension APIError: LocalizedError {
+    // BUG-13: All error bodies + recovery suggestions now come from
+    // Localizable.xcstrings so FR users stop seeing English copy inside
+    // the otherwise-FR ErrorView (e.g. session-expired card).
     var errorDescription: String? {
         switch self {
         case .networkUnavailable:
-            return "No internet connection. Please connect to WiFi or cellular data to continue."
+            return String(localized: "error.body.noInternet")
 
         case .unauthorized:
-            return "Your session has expired. Please sign in again."
+            return String(localized: "error.body.sessionExpired")
 
         case .forbidden:
-            return "You don't have permission to access this resource."
+            return String(localized: "error.body.forbidden")
 
         case .notFound:
-            return "The requested resource was not found."
+            return String(localized: "error.body.notFound")
 
         case .rateLimitExceeded(let resetAt):
             let formatter = DateFormatter()
             formatter.timeStyle = .short
             formatter.dateStyle = .none
-            return "Rate limit exceeded. Try again at \(formatter.string(from: resetAt))."
+            formatter.locale = .current
+            let time = formatter.string(from: resetAt)
+            return String(format: String(localized: "error.body.rateLimit %@"), time)
 
         case .validationError(let fields):
             let messages = fields.values.joined(separator: ", ")
-            return "Validation error: \(messages)"
+            return String(format: String(localized: "error.body.validation %@"), messages)
 
         case .serverError:
-            return "A server error occurred. Please try again later."
+            return String(localized: "error.body.server")
 
         case .networkError(let error):
-            return "Network connection failed: \(error.localizedDescription)"
+            return String(format: String(localized: "error.body.network %@"), error.localizedDescription)
 
         case .decodingError(let error):
-            return "Failed to process server response: \(error.localizedDescription)"
+            return String(format: String(localized: "error.body.decoding %@"), error.localizedDescription)
 
         case .unknown(let error):
-            return "An unexpected error occurred: \(error.localizedDescription)"
+            return String(format: String(localized: "error.body.unknown %@"), error.localizedDescription)
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .networkUnavailable:
-            return "Check your internet connection and try again."
+            return String(localized: "error.recovery.noInternet")
 
         case .unauthorized:
-            return "Sign in again to continue."
+            return String(localized: "error.recovery.sessionExpired")
 
         case .forbidden:
-            return "Check your account permissions."
+            return String(localized: "error.recovery.forbidden")
 
         case .notFound:
-            return "The item may have been deleted."
+            return String(localized: "error.recovery.notFound")
 
         case .rateLimitExceeded:
-            return "Wait a few minutes before trying again."
+            return String(localized: "error.recovery.rateLimit")
 
         case .validationError:
-            return "Check your input and try again."
+            return String(localized: "error.recovery.validation")
 
         case .serverError:
-            return "Wait a few moments and try again."
+            return String(localized: "error.recovery.server")
 
         case .networkError:
-            return "Check your internet connection and try again."
+            return String(localized: "error.recovery.noInternet")
 
         case .decodingError:
-            return "Please try again or contact support."
+            return String(localized: "error.recovery.decoding")
 
         case .unknown:
-            return "Try again or contact support if the problem persists."
+            return String(localized: "error.recovery.unknown")
         }
     }
 

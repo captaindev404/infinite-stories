@@ -585,9 +585,15 @@ struct CategoryChip: View {
             HStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.caption)
+                // BUG-16: longer FR/EN labels like "Apprendre"/"Learning"
+                // must stay on a single line inside the pill. Limit to one
+                // line and allow shrinking to 75% before truncation.
                 Text(title)
                     .font(.caption)
                     .fontWeight(.medium)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: true, vertical: false)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
@@ -612,9 +618,13 @@ struct StatItem: View {
                 Text(value)
                     .font(.caption)
                     .fontWeight(.semibold)
+                // BUG-16: FR label "Événements" was wrapping mid-word in the
+                // stats bar. Keep on a single line and shrink before truncating.
                 Text(label)
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
         }
     }

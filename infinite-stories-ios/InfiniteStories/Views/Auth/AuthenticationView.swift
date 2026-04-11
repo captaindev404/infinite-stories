@@ -291,7 +291,9 @@ struct AuthenticationView: View {
             Button(action: loginWithTestUser) {
                 HStack {
                     Image(systemName: "person.fill.checkmark")
-                    Text("Login Test User")
+                    // BUG-34: debug helpers are now localized so they don't
+                    // stand out as English inside an otherwise-FR screen.
+                    Text("auth.debug.loginTestUser")
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
@@ -314,7 +316,8 @@ struct AuthenticationView: View {
             Button(action: createTestAccount) {
                 HStack {
                     Image(systemName: "hammer.fill")
-                    Text("Create Test")
+                    // BUG-34: localized debug button label.
+                    Text("auth.debug.createTest")
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }

@@ -690,7 +690,8 @@ struct ListeningActivityChartAPI: View {
 
                 Picker(String(localized: "journey.timeRange"), selection: $selectedTimeRange) {
                     ForEach(TimeRange.allCases) { range in
-                        Text(range.rawValue).tag(range)
+                        // BUG-15: localized range label instead of English rawValue.
+                        Text(range.localizedName).tag(range)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -920,6 +921,18 @@ struct MilestoneCardAPI: View {
         }
     }
 
+    // BUG-15: The backend hands us English milestone titles ("First Story",
+    // "Story Explorer", ...). We can't localize the backend copy inside a
+    // client-only sweep, so we maintain a small client-side mapping keyed on
+    // the stable milestone ID (FIRST_STORY, STORIES_5, etc. — see
+    // infinite-stories-backend/lib/analytics/milestone-definitions.ts) and
+    // fall back to the raw title for any unknown ID.
+    private var localizedTitle: String {
+        let key = "milestone.\(milestone.id).title"
+        let localized = String(localized: String.LocalizationValue(key))
+        return localized == key ? milestone.title : localized
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             ZStack {
@@ -937,7 +950,7 @@ struct MilestoneCardAPI: View {
                 }
             }
 
-            Text(milestone.title)
+            Text(localizedTitle)
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .frame(width: 80)

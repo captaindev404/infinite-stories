@@ -20,17 +20,20 @@ enum EventCategory: String, Codable, CaseIterable {
     case custom = "custom"
     case general = "general"
 
+    // BUG-15: FR users were seeing the English category labels ("Daily Life",
+    // "Learning", etc.) in the category filter pills. The display name now
+    // goes through Localizable.xcstrings so each locale renders its own term.
     var displayName: String {
         switch self {
-        case .daily: return "Daily Life"
-        case .adventure: return "Adventure"
-        case .emotional: return "Emotional Growth"
-        case .learning: return "Learning"
-        case .celebration: return "Celebration"
-        case .challenge: return "Challenge"
-        case .imagination: return "Imagination"
-        case .custom: return "Custom"
-        case .general: return "General"
+        case .daily: return String(localized: "customEvent.category.daily")
+        case .adventure: return String(localized: "customEvent.category.adventure")
+        case .emotional: return String(localized: "customEvent.category.emotional")
+        case .learning: return String(localized: "customEvent.category.learning")
+        case .celebration: return String(localized: "customEvent.category.celebration")
+        case .challenge: return String(localized: "customEvent.category.challenge")
+        case .imagination: return String(localized: "customEvent.category.imagination")
+        case .custom: return String(localized: "customEvent.category.custom")
+        case .general: return String(localized: "customEvent.category.general")
         }
     }
 

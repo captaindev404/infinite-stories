@@ -476,11 +476,13 @@ struct TraitCard: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                Text(trait.rawValue)
+                // BUG-15: show localized trait name/description so FR users
+                // stop seeing the English rawValue (e.g. "Brave" in a FR UI).
+                Text(trait.localizedName)
                     .font(.headline)
                     .fontWeight(.semibold)
 
-                Text(trait.description)
+                Text(trait.localizedDescription)
                     .font(.caption)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
@@ -496,8 +498,8 @@ struct TraitCard: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(trait.rawValue) trait")
-        .accessibilityHint(trait.description)
+        .accessibilityLabel(trait.localizedName)
+        .accessibilityHint(trait.localizedDescription)
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }

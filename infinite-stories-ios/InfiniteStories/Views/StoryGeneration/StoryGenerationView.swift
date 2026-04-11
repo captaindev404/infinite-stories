@@ -581,11 +581,12 @@ struct EventPickerView: View {
                 }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(event.rawValue)
+                            // BUG-15: localized built-in event name / sentence-case description.
+                            Text(event.localizedName)
                                 .font(.headline)
                                 .foregroundColor(.primary)
-                            
-                            Text(event.promptSeed.capitalized)
+
+                            Text(event.promptSeed)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

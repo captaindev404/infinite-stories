@@ -412,19 +412,26 @@ struct Insights: Decodable {
     let totalUniqueStoriesListened: Int
 
     /// Formats the preferred listening hour for display
+    /// BUG-18: Previously hardcoded `h a` which forced English AM/PM inside
+    /// French UI (e.g. "Heure d'Écoute Préférée: 2 PM"). Now uses the current
+    /// user locale with short time style so FR renders "14:00" / "14 h".
     var formattedPreferredTime: String {
-        guard let hour = preferredListeningHour else { return "No data yet" }
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h a"
+        guard let hour = preferredListeningHour else {
+            return String(localized: "journey.insights.preferredTime.noData")
+        }
 
         var components = DateComponents()
         components.hour = hour
+        components.minute = 0
 
         guard let date = Calendar.current.date(from: components) else {
-            return "Around \(hour):00"
+            return "\(hour):00"
         }
 
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        formatter.locale = .current
         return formatter.string(from: date)
     }
 
@@ -486,6 +493,17 @@ enum TimeRange: String, CaseIterable, Identifiable, Hashable {
         case .week: return "week"
         case .month: return "month"
         case .year: return "year"
+        }
+    }
+
+    /// BUG-15: Localized label for the chart range picker. The rawValue is
+    /// kept as the stable API key ("Week", etc.); views should display this
+    /// localized variant instead.
+    var localizedName: String {
+        switch self {
+        case .week: return String(localized: "journey.timeRange.week")
+        case .month: return String(localized: "journey.timeRange.month")
+        case .year: return String(localized: "journey.timeRange.year")
         }
     }
 }

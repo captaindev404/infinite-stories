@@ -132,11 +132,10 @@ struct SettingsTabContent: View {
                             .pickerStyle(.menu)
                         }
 
-                        if let selectedVoice = AppSettings.availableVoices.first(where: { $0.id == settings.preferredVoice }) {
-                            Text(selectedVoice.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
+                        // BUG-15: localized voice description (was hardcoded EN).
+                        Text(AppSettings.localizedVoiceDescription(for: settings.preferredVoice))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -144,7 +143,10 @@ struct SettingsTabContent: View {
                             Picker(String(localized: "settings.language"), selection: $settings.preferredLanguage) {
                                 ForEach(AppSettings.releasedLanguages, id: \.id) { language in
                                     HStack {
-                                        Text(language.name)
+                                        // BUG-15: localized label so FR users see
+                                        // "Anglais"/"Français" instead of the EN
+                                        // language names as the visible value.
+                                        Text(AppSettings.localizedLanguageName(for: language.id))
                                         Text(language.nativeName)
                                             .foregroundColor(.secondary)
                                     }
@@ -600,11 +602,10 @@ struct SettingsView: View {
                                 .pickerStyle(.menu)
                             }
 
-                            if let selectedVoice = AppSettings.availableVoices.first(where: { $0.id == settings.preferredVoice }) {
-                                Text(selectedVoice.description)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+                            // BUG-15: localized voice description.
+                            Text(AppSettings.localizedVoiceDescription(for: settings.preferredVoice))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
@@ -612,7 +613,8 @@ struct SettingsView: View {
                                 Picker(String(localized: "settings.language"), selection: $settings.preferredLanguage) {
                                     ForEach(AppSettings.releasedLanguages, id: \.id) { language in
                                         HStack {
-                                            Text(language.name)
+                                            // BUG-15: localized language name.
+                                            Text(AppSettings.localizedLanguageName(for: language.id))
                                             Text(language.nativeName)
                                                 .foregroundColor(.secondary)
                                         }

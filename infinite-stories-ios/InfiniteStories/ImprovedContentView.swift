@@ -62,7 +62,7 @@ struct HomeContentView: View {
                 homeMainContent
             }
         }
-        .navigationTitle("InfiniteStories")
+        .navigationTitle(String(localized: "app.brand.name"))
         .navigationBarTitleDisplayMode(.large)
         .glassNavigation()
         .task {
@@ -1235,7 +1235,7 @@ struct ImprovedContentView_Preview: View {
                     }
                 }
             }
-            .navigationTitle("InfiniteStories")
+            .navigationTitle(String(localized: "app.brand.name"))
             .navigationBarTitleDisplayMode(.large)
         }
     }

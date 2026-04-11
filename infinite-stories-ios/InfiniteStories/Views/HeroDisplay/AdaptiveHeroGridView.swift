@@ -477,7 +477,8 @@ struct TraitPill: View {
     let color: Color
     
     var body: some View {
-        Text(trait.rawValue)
+        // BUG-15: localized trait name instead of English rawValue.
+        Text(trait.localizedName)
             .font(.caption2)
             .fontWeight(.medium)
             .foregroundColor(.white)

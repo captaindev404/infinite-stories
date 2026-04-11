@@ -129,6 +129,39 @@ final class AppSettings {
         Self.availableLanguages.first { $0.id == preferredLanguage }?.name ?? preferredLanguage
     }
 
+    /// BUG-15: Localized description for a given voice id. Used instead of
+    /// the English `description` field stored in `availableVoices` so French
+    /// users don't see "Warm and nurturing - ideal for bedtime" in a FR UI.
+    static func localizedVoiceDescription(for voiceId: String) -> String {
+        switch voiceId {
+        case "coral":   return String(localized: "settings.voice.coral.description")
+        case "nova":    return String(localized: "settings.voice.nova.description")
+        case "fable":   return String(localized: "settings.voice.fable.description")
+        case "alloy":   return String(localized: "settings.voice.alloy.description")
+        case "echo":    return String(localized: "settings.voice.echo.description")
+        case "onyx":    return String(localized: "settings.voice.onyx.description")
+        case "shimmer": return String(localized: "settings.voice.shimmer.description")
+        default:
+            return availableVoices.first { $0.id == voiceId }?.description ?? ""
+        }
+    }
+
+    /// BUG-15: Localized display name for a story-generation language. The
+    /// stored preference (`English`, `French`, ...) is kept as the stable
+    /// backend key, but the picker renders this localized variant so French
+    /// users see "Anglais"/"Français" rather than the English names.
+    static func localizedLanguageName(for languageId: String) -> String {
+        switch languageId {
+        case "English": return String(localized: "settings.language.english")
+        case "French":  return String(localized: "settings.language.french")
+        case "Spanish": return String(localized: "settings.language.spanish")
+        case "German":  return String(localized: "settings.language.german")
+        case "Italian": return String(localized: "settings.language.italian")
+        default:
+            return availableLanguages.first { $0.id == languageId }?.name ?? languageId
+        }
+    }
+
     /// Reset all settings to defaults
     func resetToDefaults() {
         preferredVoice = "coral"

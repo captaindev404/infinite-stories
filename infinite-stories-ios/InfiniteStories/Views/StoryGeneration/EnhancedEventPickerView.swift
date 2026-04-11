@@ -279,6 +279,7 @@ struct EnhancedEventPickerView: View {
 
         return events.filter { event in
             let matchesSearch = searchText.isEmpty ||
+                event.localizedName.localizedCaseInsensitiveContains(searchText) ||
                 event.rawValue.localizedCaseInsensitiveContains(searchText) ||
                 event.promptSeed.localizedCaseInsensitiveContains(searchText)
 
@@ -352,11 +353,13 @@ struct BuiltInEventCard: View {
                     .frame(width: 40)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(event.rawValue)
+                    // BUG-15: localized event name (FR users were seeing EN).
+                    Text(event.localizedName)
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    Text(event.promptSeed.capitalized)
+                    // BUG-17: plain sentence-case prose instead of Title Case.
+                    Text(event.promptSeed)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(2)
