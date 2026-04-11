@@ -41,17 +41,18 @@ struct HeroCreationView: View {
                     VStack(spacing: 30) {
                         headerView
                         currentStepView
+                            .id(currentStep)
+                            .transition(.opacity)
                     }
                     .padding()
+                    .animation(.easeInOut(duration: 0.2), value: currentStep)
                 }
-                
+
                 // Navigation buttons
                 HStack {
                     if currentStep > 0 {
                         Button(String(localized: "hero.creation.button.back")) {
-                            withAnimation {
-                                currentStep -= 1
-                            }
+                            currentStep -= 1
                         }
                         .buttonStyle(.bordered)
                         .frame(minWidth: 44, minHeight: 44)
@@ -62,12 +63,10 @@ struct HeroCreationView: View {
                     Spacer()
 
                     Button(currentStep == totalSteps - 1 ? (heroToEdit != nil ? String(localized: "hero.creation.button.update") : String(localized: "hero.creation.button.create")) : String(localized: "hero.creation.button.next")) {
-                        withAnimation {
-                            if currentStep == totalSteps - 1 {
-                                saveHero()
-                            } else {
-                                currentStep += 1
-                            }
+                        if currentStep == totalSteps - 1 {
+                            saveHero()
+                        } else {
+                            currentStep += 1
                         }
                     }
                     .buttonStyle(.borderedProminent)
