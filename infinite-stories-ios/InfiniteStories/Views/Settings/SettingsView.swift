@@ -358,6 +358,12 @@ struct SettingsTabContent: View {
             }
             .navigationTitle(String(localized: "settings.title"))
             .navigationBarTitleDisplayMode(.large)
+            // BUG-10: Force the system nav-bar material to be visible so the
+            // large title gets an opaque blur as soon as the Form scrolls
+            // under it. Without this, the title can collapse upward and
+            // bleed onto the Dynamic Island / status bar.
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Material.bar, for: .navigationBar)
             .glassNavigation()
             .confirmationDialog("settings.eraseAllData.confirm.title", isPresented: $showingEraseConfirmation, titleVisibility: .visible) {
                 Button("settings.eraseAllData.confirm.button", role: .destructive) {
@@ -822,6 +828,10 @@ struct SettingsView: View {
             }
             .navigationTitle(String(localized: "settings.title"))
             .navigationBarTitleDisplayMode(.large)
+            // BUG-10: Opaque nav-bar material so the large title doesn't
+            // bleed into the Dynamic Island / status bar on scroll.
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Material.bar, for: .navigationBar)
             .glassNavigation()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

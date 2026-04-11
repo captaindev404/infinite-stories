@@ -53,6 +53,12 @@ struct ReadingJourneyTabContent: View {
             .background(backgroundGradient)
             .navigationTitle(String(localized: "journey.title"))
             .navigationBarTitleDisplayMode(.large)
+            // BUG-10: Force the system nav-bar material to be visible so the
+            // large title + status bar area get an opaque blur as soon as
+            // content scrolls under the nav bar. Without this, the large
+            // title collapses upward and bleeds on top of the Dynamic Island.
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Material.bar, for: .navigationBar)
             .glassNavigation()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -311,6 +317,10 @@ struct ReadingJourneyView: View {
             .background(backgroundGradient)
             .navigationTitle("Reading Journey")
             .navigationBarTitleDisplayMode(.large)
+            // BUG-10: Opaque nav-bar material so the large title doesn't
+            // bleed into the Dynamic Island on scroll.
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Material.bar, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 16) {
