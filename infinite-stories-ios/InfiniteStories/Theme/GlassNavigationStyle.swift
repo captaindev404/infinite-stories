@@ -41,18 +41,23 @@ struct GlassTabBarModifier: ViewModifier {
 
 // MARK: - Glass Tab Morphing Modifier
 
-/// Adds smooth morphing transitions between tab selections on iOS 26+
+/// Adds smooth morphing transitions between tab selections on iOS 26+.
+///
+/// NOTE (BUG-06/BUG-27): Previously this modifier applied an implicit
+/// `.animation(.smooth(duration: 0.3), value: selectedTab)` to the entire
+/// `TabView`. That caused SwiftUI to cross-fade the outgoing and incoming tab
+/// hierarchies for ~0.3s, bleeding the previous tab's content on top of the
+/// new tab (two headers, two sets of cards, and garbled accessibility trees).
+/// The system `TabView` already handles its own selection transition, so this
+/// modifier is intentionally a pass-through until a proper morph effect is
+/// designed. Keeping the type preserves source compatibility with existing
+/// call sites in `MainTabView`.
 struct GlassTabMorphingModifier<Tab: Hashable>: ViewModifier {
     let namespace: Namespace.ID
     let selectedTab: Tab
 
     func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content
-                .animation(.smooth(duration: 0.3), value: selectedTab)
-        } else {
-            content
-        }
+        content
     }
 }
 

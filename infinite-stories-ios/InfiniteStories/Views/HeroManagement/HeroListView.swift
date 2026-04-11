@@ -26,18 +26,25 @@ struct HeroListView: View {
     private let heroRepository = HeroRepository()
 
     var body: some View {
-        Group {
-            if isLoading {
-                ProgressView(String(localized: "hero.list.loading"))
-                    .scaleEffect(1.2)
-            } else if let error = error {
-                ErrorView(error: error, retryAction: {
-                    Task { await loadHeroes() }
-                })
-            } else if heroes.isEmpty {
-                EmptyHeroStateView()
-            } else {
-                heroList
+        ZStack {
+            // Opaque background prevents previous tab's content from
+            // bleeding through during tab-switch transitions (BUG-06).
+            Color(.systemBackground)
+                .ignoresSafeArea()
+
+            Group {
+                if isLoading {
+                    ProgressView(String(localized: "hero.list.loading"))
+                        .scaleEffect(1.2)
+                } else if let error = error {
+                    ErrorView(error: error, retryAction: {
+                        Task { await loadHeroes() }
+                    })
+                } else if heroes.isEmpty {
+                    EmptyHeroStateView()
+                } else {
+                    heroList
+                }
             }
         }
         .navigationTitle(String(localized: "hero.list.title"))
