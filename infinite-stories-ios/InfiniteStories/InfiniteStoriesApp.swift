@@ -150,9 +150,10 @@ struct InfiniteStoriesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            // Check authentication state first
-            if authState.isAuthenticated {
-                // Use tab-based navigation for improved UI
+            // Root view switching (BUG-28): when the session is expired we must
+            // unmount MainTabView entirely so no tab bar, no background refresh,
+            // no authed API call can fire. AuthenticationView covers the screen.
+            if authState.isAuthenticated && !authState.sessionExpired {
                 MainTabView()
                     .preferredColorScheme(themeSettings.themePreference.colorScheme)
                     .environmentObject(themeSettings)

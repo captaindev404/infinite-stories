@@ -31,11 +31,14 @@ struct AuthenticationView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 30) {
+                // BUG-05: spacings/paddings tightened so the debug test-account
+                // row sits inside the 874pt viewport on iPhone 17 Pro without
+                // having to scroll to reach it.
+                VStack(spacing: 20) {
                     // Header
-                    VStack(spacing: 15) {
+                    VStack(spacing: 12) {
                         Image(systemName: "sparkles.rectangle.stack.fill")
-                            .font(.system(size: 70))
+                            .font(.system(size: 60))
                             .foregroundColor(.accentColor)
 
                         Text("auth.appTitle")
@@ -47,7 +50,7 @@ struct AuthenticationView: View {
                             .font(.body)
                             .foregroundColor(.secondary)
                     }
-                    .padding(.top, 40)
+                    .padding(.top, 20)
 
                     // Auth toggle
                     HStack(spacing: 0) {
@@ -89,7 +92,7 @@ struct AuthenticationView: View {
                     .padding(.horizontal, 30)
 
                     // Form fields
-                    VStack(spacing: 20) {
+                    VStack(spacing: 14) {
                         if isSignUp {
                             MagicalTextField(
                                 icon: "person.fill",
@@ -154,7 +157,7 @@ struct AuthenticationView: View {
                     .padding(.horizontal, 30)
 
                     // Action buttons
-                    VStack(spacing: 15) {
+                    VStack(spacing: 12) {
                         // Main auth button
                         Button(action: handleAuthentication) {
                             if viewModel.isLoading {
@@ -210,60 +213,18 @@ struct AuthenticationView: View {
                         .disabled(viewModel.isLoading)
 
                         // Test buttons (development only)
+                        // BUG-05: moved above Apple-sign-in spacing + Spacer so
+                        // they land inside the visible scroll viewport on
+                        // iPhone 17 Pro (874pt) without requiring the user to
+                        // scroll to reach them.
                         #if DEBUG
-                        HStack(spacing: 12) {
-                            // Login with test user
-                            Button(action: loginWithTestUser) {
-                                HStack {
-                                    Image(systemName: "person.fill.checkmark")
-                                    Text("Login Test User")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                                .foregroundColor(.blue)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 12)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.blue.opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .disabled(viewModel.isLoading)
-
-                            // Create new test account
-                            Button(action: createTestAccount) {
-                                HStack {
-                                    Image(systemName: "hammer.fill")
-                                    Text("Create Test")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                }
-                                .foregroundColor(.orange)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 12)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .fill(Color.orange.opacity(0.1))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-                                        )
-                                )
-                            }
-                            .disabled(viewModel.isLoading)
-                        }
-                        .padding(.horizontal, 30)
+                        debugTestAccountButtons
+                            .padding(.top, 4)
                         #endif
                     }
                     .padding(.top, 10)
 
-                    Spacer(minLength: 50)
+                    Spacer(minLength: 30)
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -280,6 +241,61 @@ struct AuthenticationView: View {
             Text(errorMessage)
         }
     }
+
+    #if DEBUG
+    /// Extracted so we can place the debug test-account row wherever we need
+    /// inside the scroll container without duplicating styling (BUG-05).
+    private var debugTestAccountButtons: some View {
+        HStack(spacing: 12) {
+            // Login with test user
+            Button(action: loginWithTestUser) {
+                HStack {
+                    Image(systemName: "person.fill.checkmark")
+                    Text("Login Test User")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                .foregroundColor(.blue)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.blue.opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                        )
+                )
+            }
+            .disabled(viewModel.isLoading)
+
+            // Create new test account
+            Button(action: createTestAccount) {
+                HStack {
+                    Image(systemName: "hammer.fill")
+                    Text("Create Test")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                .foregroundColor(.orange)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.orange.opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                        )
+                )
+            }
+            .disabled(viewModel.isLoading)
+        }
+        .padding(.horizontal, 30)
+    }
+    #endif
 
     private var isFormValid: Bool {
         if isSignUp {
@@ -408,9 +424,22 @@ struct AuthenticationView: View {
         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
         impactFeedback.impactOccurred()
 
-        // Wait a moment for UI to update, then authenticate
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            handleAuthentication()
+        Task {
+            do {
+                let (token, userId) = try await viewModel.signIn(email: "test@example.com", password: "testpass123")
+                await MainActor.run {
+                    authState.signIn(token: token, userId: userId)
+                    let successFeedback = UINotificationFeedbackGenerator()
+                    successFeedback.notificationOccurred(.success)
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    let errorFeedback = UINotificationFeedbackGenerator()
+                    errorFeedback.notificationOccurred(.error)
+                }
+            }
         }
     }
 
@@ -426,9 +455,51 @@ struct AuthenticationView: View {
         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
         impactFeedback.impactOccurred()
 
-        // Wait a moment for UI to update, then authenticate
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            handleAuthentication()
+        Task {
+            do {
+                let (token, userId) = try await viewModel.signUp(
+                    email: "test@example.com",
+                    password: "testpass123",
+                    name: "Test User"
+                )
+                await MainActor.run {
+                    authState.signIn(token: token, userId: userId)
+                    let successFeedback = UINotificationFeedbackGenerator()
+                    successFeedback.notificationOccurred(.success)
+                }
+            } catch AuthenticationError.userAlreadyExists {
+                // BUG-21: backend returned 409/422 USER_ALREADY_EXISTS. Fall
+                // back to a plain sign-in with the same credentials so the
+                // debug button "just works" on re-runs.
+                #if DEBUG
+                print("ℹ️ Create Test: account already exists, falling back to sign-in")
+                #endif
+                do {
+                    let (token, userId) = try await viewModel.signIn(
+                        email: "test@example.com",
+                        password: "testpass123"
+                    )
+                    await MainActor.run {
+                        authState.signIn(token: token, userId: userId)
+                        let successFeedback = UINotificationFeedbackGenerator()
+                        successFeedback.notificationOccurred(.success)
+                    }
+                } catch {
+                    await MainActor.run {
+                        errorMessage = error.localizedDescription
+                        showError = true
+                        let errorFeedback = UINotificationFeedbackGenerator()
+                        errorFeedback.notificationOccurred(.error)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    let errorFeedback = UINotificationFeedbackGenerator()
+                    errorFeedback.notificationOccurred(.error)
+                }
+            }
         }
     }
 }
@@ -744,9 +815,15 @@ class AuthenticationViewModel: ObservableObject {
 
             isAuthenticated = true
             return (token, userId)
-        } else if httpResponse.statusCode == 409 {
+        } else if httpResponse.statusCode == 409 || httpResponse.statusCode == 422 {
+            // Backend may return 409 (legacy) or 422 USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL
+            // for an existing account. Treat both as "user already exists" so the
+            // debug `Create Test` button can fall back to a plain login (BUG-21).
             #if DEBUG
-            print("⚠️ User already exists")
+            print("⚠️ User already exists (status \(httpResponse.statusCode))")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("Sign up conflict body: \(responseString)")
+            }
             #endif
             throw AuthenticationError.userAlreadyExists
         } else {

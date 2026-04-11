@@ -102,6 +102,19 @@ struct MainTabView: View {
         .glassTabBar()
         .glassTabMorphing(namespace: tabNamespace, selectedTab: selectedTab)
         .tint(.accentColor)
+        .onAppear {
+            // BUG-28: after a session-expired → "Se reconnecter" roundtrip we
+            // want the user to land back on the tab they came from.
+            if let restore = authState.pendingRestoreTab {
+                selectedTab = restore
+                authState.pendingRestoreTab = nil
+            }
+        }
+        .onChange(of: selectedTab) { _, newValue in
+            // Track the last user-selected tab so we can restore it after a
+            // forced sign-out (BUG-28).
+            authState.pendingRestoreTab = newValue
+        }
     }
 }
 

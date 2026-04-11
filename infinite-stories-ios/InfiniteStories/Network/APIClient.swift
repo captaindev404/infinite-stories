@@ -142,9 +142,12 @@ class APIClient {
             let error = APIError.from(httpStatusCode: httpResponse.statusCode, data: data)
             Logger.network.error("HTTP error \(httpResponse.statusCode): \(error.localizedDescription)")
 
-            // Handle 401 Unauthorized - clear auth state
+            // Handle 401 Unauthorized - flip the global session-expired flag so
+            // the app root unmounts MainTabView and presents the auth screen
+            // full-screen. This also wipes cookies/keychain so the next sign-in
+            // starts from a clean slate (BUG-28, BUG-35).
             if case .unauthorized = error {
-                await AuthStateManager.shared.signOut()
+                await AuthStateManager.shared.handleSessionExpired()
             }
 
             throw error
