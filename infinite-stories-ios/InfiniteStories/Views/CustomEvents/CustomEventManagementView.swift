@@ -112,11 +112,32 @@ struct CustomEventManagementView: View {
                 }
             }
             .navigationTitle("customEvent.management.title")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 toolbarContent
             }
-            .searchable(text: $searchText, prompt: "customEvent.management.search")
+            // BUG-01 fix: pin search field to a dedicated drawer so it cannot
+            // collapse onto the navigation bar after a child sheet is dismissed.
+            // Previously, after dismissing CustomEventCreationView via "Annuler",
+            // the search bar would go into an "active" state and the entire
+            // navigation chrome (close button, title) would be hidden, trapping
+            // the user. Forcing `.navigationBarDrawer(displayMode: .always)`
+            // keeps the search bar separate from the toolbar so the close button
+            // and title remain visible at all times.
+            //
+            // Manual verification checklist (BUG-01):
+            //   1. Tap purple grid FAB on Home → management sheet opens with title + close button.
+            //   2. Tap "+" → creation sheet opens.
+            //   3. Tap "Annuler" → returns to management sheet; close button + title still visible.
+            //   4. Tap close button → returns to Home.
+            //   5. Repeat with swipe-to-dismiss instead of close button.
+            //   6. Repeat with a category filter pill selected before opening creation.
+            //   7. Repeat after typing into the search field before opening creation.
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "customEvent.management.search"
+            )
             .sheet(isPresented: $showingCreationSheet) {
                 CustomEventCreationView(onEventCreated: { newEvent in
                     customEvents.insert(newEvent, at: 0)
