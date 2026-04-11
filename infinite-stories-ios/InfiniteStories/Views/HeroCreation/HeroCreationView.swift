@@ -56,7 +56,6 @@ struct HeroCreationView: View {
                         }
                         .buttonStyle(.bordered)
                         .frame(minWidth: 44, minHeight: 44)
-                        .accessibilityLabel(String(localized: "hero.creation.accessibility.back"))
                         .accessibilityHint(String(localized: "hero.creation.accessibility.back.hint"))
                     }
 
@@ -72,7 +71,6 @@ struct HeroCreationView: View {
                     .buttonStyle(.borderedProminent)
                     .frame(minWidth: 44, minHeight: 44)
                     .disabled(!canProceed)
-                    .accessibilityLabel(currentStep == totalSteps - 1 ? (heroToEdit != nil ? String(localized: "hero.creation.accessibility.update") : String(localized: "hero.creation.accessibility.create")) : String(localized: "hero.creation.accessibility.next"))
                     .accessibilityHint(currentStep == totalSteps - 1 ? String(localized: "hero.creation.accessibility.save.hint") : String(localized: "hero.creation.accessibility.next.hint"))
                 }
                 .padding()
@@ -125,11 +123,6 @@ struct HeroCreationView: View {
             Image(systemName: "person.crop.circle.badge.star.fill")
                 .font(.system(size: 60))
                 .foregroundColor(.purple)
-            
-            Text(String(localized: "hero.creation.header.title"))
-                .font(.title2)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
 
             Text(String(localized: "hero.creation.header.step", defaultValue: "Step \(currentStep + 1) of \(totalSteps)"))
                 .font(.subheadline)
