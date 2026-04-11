@@ -21134,6 +21134,78 @@
         }
       }
     },
+    "story.card.listens.%lld" : {
+      "comment" : "Story card: number of times the story has been listened to (BUG-33: unified play-count metric across card, stats and VoiceOver)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Anhörungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld listens"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld escuchas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld écoutes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ascolti"
+          }
+        }
+      }
+    },
+    "story.card.listens.accessibility.%lld" : {
+      "comment" : "Story card: VoiceOver label for listen count - must match on-screen label (BUG-33)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Anhörungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listened %lld times"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchado %lld veces"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouté %lld fois"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascoltato %lld volte"
+          }
+        }
+      }
+    },
     "story.edit.alert.discard.message" : {
       "comment" : "Localized string for story.edit.alert.discard.message",
       "extractionState" : "manual",

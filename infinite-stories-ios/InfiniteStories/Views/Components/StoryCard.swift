@@ -487,13 +487,18 @@ struct StoryCard: View {
             }
 
             if story.playCount > 0 {
-                HStack(spacing: 2) {
+                // BUG-33: Use the unified "listens" metric + label across card, stats, and VoiceOver.
+                // Single source of truth: story.playCount, always rendered with the localized
+                // "story.card.listens.%lld" key so kids/parents see one consistent number + word.
+                HStack(spacing: 3) {
                     Image(systemName: "play.circle.fill")
                         .font(.system(size: variant == .compact ? 10 : 11))
-                    Text("\(story.playCount)")
+                    Text("story.card.listens.\(story.playCount)")
                         .font(metadataFont)
+                        .lineLimit(1)
                 }
                 .foregroundColor(.blue)
+                .fixedSize(horizontal: true, vertical: false)
             }
 
             Text(formatSmartDate(story.createdAt))

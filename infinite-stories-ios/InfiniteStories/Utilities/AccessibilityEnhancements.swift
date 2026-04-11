@@ -108,7 +108,9 @@ struct AccessibilityLabelProvider {
         }
         
         if story.playCount > 0 {
-            components.append("Played \(story.playCount) time\(story.playCount == 1 ? "" : "s")")
+            // BUG-33: Keep the VoiceOver announcement consistent with the visible
+            // "Écoutes: N" / "N listens" label shown on the card. One metric, one label.
+            components.append(String(localized: "story.card.listens.accessibility.\(story.playCount)"))
         }
         
         return components.joined(separator: ", ")
