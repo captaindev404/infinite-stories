@@ -6,8 +6,8 @@ import { MILESTONE_DEFINITIONS } from '@/lib/analytics/milestone-definitions';
 // Mock requireAuth before importing the route
 vi.mock('@/lib/auth/session', () => ({
   requireAuth: async () => ({
-    id: 'test-user-id',
-    email: 'test@example.com',
+    id: 'test-user-id-milestones',
+    email: 'test-milestones@example.com',
   }),
 }));
 
@@ -22,8 +22,8 @@ describe('GET /api/v1/analytics/milestones', () => {
     // Create test user
     testUser = await prisma.user.create({
       data: {
-        id: 'test-user-id',
-        email: 'test@example.com',
+        id: 'test-user-id-milestones',
+        email: 'test-milestones@example.com',
         name: 'Test User',
       },
     });

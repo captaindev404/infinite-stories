@@ -21,7 +21,7 @@ import { requireAuth } from '@/lib/auth/session';
 const mockRequireAuth = requireAuth as any;
 
 describe('GET /api/v1/analytics/heroes', () => {
-  const mockUserId = 'test-user-id';
+  const mockUserId = 'test-user-id-heroes';
   const mockHeroId1 = 'hero-1';
   const mockHeroId2 = 'hero-2';
   const mockHeroId3 = 'hero-3';
@@ -64,7 +64,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -81,7 +81,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -162,7 +162,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -223,7 +223,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -343,7 +343,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -379,7 +379,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 
@@ -446,7 +446,7 @@ describe('GET /api/v1/analytics/heroes', () => {
     await prisma.user.create({
       data: {
         id: mockUserId,
-        email: 'test@example.com',
+        email: 'test-heroes@example.com',
       },
     });
 

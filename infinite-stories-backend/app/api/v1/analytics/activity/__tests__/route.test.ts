@@ -5,8 +5,8 @@ import { prisma } from '@/lib/prisma/client';
 // Mock requireAuth before importing the route
 vi.mock('@/lib/auth/session', () => ({
   requireAuth: async () => ({
-    id: 'test-user-id',
-    email: 'test@example.com',
+    id: 'test-user-id-activity',
+    email: 'test-activity@example.com',
   }),
 }));
 
@@ -21,23 +21,23 @@ describe('GET /api/v1/analytics/activity', () => {
   beforeEach(async () => {
     // Clean up any existing test data first (in correct order for FK constraints)
     await prisma.listeningSession.deleteMany({
-      where: { userId: 'test-user-id' },
+      where: { userId: 'test-user-id-activity' },
     });
     await prisma.story.deleteMany({
-      where: { userId: 'test-user-id' },
+      where: { userId: 'test-user-id-activity' },
     });
     await prisma.hero.deleteMany({
-      where: { userId: 'test-user-id' },
+      where: { userId: 'test-user-id-activity' },
     });
     await prisma.user.deleteMany({
-      where: { email: 'test@example.com' },
+      where: { email: 'test-activity@example.com' },
     });
 
     // Create test user
     testUser = await prisma.user.create({
       data: {
-        id: 'test-user-id',
-        email: 'test@example.com',
+        id: 'test-user-id-activity',
+        email: 'test-activity@example.com',
         name: 'Test User',
       },
     });
