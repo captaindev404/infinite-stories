@@ -79,7 +79,11 @@ struct CustomEventDetailView: View {
                         .ignoresSafeArea()
                     VStack(spacing: 12) {
                         ProgressView()
-                        Text(isDeleting ? String(localized: "customEvent.detail.deleting") : String(localized: "customEvent.detail.enhancing"))
+                        Text(isDeleting
+                             ? String(localized: "customEvent.detail.deleting",
+                                      comment: "Overlay label shown while a custom event is being deleted.")
+                             : String(localized: "customEvent.detail.enhancing",
+                                      comment: "Overlay label shown while a custom event is being AI-enhanced."))
                             .font(.caption)
                             .foregroundColor(.white)
                     }
@@ -155,14 +159,17 @@ struct CustomEventDetailView: View {
                 )
 
                 BadgeView(
-                    text: currentEvent.storyTone.displayName,
+                    text: currentEvent.storyTone.localizedName,
                     icon: "waveform",
                     color: .blue
                 )
 
                 if let ageRange = currentEvent.eventAgeRange {
+                    // BUG-L10N-08: was rendering the English rawValue
+                    // ("All Ages"). Route through localizedName so FR users
+                    // see "Tous âges", DE "Alle Altersgruppen", etc.
                     BadgeView(
-                        text: ageRange.rawValue,
+                        text: ageRange.localizedName,
                         icon: "person.2",
                         color: .green
                     )
@@ -181,7 +188,8 @@ struct CustomEventDetailView: View {
         HStack(spacing: 12) {
             if !currentEvent.aiEnhanced {
                 ActionButton(
-                    title: String(localized: "customEvent.detail.actions.enhance"),
+                    title: String(localized: "customEvent.detail.actions.enhance",
+                                  comment: "Custom Event detail: AI Enhance action button title."),
                     icon: "sparkles",
                     color: .purple
                 ) {
@@ -192,7 +200,11 @@ struct CustomEventDetailView: View {
             }
 
             ActionButton(
-                title: currentEvent.isFavorite ? String(localized: "customEvent.detail.actions.unfavorite") : String(localized: "customEvent.detail.actions.favorite"),
+                title: currentEvent.isFavorite
+                       ? String(localized: "customEvent.detail.actions.unfavorite",
+                                comment: "Custom Event detail: Remove favorite action button title.")
+                       : String(localized: "customEvent.detail.actions.favorite",
+                                comment: "Custom Event detail: Add favorite action button title."),
                 icon: currentEvent.isFavorite ? "star.slash" : "star",
                 color: .yellow
             ) {
@@ -207,29 +219,39 @@ struct CustomEventDetailView: View {
 
     private var eventDetailsSection: some View {
         VStack(spacing: 16) {
-            SectionHeader(title: String(localized: "customEvent.detail.section.eventDetails"), icon: "info.circle")
+            SectionHeader(title: String(localized: "customEvent.detail.section.eventDetails",
+                                        comment: "Custom Event detail: Event Details section header."),
+                          icon: "info.circle")
 
             VStack(spacing: 12) {
                 DetailRow(
-                    label: String(localized: "customEvent.detail.field.created"),
+                    label: String(localized: "customEvent.detail.field.created",
+                                  comment: "Custom Event detail: Created timestamp field label."),
                     value: currentEvent.createdAt.formatted(date: .abbreviated, time: .shortened)
                 )
 
                 if let lastUsed = currentEvent.lastUsedAt {
                     DetailRow(
-                        label: String(localized: "customEvent.detail.field.lastUsed"),
+                        label: String(localized: "customEvent.detail.field.lastUsed",
+                                      comment: "Custom Event detail: Last used timestamp field label."),
                         value: lastUsed.formatted(date: .abbreviated, time: .shortened)
                     )
                 }
 
                 DetailRow(
-                    label: String(localized: "customEvent.detail.field.aiEnhanced"),
-                    value: currentEvent.aiEnhanced ? String(localized: "customEvent.detail.field.yes") : String(localized: "customEvent.detail.field.no"),
+                    label: String(localized: "customEvent.detail.field.aiEnhanced",
+                                  comment: "Custom Event detail: AI enhanced status field label."),
+                    value: currentEvent.aiEnhanced
+                           ? String(localized: "customEvent.detail.field.yes",
+                                    comment: "Custom Event detail: Yes value for AI enhanced flag.")
+                           : String(localized: "customEvent.detail.field.no",
+                                    comment: "Custom Event detail: No value for AI enhanced flag."),
                     valueColor: currentEvent.aiEnhanced ? .green : .secondary
                 )
 
                 DetailRow(
-                    label: String(localized: "customEvent.detail.field.lastUpdated"),
+                    label: String(localized: "customEvent.detail.field.lastUpdated",
+                                  comment: "Custom Event detail: Last updated timestamp field label."),
                     value: currentEvent.updatedAt.formatted(date: .abbreviated, time: .shortened)
                 )
             }
@@ -243,19 +265,23 @@ struct CustomEventDetailView: View {
 
     private var statisticsSection: some View {
         VStack(spacing: 16) {
-            SectionHeader(title: String(localized: "customEvent.detail.section.statistics"), icon: "chart.bar")
+            SectionHeader(title: String(localized: "customEvent.detail.section.statistics",
+                                        comment: "Custom Event detail: Statistics section header."),
+                          icon: "chart.bar")
 
             HStack(spacing: 16) {
                 EventStatCard(
                     value: "\(currentEvent.usageCount)",
-                    label: String(localized: "customEvent.detail.stats.timesUsed"),
+                    label: String(localized: "customEvent.detail.stats.timesUsed",
+                                  comment: "Custom Event detail: Times used stat label."),
                     icon: "book.pages",
                     color: .blue
                 )
 
                 EventStatCard(
                     value: currentEvent.timeSinceCreation,
-                    label: String(localized: "customEvent.detail.stats.age"),
+                    label: String(localized: "customEvent.detail.stats.age",
+                                  comment: "Custom Event detail: Age/time-since-creation stat label."),
                     icon: "clock",
                     color: .green
                 )
@@ -267,7 +293,9 @@ struct CustomEventDetailView: View {
 
     private var keywordsSection: some View {
         VStack(spacing: 12) {
-            SectionHeader(title: String(localized: "customEvent.detail.section.keywords"), icon: "tag")
+            SectionHeader(title: String(localized: "customEvent.detail.section.keywords",
+                                        comment: "Custom Event detail: Keywords section header."),
+                          icon: "tag")
 
             FlowLayout(spacing: 8) {
                 ForEach(currentEvent.keywords, id: \.self) { keyword in
@@ -281,7 +309,9 @@ struct CustomEventDetailView: View {
 
     private var promptSeedSection: some View {
         VStack(spacing: 12) {
-            SectionHeader(title: String(localized: "customEvent.detail.section.prompt"), icon: "text.bubble")
+            SectionHeader(title: String(localized: "customEvent.detail.section.prompt",
+                                        comment: "Custom Event detail: Prompt seed section header."),
+                          icon: "text.bubble")
 
             Text(currentEvent.promptSeed)
                 .font(.body)
@@ -297,7 +327,9 @@ struct CustomEventDetailView: View {
 
     private var dangerZone: some View {
         VStack(spacing: 12) {
-            SectionHeader(title: String(localized: "customEvent.detail.section.dangerZone"), icon: "exclamationmark.triangle")
+            SectionHeader(title: String(localized: "customEvent.detail.section.dangerZone",
+                                        comment: "Custom Event detail: Danger Zone section header."),
+                          icon: "exclamationmark.triangle")
                 .foregroundColor(.red)
 
             Button {

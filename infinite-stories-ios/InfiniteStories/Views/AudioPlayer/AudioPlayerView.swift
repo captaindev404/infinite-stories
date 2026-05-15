@@ -74,24 +74,29 @@ struct AudioPlayerView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.orange)
 
-            Text(String(localized: "audio.player.error.missing.title"))
+            Text(String(localized: "audio.player.error.missing.title",
+                        comment: "Audio player: missing story error title."))
                 .font(.headline)
 
-            Text(String(localized: "audio.player.error.missing.message"))
+            Text(String(localized: "audio.player.error.missing.message",
+                        comment: "Audio player: missing story error body message."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Button(String(localized: "audio.player.button.close")) {
+            Button(String(localized: "audio.player.button.close",
+                          comment: "Audio player: Close button.")) {
                 dismiss()
             }
             .buttonStyle(.borderedProminent)
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(String(localized: "audio.player.title"))
+        .navigationTitle(String(localized: "audio.player.title",
+                                comment: "Audio player: Navigation title."))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(String(localized: "audio.player.button.done")) {
+                Button(String(localized: "audio.player.button.done",
+                              comment: "Audio player: Done button.")) {
                     dismiss()
                 }
             }
@@ -186,11 +191,13 @@ struct AudioPlayerView: View {
                                 .font(.system(size: 60))
                                 .foregroundColor(.gray.opacity(0.5))
 
-                            Text(String(localized: "audio.player.illustrations.none.title"))
+                            Text(String(localized: "audio.player.illustrations.none.title",
+                                        comment: "Audio player: Title shown when no illustrations are available."))
                                 .font(.headline)
                                 .foregroundColor(.secondary)
 
-                            Text(String(localized: "audio.player.illustrations.none.message"))
+                            Text(String(localized: "audio.player.illustrations.none.message",
+                                        comment: "Audio player: Body message shown when no illustrations are available."))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -212,7 +219,9 @@ struct AudioPlayerView: View {
                                 .fixedSize(horizontal: false, vertical: true)
 
                             if let hero = currentStory.hero {
-                                Text(String(localized: "audio.player.featuring.\(hero.name)"))
+                                Text(String(format: String(localized: "audio.player.featuring.%@",
+                                                           comment: "Audio player: Featuring hero label. %@ is the hero's name."),
+                                            hero.name))
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
@@ -234,7 +243,11 @@ struct AudioPlayerView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: showIllustrations ? "photo.fill" : "photo")
                                             .font(.system(size: 14))
-                                        Text(showIllustrations ? String(localized: "audio.player.button.hide") : String(localized: "audio.player.button.show"))
+                                        Text(showIllustrations
+                                             ? String(localized: "audio.player.button.hide",
+                                                      comment: "Audio player: Hide illustrations button label.")
+                                             : String(localized: "audio.player.button.show",
+                                                      comment: "Audio player: Show illustrations button label."))
                                             .font(.caption)
                                     }
                                     .foregroundColor(showIllustrations ? .orange : .secondary)
@@ -265,14 +278,22 @@ struct AudioPlayerView: View {
                             // Story Info
                             HStack(spacing: 12) {
                                 if !currentStory.content.isEmpty {
-                                    Label(String(localized: "audio.player.words.\(wordCount)"), systemImage: "text.word.spacing")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Label("\(currentStory.playCount)", systemImage: "play.circle")
+                                    Label(
+                                        currentStory.localizedWordCountLabel,
+                                        systemImage: "text.word.spacing"
+                                    )
                                     .font(.caption)
                                     .foregroundColor(.secondary)
+                                }
+
+                                // BUG-A29: give the listen count an explicit
+                                // label ("5 écoutes") instead of a bare number.
+                                Label(
+                                    currentStory.localizedPlayCountLabel,
+                                    systemImage: "play.circle"
+                                )
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -338,8 +359,16 @@ struct AudioPlayerView: View {
                                 }
                                 .scaleEffect(previousButtonPressed ? 0.9 : 1.0)
                                 .disabled(!canGoToPrevious && viewModel.duration == 0)
-                                .accessibilityLabel(viewModel.isQueueMode ? String(localized: "audio.player.button.previous") : String(localized: "audio.player.button.restart"))
-                                .accessibilityHint(viewModel.isQueueMode ? String(localized: "audio.player.previous.hint") : String(localized: "audio.player.restart.hint"))
+                                .accessibilityLabel(viewModel.isQueueMode
+                                                    ? String(localized: "audio.player.button.previous",
+                                                             comment: "Audio player: Previous story button accessibility label.")
+                                                    : String(localized: "audio.player.button.restart",
+                                                             comment: "Audio player: Restart current story button accessibility label."))
+                                .accessibilityHint(viewModel.isQueueMode
+                                                   ? String(localized: "audio.player.previous.hint",
+                                                            comment: "Audio player: Previous story button hint.")
+                                                   : String(localized: "audio.player.restart.hint",
+                                                            comment: "Audio player: Restart button hint."))
                                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
                                     withAnimation(.easeInOut(duration: 0.1)) {
                                         previousButtonPressed = pressing
@@ -359,8 +388,10 @@ struct AudioPlayerView: View {
                                 }
                                 .scaleEffect(skipBackwardPressed ? 0.9 : 1.0)
                                 .disabled(viewModel.duration == 0)
-                                .accessibilityLabel(String(localized: "audio.player.skip.back.label"))
-                                .accessibilityHint(String(localized: "audio.player.skip.back.hint"))
+                                .accessibilityLabel(String(localized: "audio.player.skip.back.label",
+                                                           comment: "Audio player: Skip back 15 seconds accessibility label."))
+                                .accessibilityHint(String(localized: "audio.player.skip.back.hint",
+                                                          comment: "Audio player: Skip back hint."))
                                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
                                     withAnimation(.easeInOut(duration: 0.1)) {
                                         skipBackwardPressed = pressing
@@ -386,8 +417,16 @@ struct AudioPlayerView: View {
                                 }
                                 .scaleEffect(playButtonPressed ? 0.95 : 1.0)
                                 .animation(.spring(response: 0.2, dampingFraction: 0.8), value: playButtonPressed)
-                                .accessibilityLabel(viewModel.isPlaying ? String(localized: "audio.player.button.pause") : String(localized: "audio.player.button.play"))
-                                .accessibilityHint(viewModel.isPlaying ? String(localized: "audio.player.pause.hint") : String(localized: "audio.player.play.hint"))
+                                .accessibilityLabel(viewModel.isPlaying
+                                                    ? String(localized: "audio.player.button.pause",
+                                                             comment: "Audio player: Pause button accessibility label.")
+                                                    : String(localized: "audio.player.button.play",
+                                                             comment: "Audio player: Play button accessibility label."))
+                                .accessibilityHint(viewModel.isPlaying
+                                                   ? String(localized: "audio.player.pause.hint",
+                                                            comment: "Audio player: Pause button hint.")
+                                                   : String(localized: "audio.player.play.hint",
+                                                            comment: "Audio player: Play button hint."))
                                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
                                     withAnimation(.easeInOut(duration: 0.1)) {
                                         playButtonPressed = pressing
@@ -409,8 +448,10 @@ struct AudioPlayerView: View {
                                 }
                                 .scaleEffect(skipForwardPressed ? 0.9 : 1.0)
                                 .disabled(viewModel.duration == 0)
-                                .accessibilityLabel(String(localized: "audio.player.skip.forward.label"))
-                                .accessibilityHint(String(localized: "audio.player.skip.forward.hint"))
+                                .accessibilityLabel(String(localized: "audio.player.skip.forward.label",
+                                                           comment: "Audio player: Skip forward 15 seconds accessibility label."))
+                                .accessibilityHint(String(localized: "audio.player.skip.forward.hint",
+                                                          comment: "Audio player: Skip forward hint."))
                                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
                                     withAnimation(.easeInOut(duration: 0.1)) {
                                         skipForwardPressed = pressing
@@ -432,8 +473,10 @@ struct AudioPlayerView: View {
                                 }
                                 .scaleEffect(nextButtonPressed ? 0.9 : 1.0)
                                 .disabled(!canGoToNext)
-                                .accessibilityLabel(String(localized: "audio.player.button.next"))
-                                .accessibilityHint(String(localized: "audio.player.next.hint"))
+                                .accessibilityLabel(String(localized: "audio.player.button.next",
+                                                           comment: "Audio player: Next story button accessibility label."))
+                                .accessibilityHint(String(localized: "audio.player.next.hint",
+                                                          comment: "Audio player: Next story button hint."))
                                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
                                     withAnimation(.easeInOut(duration: 0.1)) {
                                         nextButtonPressed = pressing
@@ -449,7 +492,8 @@ struct AudioPlayerView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: "exclamationmark.circle.fill")
                                             .font(.caption)
-                                        Text(String(localized: "audio.player.audio.outdated"))
+                                        Text(String(localized: "audio.player.audio.outdated",
+                                                    comment: "Audio player: Label shown when the cached audio is outdated and should be regenerated."))
                                             .font(.caption2)
                                     }
                                     .foregroundColor(.orange)
@@ -461,12 +505,27 @@ struct AudioPlayerView: View {
 
                                 // Speed Control
                                 Menu {
-                                    Button(String(localized: "audio.player.speed.0.5x")) { viewModel.setPlaybackSpeed(0.5) }
-                                    Button(String(localized: "audio.player.speed.0.75x")) { viewModel.setPlaybackSpeed(0.75) }
-                                    Button(String(localized: "audio.player.speed.1.0x")) { viewModel.setPlaybackSpeed(1.0) }
-                                    Button(String(localized: "audio.player.speed.1.25x")) { viewModel.setPlaybackSpeed(1.25) }
-                                    Button(String(localized: "audio.player.speed.1.5x")) { viewModel.setPlaybackSpeed(1.5) }
-                                    Button(String(localized: "audio.player.speed.2.0x")) { viewModel.setPlaybackSpeed(2.0) }
+                                    // NOTE: catalog state for these keys is missing
+                                    // (not yet translated). Default values kept as the
+                                    // universal speed labels. See Task #86 report.
+                                    Button(String(localized: "audio.player.speed.0.5x",
+                                                  defaultValue: "0.5x",
+                                                  comment: "Audio player: 0.5x playback speed menu item.")) { viewModel.setPlaybackSpeed(0.5) }
+                                    Button(String(localized: "audio.player.speed.0.75x",
+                                                  defaultValue: "0.75x",
+                                                  comment: "Audio player: 0.75x playback speed menu item.")) { viewModel.setPlaybackSpeed(0.75) }
+                                    Button(String(localized: "audio.player.speed.1.0x",
+                                                  defaultValue: "1.0x",
+                                                  comment: "Audio player: 1.0x (normal) playback speed menu item.")) { viewModel.setPlaybackSpeed(1.0) }
+                                    Button(String(localized: "audio.player.speed.1.25x",
+                                                  defaultValue: "1.25x",
+                                                  comment: "Audio player: 1.25x playback speed menu item.")) { viewModel.setPlaybackSpeed(1.25) }
+                                    Button(String(localized: "audio.player.speed.1.5x",
+                                                  defaultValue: "1.5x",
+                                                  comment: "Audio player: 1.5x playback speed menu item.")) { viewModel.setPlaybackSpeed(1.5) }
+                                    Button(String(localized: "audio.player.speed.2.0x",
+                                                  defaultValue: "2.0x",
+                                                  comment: "Audio player: 2.0x playback speed menu item.")) { viewModel.setPlaybackSpeed(2.0) }
                                 } label: {
                                     HStack(spacing: 4) {
                                         Image(systemName: "speedometer")
@@ -490,7 +549,8 @@ struct AudioPlayerView: View {
                                 }) {
                                     HStack(spacing: 4) {
                                         Image(systemName: "stop.fill")
-                                        Text(String(localized: "audio.player.button.stop"))
+                                        Text(String(localized: "audio.player.button.stop",
+                                                    comment: "Audio player: Stop button label."))
                                     }
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
@@ -500,10 +560,16 @@ struct AudioPlayerView: View {
                                     .background(Color(.systemGray6))
                                     .cornerRadius(8)
                                 }
-                                .opacity((viewModel.isPlaying || viewModel.isPaused) ? 1.0 : 0.5)
-                                .disabled(!(viewModel.isPlaying || viewModel.isPaused))
-                                .accessibilityLabel(String(localized: "audio.player.stop.label"))
-                                .accessibilityHint(String(localized: "audio.player.stop.hint"))
+                                // BUG-A13: Button was permanently disabled because
+                                // the playing/paused flags never both reflected "has
+                                // loaded audio". Enable whenever a story is loaded;
+                                // stopAudio() is a no-op when nothing is playing.
+                                .opacity(viewModel.currentStory != nil ? 1.0 : 0.5)
+                                .disabled(viewModel.currentStory == nil)
+                                .accessibilityLabel(String(localized: "audio.player.stop.label",
+                                                           comment: "Audio player: Stop button accessibility label."))
+                                .accessibilityHint(String(localized: "audio.player.stop.hint",
+                                                          comment: "Audio player: Stop button hint."))
                             }
                             .padding(.horizontal, 20)
                     }
@@ -514,7 +580,8 @@ struct AudioPlayerView: View {
                                     HStack {
                                         Image(systemName: "text.book.closed")
                                             .font(.caption)
-                                        Text(String(localized: "audio.player.story.text"))
+                                        Text(String(localized: "audio.player.story.text",
+                                                    comment: "Audio player: Story text section header."))
                                             .font(.caption)
                                             .fontWeight(.medium)
                                         Spacer()
@@ -522,7 +589,10 @@ struct AudioPlayerView: View {
                                     .padding(.horizontal, 20)
 
                                     ScrollView {
-                                        Text(currentStory.content.isEmpty ? String(localized: "audio.player.content.unavailable") : currentStory.content)
+                                        Text(currentStory.content.isEmpty
+                                             ? String(localized: "audio.player.content.unavailable",
+                                                      comment: "Audio player: Message shown when story content is unavailable.")
+                                             : currentStory.content)
                                             .font(.system(.title3, design: .serif))
                                             .lineSpacing(6)
                                             .padding(16)
@@ -540,38 +610,54 @@ struct AudioPlayerView: View {
                     }
 
                     // Story metadata
-                            HStack {
-                                Text(String(localized: "audio.player.created.\(currentStory.formattedDate)"))
+                    // BUG-A14: switched from HStack+Spacer to a ViewThatFits so
+                    // long French strings stack vertically instead of clipping
+                    // ("Créé le 10 avr. 2026 à 12:07" + "Lu 1 fois").
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            Text(currentStory.localizedCreatedAtLabel)
+                                .lineLimit(1)
+                            Spacer()
+                            if currentStory.playCount > 0 {
+                                Text(currentStory.localizedPlayCountLabel)
                                     .lineLimit(1)
-                                Spacer()
-                                if currentStory.playCount > 0 {
-                                    Text(currentStory.playCount == 1 ?
-                                         String(localized: "audio.player.played.once") :
-                                         String(localized: "audio.player.played.times.\(currentStory.playCount)"))
-                                        .lineLimit(1)
-                                }
                             }
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 8)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(currentStory.localizedCreatedAtLabel)
+                                .lineLimit(1)
+                            if currentStory.playCount > 0 {
+                                Text(currentStory.localizedPlayCountLabel)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
                 } // End of VStack(spacing: 0) - Portrait Layout
             } // End of else (portrait)
         } // End of GeometryReader
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(String(localized: "audio.player.title"))
+        .navigationTitle(String(localized: "audio.player.title",
+                                comment: "Audio player: Navigation title."))
         .toolbarBackground(.visible, for: .navigationBar)
         .modifier(iOS26SafeAreaModifier())
         .glassNavigation()
         .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(String(localized: "audio.player.button.done")) {
+                    Button(String(localized: "audio.player.button.done",
+                                  comment: "Audio player: Done button.")) {
                         viewModel.stopAudio()
                         dismiss()
                     }
-                    .accessibilityLabel(String(localized: "audio.player.done.label"))
-                    .accessibilityHint(String(localized: "audio.player.done.hint"))
+                    .accessibilityLabel(String(localized: "audio.player.done.label",
+                                               comment: "Audio player: Done button accessibility label."))
+                    .accessibilityHint(String(localized: "audio.player.done.hint",
+                                              comment: "Audio player: Done button hint."))
                 }
 
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -584,8 +670,16 @@ struct AudioPlayerView: View {
                                 .foregroundColor(currentStory.isFavorite ? .red : .secondary)
                                 .frame(minWidth: 44, minHeight: 44)
                         }
-                        .accessibilityLabel(currentStory.isFavorite ? String(localized: "audio.player.favorite.remove.label") : String(localized: "audio.player.favorite.add.label"))
-                        .accessibilityHint(currentStory.isFavorite ? String(localized: "audio.player.favorite.remove.hint") : String(localized: "audio.player.favorite.add.hint"))
+                        .accessibilityLabel(currentStory.isFavorite
+                                            ? String(localized: "audio.player.favorite.remove.label",
+                                                     comment: "Audio player: Remove from favorites accessibility label.")
+                                            : String(localized: "audio.player.favorite.add.label",
+                                                     comment: "Audio player: Add to favorites accessibility label."))
+                        .accessibilityHint(currentStory.isFavorite
+                                           ? String(localized: "audio.player.favorite.remove.hint",
+                                                    comment: "Audio player: Remove from favorites hint.")
+                                           : String(localized: "audio.player.favorite.add.hint",
+                                                    comment: "Audio player: Add to favorites hint."))
 
                         Button(action: {
                             showingEditView = true
@@ -594,8 +688,10 @@ struct AudioPlayerView: View {
                                 .foregroundColor(.purple)
                                 .frame(minWidth: 44, minHeight: 44)
                         }
-                        .accessibilityLabel(String(localized: "audio.player.edit.label"))
-                        .accessibilityHint(String(localized: "audio.player.edit.hint"))
+                        .accessibilityLabel(String(localized: "audio.player.edit.label",
+                                                   comment: "Audio player: Edit story accessibility label."))
+                        .accessibilityHint(String(localized: "audio.player.edit.hint",
+                                                  comment: "Audio player: Edit story hint."))
 
                         // Export Audio Button
                         Button(action: {
@@ -607,8 +703,10 @@ struct AudioPlayerView: View {
                         }
                         .disabled(!currentStory.hasAudio && currentStory.audioFileName == nil)
                         .opacity(currentStory.hasAudio || currentStory.audioFileName != nil ? 1.0 : 0.6)
-                        .accessibilityLabel(String(localized: "audio.player.export.label"))
-                        .accessibilityHint(String(localized: "audio.player.export.hint"))
+                        .accessibilityLabel(String(localized: "audio.player.export.label",
+                                                   comment: "Audio player: Export audio accessibility label."))
+                        .accessibilityHint(String(localized: "audio.player.export.hint",
+                                                  comment: "Audio player: Export audio hint."))
                     }
                 }
             }
@@ -620,8 +718,12 @@ struct AudioPlayerView: View {
                     ShareSheet(activityItems: [audioFileURL])
                 }
             }
-            .alert(String(localized: "audio.player.export.error.title"), isPresented: $showingExportError) {
-                Button(String(localized: "audio.player.button.ok"), role: .cancel) {}
+            .alert(String(localized: "audio.player.export.error.title",
+                          comment: "Audio player: Export error alert title."),
+                   isPresented: $showingExportError) {
+                Button(String(localized: "audio.player.button.ok",
+                              comment: "Audio player: OK button in export error alert."),
+                       role: .cancel) {}
             } message: {
                 Text(exportErrorMessage)
             }
@@ -679,7 +781,9 @@ struct AudioPlayerView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let hero = currentStory.hero {
-                    Text(String(localized: "audio.player.featuring.\(hero.name)"))
+                    Text(String(format: String(localized: "audio.player.featuring.%@",
+                                               comment: "Audio player: Featuring hero label. %@ is the hero's name."),
+                                hero.name))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -790,12 +894,27 @@ struct AudioPlayerView: View {
                 // Secondary Controls
                 HStack(spacing: 12) {
                     Menu {
-                        Button(String(localized: "audio.player.speed.0.5x")) { viewModel.setPlaybackSpeed(0.5) }
-                        Button(String(localized: "audio.player.speed.0.75x")) { viewModel.setPlaybackSpeed(0.75) }
-                        Button(String(localized: "audio.player.speed.1.0x")) { viewModel.setPlaybackSpeed(1.0) }
-                        Button(String(localized: "audio.player.speed.1.25x")) { viewModel.setPlaybackSpeed(1.25) }
-                        Button(String(localized: "audio.player.speed.1.5x")) { viewModel.setPlaybackSpeed(1.5) }
-                        Button(String(localized: "audio.player.speed.2.0x")) { viewModel.setPlaybackSpeed(2.0) }
+                        // NOTE: catalog state for these keys is missing
+                        // (not yet translated). Default values kept as the
+                        // universal speed labels. See Task #86 report.
+                        Button(String(localized: "audio.player.speed.0.5x",
+                                      defaultValue: "0.5x",
+                                      comment: "Audio player: 0.5x playback speed menu item.")) { viewModel.setPlaybackSpeed(0.5) }
+                        Button(String(localized: "audio.player.speed.0.75x",
+                                      defaultValue: "0.75x",
+                                      comment: "Audio player: 0.75x playback speed menu item.")) { viewModel.setPlaybackSpeed(0.75) }
+                        Button(String(localized: "audio.player.speed.1.0x",
+                                      defaultValue: "1.0x",
+                                      comment: "Audio player: 1.0x (normal) playback speed menu item.")) { viewModel.setPlaybackSpeed(1.0) }
+                        Button(String(localized: "audio.player.speed.1.25x",
+                                      defaultValue: "1.25x",
+                                      comment: "Audio player: 1.25x playback speed menu item.")) { viewModel.setPlaybackSpeed(1.25) }
+                        Button(String(localized: "audio.player.speed.1.5x",
+                                      defaultValue: "1.5x",
+                                      comment: "Audio player: 1.5x playback speed menu item.")) { viewModel.setPlaybackSpeed(1.5) }
+                        Button(String(localized: "audio.player.speed.2.0x",
+                                      defaultValue: "2.0x",
+                                      comment: "Audio player: 2.0x playback speed menu item.")) { viewModel.setPlaybackSpeed(2.0) }
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "speedometer")
@@ -814,7 +933,8 @@ struct AudioPlayerView: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "stop.fill")
-                            Text(String(localized: "audio.player.button.stop"))
+                            Text(String(localized: "audio.player.button.stop",
+                                        comment: "Audio player: Stop button label."))
                         }
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -848,11 +968,11 @@ struct AudioPlayerView: View {
 
             // Metadata
             HStack {
-                Text(String(localized: "audio.player.created.\(currentStory.formattedDate)"))
+                Text(currentStory.localizedCreatedAtLabel)
                     .lineLimit(1)
                 Spacer()
                 if currentStory.playCount > 0 {
-                    Text(String(localized: "audio.player.plays.\(currentStory.playCount)"))
+                    Text(currentStory.localizedPlayCountLabel)
                         .lineLimit(1)
                 }
             }
@@ -878,16 +998,18 @@ struct AudioPlayerView: View {
         let seconds = Int(time) % 60
         return String(format: "%d:%02d", minutes, seconds)
     }
-    
-    private var wordCount: Int {
-        currentStory.content.components(separatedBy: .whitespacesAndNewlines)
-            .filter { !$0.isEmpty }
-            .count
-    }
-    
+
+    // NOTE (Task #84): The former `audioPlayedLabel`, `wordCountLabel`, and
+    // `createdAtLabel` View helpers were pure `Story -> String` formatters
+    // with no View state. They moved to a `Story` extension in
+    // `Models/Story.swift` as `localizedPlayCountLabel`,
+    // `localizedWordCountLabel`, and `localizedCreatedAtLabel` so they can
+    // be unit-tested (Task #88) and shared across layouts without
+    // duplication. Use `currentStory.localized...Label` at call sites.
+
     private var estimatedReadingTime: Int {
         // Average reading speed is about 200 words per minute
-        max(1, (wordCount + 199) / 200)
+        max(1, (currentStory.wordCount + 199) / 200)
     }
 
     private var canGoToPrevious: Bool {
@@ -900,7 +1022,8 @@ struct AudioPlayerView: View {
 
     private func exportAudioFile() {
         guard let audioFileName = currentStory.audioFileName else {
-            exportErrorMessage = String(localized: "audio.player.export.error.no.file")
+            exportErrorMessage = String(localized: "audio.player.export.error.no.file",
+                                        comment: "Audio player: Export error message when no audio file is available.")
             showingExportError = true
             return
         }
@@ -1019,11 +1142,18 @@ enum AudioExportError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .fileNotFound:
-            return String(localized: "audio.player.error.file.not.found")
+            return String(localized: "audio.player.error.file.not.found",
+                          comment: "Audio player: Export error message when the audio file cannot be found.")
         case .invalidFileName:
-            return String(localized: "audio.player.error.invalid.filename")
+            return String(localized: "audio.player.error.invalid.filename",
+                          comment: "Audio player: Export error message when the audio filename is invalid.")
         case .exportFailed(let reason):
-            return String(localized: "audio.player.error.export.failed.\(reason)")
+            // NOTE: catalog state for this key is missing; falls back to the
+            // key string at runtime. See Task #86 report.
+            return String(format: String(localized: "audio.player.error.export.failed.%@",
+                                         defaultValue: "Export failed: %@",
+                                         comment: "Audio player: Export failure message. %@ is the reason string."),
+                          reason)
         }
     }
 }

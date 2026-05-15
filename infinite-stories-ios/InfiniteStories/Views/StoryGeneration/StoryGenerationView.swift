@@ -59,7 +59,9 @@ struct StoryGenerationView: View {
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                 
-                                Text(eventDescription.capitalized)
+                                // L10N-05/L10N-14: render localized description verbatim
+                                // (no `.capitalized` — xcstrings already has correct casing).
+                                Text(eventDescription)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.leading)
@@ -142,7 +144,8 @@ struct StoryGenerationView: View {
                         HStack(spacing: 8) {
                             StepIndicator(
                                 step: 1,
-                                label: String(localized: "story.generation.step.story"),
+                                label: String(localized: "story.generation.step.story",
+                                              comment: "Story Generation: Story step label"),
                                 icon: "doc.text.fill",
                                 isActive: viewModel.generationStage == .generatingStory,
                                 isCompleted: stepCompleted(1)
@@ -152,7 +155,8 @@ struct StoryGenerationView: View {
 
                             StepIndicator(
                                 step: 2,
-                                label: String(localized: "story.generation.step.audio"),
+                                label: String(localized: "story.generation.step.audio",
+                                              comment: "Story Generation: Audio step label"),
                                 icon: "speaker.wave.2.fill",
                                 isActive: viewModel.generationStage == .generatingAudio,
                                 isCompleted: stepCompleted(2)
@@ -163,7 +167,8 @@ struct StoryGenerationView: View {
 
                                 StepIndicator(
                                     step: 3,
-                                    label: String(localized: "story.generation.step.images"),
+                                    label: String(localized: "story.generation.step.images",
+                                                  comment: "Story Generation: Images step label"),
                                     icon: "photo.fill",
                                     isActive: viewModel.generationStage == .generatingIllustrations,
                                     isCompleted: stepCompleted(3)
@@ -179,7 +184,9 @@ struct StoryGenerationView: View {
                                 .frame(width: 220)
                                 .tint(.orange)
 
-                            Text(String(localized: "story.generation.progress.complete", defaultValue: "\(Int(viewModel.overallProgress * 100))% complete"))
+                            Text(String(format: String(localized: "story.generation.progress.complete",
+                                                       comment: "Story Generation: Progress percentage complete. %d is the integer percent."),
+                                        Int(viewModel.overallProgress * 100)))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -249,7 +256,9 @@ struct StoryGenerationView: View {
                                 .foregroundColor(.red)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(String(localized: "story.generation.error.failed", defaultValue: "\(failedStep.displayName) Failed"))
+                                Text(String(format: String(localized: "story.generation.error.failed",
+                                                           comment: "Story Generation: Failed error message. %@ is the step name."),
+                                            failedStep.displayName))
                                     .font(.headline)
                                     .foregroundColor(.red)
 
@@ -420,29 +429,37 @@ struct StoryGenerationView: View {
     
     private var eventTitle: String {
         if let builtIn = selectedBuiltInEvent {
-            return builtIn.rawValue
+            // L10N-05/L10N-14: show localized event name, not English rawValue.
+            return builtIn.localizedName
         } else if let custom = selectedCustomEvent {
             return custom.title
         }
-        return String(localized: "story.generation.event.select")
+        return String(localized: "story.generation.event.select",
+                      comment: "Story Generation: Select event placeholder")
     }
-    
+
     private var eventDescription: String {
         if let builtIn = selectedBuiltInEvent {
-            return builtIn.promptSeed
+            // L10N-05: show localized description, not English promptSeed
+            // (which stays English because it feeds the OpenAI story prompt).
+            return builtIn.localizedDescription
         } else if let custom = selectedCustomEvent {
             return custom.description
         }
-        return String(localized: "story.generation.event.choose")
+        return String(localized: "story.generation.event.choose",
+                      comment: "Story Generation: Choose adventure type placeholder")
     }
 
     private var generationStatusText: String {
         if viewModel.isGeneratingIllustrations {
-            return String(localized: "story.generation.status.illustrations")
+            return String(localized: "story.generation.status.illustrations",
+                          comment: "Story Generation: Creating illustrations status")
         } else if viewModel.isGeneratingAudio {
-            return String(localized: "story.generation.status.audio")
+            return String(localized: "story.generation.status.audio",
+                          comment: "Story Generation: Creating audio status")
         } else {
-            return String(localized: "story.generation.status.story")
+            return String(localized: "story.generation.status.story",
+                          comment: "Story Generation: Writing story status")
         }
     }
 
@@ -552,7 +569,9 @@ struct HeroInfoCard: View {
                         .foregroundColor(.secondary)
                     
                     if !hero.specialAbility.isEmpty {
-                        Text(String(localized: "story.generation.hero.special", defaultValue: "Special: \(hero.specialAbility)"))
+                        Text(String(format: String(localized: "story.generation.hero.special",
+                                                   comment: "Story Generation: Special ability label. %@ is the special ability."),
+                                    hero.specialAbility))
                             .font(.caption)
                             .foregroundColor(.purple)
                     }
@@ -581,12 +600,12 @@ struct EventPickerView: View {
                 }) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            // BUG-15: localized built-in event name / sentence-case description.
+                            // L10N-05: localized built-in event name + localized description.
                             Text(event.localizedName)
                                 .font(.headline)
                                 .foregroundColor(.primary)
 
-                            Text(event.promptSeed)
+                            Text(event.localizedDescription)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

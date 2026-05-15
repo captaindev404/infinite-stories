@@ -99,7 +99,13 @@ struct AccessibilityLabelProvider {
             components.append("Favorite")
         }
         
-        components.append("Event: \(story.eventTitle)")
+        // L10N-02: localize the "Event: X" accessibility prefix so French
+        // VoiceOver announces "Événement : <nom>" instead of leaking English.
+        let eventFormat = String(
+            localized: "story.card.accessibility.event %@",
+            defaultValue: "Event: %@"
+        )
+        components.append(String(format: eventFormat, story.eventTitle))
         components.append(story.hasAudio ? "Has audio" : "Text only")
         
         if story.hasAudio {
@@ -110,7 +116,9 @@ struct AccessibilityLabelProvider {
         if story.playCount > 0 {
             // BUG-33: Keep the VoiceOver announcement consistent with the visible
             // "Écoutes: N" / "N listens" label shown on the card. One metric, one label.
-            components.append(String(localized: "story.card.listens.accessibility.\(story.playCount)"))
+            components.append(String(format: String(localized: "story.card.listens.accessibility.%lld",
+                                                    comment: "Story card: VoiceOver label for listen count — must match the on-screen label. %lld is the play count."),
+                                     story.playCount))
         }
         
         return components.joined(separator: ", ")

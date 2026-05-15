@@ -270,8 +270,9 @@ struct AuthenticationView: View {
             .toolbarBackground(Material.bar, for: .navigationBar)
         }
         .onAppear {
-            // Default to sign-up for new users, sign-in for returning users
-            isSignUp = !authState.hasEverAuthenticated
+            // BUG-A09: Always default to Sign In on cold launch. Returning users
+            // land on Sign In (their primary action); new users tap once to Sign Up.
+            isSignUp = false
         }
         .alert(String(localized: "auth.error.title"), isPresented: $showError) {
             Button(String(localized: "common.ok"), role: .cancel) {
@@ -453,6 +454,16 @@ struct AuthenticationView: View {
     }
 
     private func loginWithTestUser() {
+        // BUG-A19: refuse to use the dev test account against a non-localhost
+        // backend so an accidentally-leaked DEBUG build can't authenticate a
+        // fake user against production. Localhost-only environments are the
+        // contract for this helper.
+        guard AppConfiguration.backendBaseURL.contains("localhost") || AppConfiguration.backendBaseURL.contains("127.0.0.1") else {
+            errorMessage = "Debug test user is only permitted against localhost backends."
+            showError = true
+            return
+        }
+
         // Auto-fill test credentials for login
         email = "test@example.com"
         password = "testpass123"
@@ -487,6 +498,13 @@ struct AuthenticationView: View {
     }
 
     private func createTestAccount() {
+        // BUG-A19: localhost-only guard, same as loginWithTestUser.
+        guard AppConfiguration.backendBaseURL.contains("localhost") || AppConfiguration.backendBaseURL.contains("127.0.0.1") else {
+            errorMessage = "Debug test account creation is only permitted against localhost backends."
+            showError = true
+            return
+        }
+
         // Auto-fill test credentials for sign up (same as login test user)
         email = "test@example.com"
         password = "testpass123"

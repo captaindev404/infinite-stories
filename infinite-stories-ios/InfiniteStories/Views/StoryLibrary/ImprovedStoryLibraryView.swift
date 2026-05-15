@@ -168,7 +168,9 @@ struct ImprovedStoryLibraryView: View {
                     }
                 }
                 .padding()
-
+            }
+            .contentMargins(.bottom, 40, for: .scrollContent)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
                 // Edit mode toolbar at bottom
                 if isEditMode && !stories.isEmpty {
                     EditModeToolbar(
@@ -197,6 +199,8 @@ struct ImprovedStoryLibraryView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                // BUG-A23: small trailing padding so the button label doesn't
+                // crowd the Dynamic Island on notched devices.
                 Button(isEditMode ? String(localized: "library.button.done") : String(localized: "library.button.edit")) {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                         isEditMode.toggle()
@@ -206,6 +210,7 @@ struct ImprovedStoryLibraryView: View {
                     }
                 }
                 .fontWeight(.medium)
+                .padding(.trailing, 4)
                 .disabled(stories.isEmpty)
             }
         }
@@ -333,7 +338,7 @@ struct ImprovedStoryLibraryView: View {
                 color: StoryLibraryDesign.Colors.newBadge
             )
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "library.stats.new.accessibility.\(newStories.count)"))
+            .accessibilityLabel("\(newStories.count) \(String(localized: "library.stats.new"))")
 
             StatCard(
                 icon: "book.fill",
@@ -342,7 +347,7 @@ struct ImprovedStoryLibraryView: View {
                 color: StoryLibraryDesign.Colors.inProgressBadge
             )
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "library.stats.reading.accessibility.\(inProgressStories.count)"))
+            .accessibilityLabel("\(inProgressStories.count) \(String(localized: "library.stats.reading"))")
 
             StatCard(
                 icon: "checkmark.circle.fill",
@@ -351,7 +356,7 @@ struct ImprovedStoryLibraryView: View {
                 color: StoryLibraryDesign.Colors.completedBadge
             )
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "library.stats.completed.accessibility.\(completedStories.count)"))
+            .accessibilityLabel("\(completedStories.count) \(String(localized: "library.stats.completed"))")
 
             StatCard(
                 icon: "heart.fill",
@@ -360,7 +365,7 @@ struct ImprovedStoryLibraryView: View {
                 color: Color.red
             )
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "library.stats.favorites.accessibility.\(stories.filter { $0.isFavorite }.count)"))
+            .accessibilityLabel("\(stories.filter { $0.isFavorite }.count) \(String(localized: "library.stats.favorites"))")
         }
     }
     

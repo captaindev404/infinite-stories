@@ -71,62 +71,45 @@ struct HomeContentView: View {
     }
 
     private var homeMainContent: some View {
-        ZStack {
-            // Main Content
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Hero Section
-                    HeroSectionView(
-                        heroes: heroes,
-                        showingHeroCreation: $showingHeroCreation,
-                        selectedHeroForStory: $selectedHeroForStory,
-                        showingStoryGeneration: $showingStoryGeneration
-                    )
+        ScrollView {
+            VStack(spacing: 20) {
+                // Hero Section
+                HeroSectionView(
+                    heroes: heroes,
+                    showingHeroCreation: $showingHeroCreation,
+                    selectedHeroForStory: $selectedHeroForStory,
+                    showingStoryGeneration: $showingStoryGeneration
+                )
 
-                    // Recent Stories Section
-                    homeRecentStoriesSection
+                // Recent Stories Section
+                homeRecentStoriesSection
 
-                    // Empty State
-                    if heroes.isEmpty {
-                        EmptyStateView(showingHeroCreation: $showingHeroCreation)
-                            .padding(.top, 20)
-                    }
+                // Empty State
+                if heroes.isEmpty {
+                    EmptyStateView(showingHeroCreation: $showingHeroCreation)
+                        .padding(.top, 20)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 100)
             }
-            .refreshable {
-                await loadData()
-            }
-
-            // Floating Create Story Button
-            VStack {
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+        }
+        .refreshable {
+            await loadData()
+        }
+        .safeAreaInset(edge: .bottom) {
+            HStack(alignment: .bottom) {
+                FloatingCustomEventButton(
+                    showingCustomEventManagement: $showingCustomEventManagement
+                )
                 Spacer()
-                HStack {
-                    Spacer()
-                    FloatingCreateStoryButton(
-                        hasHeroes: !heroes.isEmpty,
-                        showingStoryGeneration: $showingStoryGeneration,
-                        showingHeroCreation: $showingHeroCreation
-                    )
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 30)
-                }
+                FloatingCreateStoryButton(
+                    hasHeroes: !heroes.isEmpty,
+                    showingStoryGeneration: $showingStoryGeneration,
+                    showingHeroCreation: $showingHeroCreation
+                )
             }
-
-            // Floating Custom Event Management Button
-            VStack {
-                Spacer()
-                HStack {
-                    FloatingCustomEventButton(
-                        showingCustomEventManagement: $showingCustomEventManagement
-                    )
-                    .padding(.leading, 20)
-                    .padding(.bottom, 30)
-                    Spacer()
-                }
-            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
         }
         .sheet(isPresented: $showingHeroCreation, onDismiss: {
             Task {
@@ -179,10 +162,27 @@ struct HomeContentView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Only show section if we have stories
             if !stories.isEmpty {
-                // Header
-                Text("home.recentAdventures")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(.primary)
+                // BUG-A24: Header + "Voir tout" affordance so users can
+                // discover the full list in the Library tab.
+                HStack(alignment: .firstTextBaseline) {
+                    Text("home.recentAdventures")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Button {
+                        NotificationCenter.default.post(
+                            name: .switchToTab,
+                            object: AppTab.library.rawValue
+                        )
+                    } label: {
+                        Text(String(localized: "home.recentAdventures.seeAll", defaultValue: "See all"))
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .accessibilityHint(String(
+                        localized: "home.recentAdventures.seeAll.a11y",
+                        defaultValue: "Switches to the Library tab"
+                    ))
+                }
 
                 // Story Cards
                 VStack(spacing: 12) {

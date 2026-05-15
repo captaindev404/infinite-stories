@@ -257,10 +257,15 @@ class StoryRepository: StoryRepositoryProtocol {
                 hero: matchedHero
             )
         } else {
-            // For custom events, create placeholder custom event
-            // In real usage, this should be fetched or passed in
+            // For custom events, create a placeholder. The real
+            // CustomStoryEvent is fetched separately via `customEventId`.
+            // L10N-83: use an empty title as the sentinel — Story.eventTitle
+            // detects `trimmed.isEmpty` and falls back to the localized
+            // "story.card.event.custom" key. Never stuff a display string
+            // into model data: it's locale-dependent and breaks equality
+            // checks the moment the backend returns real titles.
             let placeholderCustomEvent = CustomStoryEvent(
-                title: response.eventType ?? "Custom Event",
+                title: "",
                 description: "",
                 promptSeed: "",
                 category: .adventure,

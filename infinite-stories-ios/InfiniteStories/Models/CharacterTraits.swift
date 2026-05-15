@@ -23,32 +23,32 @@ enum CharacterTrait: String, CaseIterable, Codable {
     /// Localized display name for the trait
     var localizedName: String {
         switch self {
-        case .brave: return String(localized: "model.trait.brave")
-        case .kind: return String(localized: "model.trait.kind")
-        case .curious: return String(localized: "model.trait.curious")
-        case .funny: return String(localized: "model.trait.funny")
-        case .smart: return String(localized: "model.trait.smart")
-        case .adventurous: return String(localized: "model.trait.adventurous")
-        case .creative: return String(localized: "model.trait.creative")
-        case .helpful: return String(localized: "model.trait.helpful")
-        case .gentle: return String(localized: "model.trait.gentle")
-        case .magical: return String(localized: "model.trait.magical")
+        case .brave: return String(localized: "model.trait.brave", comment: "Character trait name: Brave")
+        case .kind: return String(localized: "model.trait.kind", comment: "Character trait name: Kind")
+        case .curious: return String(localized: "model.trait.curious", comment: "Character trait name: Curious")
+        case .funny: return String(localized: "model.trait.funny", comment: "Character trait name: Funny")
+        case .smart: return String(localized: "model.trait.smart", comment: "Character trait name: Smart")
+        case .adventurous: return String(localized: "model.trait.adventurous", comment: "Character trait name: Adventurous")
+        case .creative: return String(localized: "model.trait.creative", comment: "Character trait name: Creative")
+        case .helpful: return String(localized: "model.trait.helpful", comment: "Character trait name: Helpful")
+        case .gentle: return String(localized: "model.trait.gentle", comment: "Character trait name: Gentle")
+        case .magical: return String(localized: "model.trait.magical", comment: "Character trait name: Magical")
         }
     }
 
     /// Localized description for the trait
     var localizedDescription: String {
         switch self {
-        case .brave: return String(localized: "model.trait.brave.description")
-        case .kind: return String(localized: "model.trait.kind.description")
-        case .curious: return String(localized: "model.trait.curious.description")
-        case .funny: return String(localized: "model.trait.funny.description")
-        case .smart: return String(localized: "model.trait.smart.description")
-        case .adventurous: return String(localized: "model.trait.adventurous.description")
-        case .creative: return String(localized: "model.trait.creative.description")
-        case .helpful: return String(localized: "model.trait.helpful.description")
-        case .gentle: return String(localized: "model.trait.gentle.description")
-        case .magical: return String(localized: "model.trait.magical.description")
+        case .brave: return String(localized: "model.trait.brave.description", comment: "Character trait description: Brave")
+        case .kind: return String(localized: "model.trait.kind.description", comment: "Character trait description: Kind")
+        case .curious: return String(localized: "model.trait.curious.description", comment: "Character trait description: Curious")
+        case .funny: return String(localized: "model.trait.funny.description", comment: "Character trait description: Funny")
+        case .smart: return String(localized: "model.trait.smart.description", comment: "Character trait description: Smart")
+        case .adventurous: return String(localized: "model.trait.adventurous.description", comment: "Character trait description: Adventurous")
+        case .creative: return String(localized: "model.trait.creative.description", comment: "Character trait description: Creative")
+        case .helpful: return String(localized: "model.trait.helpful.description", comment: "Character trait description: Helpful")
+        case .gentle: return String(localized: "model.trait.gentle.description", comment: "Character trait description: Gentle")
+        case .magical: return String(localized: "model.trait.magical.description", comment: "Character trait description: Magical")
         }
     }
 
@@ -94,16 +94,33 @@ enum StoryEvent: String, CaseIterable, Codable {
     /// Localized display name for the event
     var localizedName: String {
         switch self {
-        case .bedtime: return String(localized: "model.event.bedtime")
-        case .schoolDay: return String(localized: "model.event.schoolDay")
-        case .birthday: return String(localized: "model.event.birthday")
-        case .weekend: return String(localized: "model.event.weekend")
-        case .rainyDay: return String(localized: "model.event.rainyDay")
-        case .family: return String(localized: "model.event.family")
-        case .friendship: return String(localized: "model.event.friendship")
-        case .learning: return String(localized: "model.event.learning")
-        case .helping: return String(localized: "model.event.helping")
-        case .holiday: return String(localized: "model.event.holiday")
+        case .bedtime: return String(localized: "model.event.bedtime", comment: "Story event name: Bedtime Adventure")
+        case .schoolDay: return String(localized: "model.event.schoolDay", comment: "Story event name: School Day Fun")
+        case .birthday: return String(localized: "model.event.birthday", comment: "Story event name: Birthday Celebration")
+        case .weekend: return String(localized: "model.event.weekend", comment: "Story event name: Weekend Explorer")
+        case .rainyDay: return String(localized: "model.event.rainyDay", comment: "Story event name: Rainy Day Magic")
+        case .family: return String(localized: "model.event.family", comment: "Story event name: Family Time")
+        case .friendship: return String(localized: "model.event.friendship", comment: "Story event name: Making Friends")
+        case .learning: return String(localized: "model.event.learning", comment: "Story event name: Learning Something New")
+        case .helping: return String(localized: "model.event.helping", comment: "Story event name: Helping Others")
+        case .holiday: return String(localized: "model.event.holiday", comment: "Story event name: Holiday Adventure")
+        }
+    }
+
+    /// Localized short description for the event (shown in pickers / UI).
+    /// Must NOT reuse `promptSeed` — that value is English-only and feeds the AI.
+    var localizedDescription: String {
+        switch self {
+        case .bedtime: return String(localized: "model.event.bedtime.description", comment: "Story event description: bedtime. Shown in Story Generation event picker list and trigger.")
+        case .schoolDay: return String(localized: "model.event.schoolDay.description", comment: "Story event description: schoolDay. Shown in Story Generation event picker list and trigger.")
+        case .birthday: return String(localized: "model.event.birthday.description", comment: "Story event description: birthday. Shown in Story Generation event picker list and trigger.")
+        case .weekend: return String(localized: "model.event.weekend.description", comment: "Story event description: weekend. Shown in Story Generation event picker list and trigger.")
+        case .rainyDay: return String(localized: "model.event.rainyDay.description", comment: "Story event description: rainyDay. Shown in Story Generation event picker list and trigger.")
+        case .family: return String(localized: "model.event.family.description", comment: "Story event description: family. Shown in Story Generation event picker list and trigger.")
+        case .friendship: return String(localized: "model.event.friendship.description", comment: "Story event description: friendship. Shown in Story Generation event picker list and trigger.")
+        case .learning: return String(localized: "model.event.learning.description", comment: "Story event description: learning. Shown in Story Generation event picker list and trigger.")
+        case .helping: return String(localized: "model.event.helping.description", comment: "Story event description: helping. Shown in Story Generation event picker list and trigger.")
+        case .holiday: return String(localized: "model.event.holiday.description", comment: "Story event description: holiday. Shown in Story Generation event picker list and trigger.")
         }
     }
 

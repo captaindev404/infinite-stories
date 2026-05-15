@@ -51,7 +51,8 @@ struct ReadingJourneyTabContent: View {
                 }
             }
             .background(backgroundGradient)
-            .navigationTitle(String(localized: "journey.title"))
+            .navigationTitle(String(localized: "journey.title",
+                                    comment: "Journey: Navigation title"))
             .navigationBarTitleDisplayMode(.large)
             // BUG-10: Force the system nav-bar material to be visible so the
             // large title + status bar area get an opaque blur as soon as
@@ -84,6 +85,13 @@ struct ReadingJourneyTabContent: View {
         }
         .task {
             await loadAllData(forceRefresh: false)
+        }
+        // BUG-A11: refresh activity every time the tab becomes visible so a
+        // story played seconds ago shows up in the chart.
+        .onAppear {
+            Task {
+                await loadActivityData(range: selectedTimeRange, forceRefresh: true)
+            }
         }
         .onChange(of: selectedTimeRange) { _, newRange in
             Task {
@@ -256,20 +264,28 @@ struct ReadingJourneyTabContent: View {
         let listeningTime = summary?.formattedListeningTime ?? "0m"
         let streak = summary?.currentStreak ?? 0
         let favorites = summary?.favoriteStoriesCount ?? 0
-        let mostActiveHero = heroAnalytics?.mostActiveHero?.heroName ?? String(localized: "journey.share.noneYet")
+        let mostActiveHero = heroAnalytics?.mostActiveHero?.heroName ?? String(localized: "journey.share.noneYet",
+                                                                                comment: "Journey: None yet placeholder")
 
-        return String(localized: "journey.share.text", defaultValue: """
-        My Infinite Stories Reading Journey
+        // NOTE: this site interpolates values directly into the defaultValue
+        // rather than using String(format:). The catalog value wins at runtime,
+        // so localized strings end up showing raw %@/%lld tokens. Tracked
+        // separately — not removing the defaultValue here because doing so
+        // would break the EN path without fixing the FR path.
+        return String(localized: "journey.share.text",
+                      defaultValue: """
+                      My Infinite Stories Reading Journey
 
-        Total Stories: \(totalStories)
-        Listening Time: \(listeningTime)
-        Current Streak: \(streak) days
-        Favorite Stories: \(favorites)
+                      Total Stories: \(totalStories)
+                      Listening Time: \(listeningTime)
+                      Current Streak: \(streak) days
+                      Favorite Stories: \(favorites)
 
-        Most Active Hero: \(mostActiveHero)
+                      Most Active Hero: \(mostActiveHero)
 
-        Created with Infinite Stories - Where magical adventures come to life!
-        """)
+                      Created with Infinite Stories - Where magical adventures come to life!
+                      """,
+                      comment: "Journey: Share text template. Should use positional format specifiers.")
     }
 }
 
@@ -340,7 +356,8 @@ struct ReadingJourneyView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(String(localized: "journey.done")) {
+                    Button(String(localized: "journey.done",
+                                  comment: "Journey: Done button")) {
                         dismiss()
                     }
                     .foregroundColor(.accentColor)
@@ -352,6 +369,13 @@ struct ReadingJourneyView: View {
         }
         .task {
             await loadAllData(forceRefresh: false)
+        }
+        // BUG-A11: refresh activity every time the tab becomes visible so a
+        // story played seconds ago shows up in the chart.
+        .onAppear {
+            Task {
+                await loadActivityData(range: selectedTimeRange, forceRefresh: true)
+            }
         }
         .onChange(of: selectedTimeRange) { _, newRange in
             Task {
@@ -522,20 +546,28 @@ struct ReadingJourneyView: View {
         let listeningTime = summary?.formattedListeningTime ?? "0m"
         let streak = summary?.currentStreak ?? 0
         let favorites = summary?.favoriteStoriesCount ?? 0
-        let mostActiveHero = heroAnalytics?.mostActiveHero?.heroName ?? String(localized: "journey.share.noneYet")
+        let mostActiveHero = heroAnalytics?.mostActiveHero?.heroName ?? String(localized: "journey.share.noneYet",
+                                                                                comment: "Journey: None yet placeholder")
 
-        return String(localized: "journey.share.text", defaultValue: """
-        My Infinite Stories Reading Journey
+        // NOTE: this site interpolates values directly into the defaultValue
+        // rather than using String(format:). The catalog value wins at runtime,
+        // so localized strings end up showing raw %@/%lld tokens. Tracked
+        // separately — not removing the defaultValue here because doing so
+        // would break the EN path without fixing the FR path.
+        return String(localized: "journey.share.text",
+                      defaultValue: """
+                      My Infinite Stories Reading Journey
 
-        Total Stories: \(totalStories)
-        Listening Time: \(listeningTime)
-        Current Streak: \(streak) days
-        Favorite Stories: \(favorites)
+                      Total Stories: \(totalStories)
+                      Listening Time: \(listeningTime)
+                      Current Streak: \(streak) days
+                      Favorite Stories: \(favorites)
 
-        Most Active Hero: \(mostActiveHero)
+                      Most Active Hero: \(mostActiveHero)
 
-        Created with Infinite Stories - Where magical adventures come to life!
-        """)
+                      Created with Infinite Stories - Where magical adventures come to life!
+                      """,
+                      comment: "Journey: Share text template. Should use positional format specifiers.")
     }
 }
 
@@ -565,15 +597,10 @@ struct HeaderStatsSection: View {
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 15) {
-            // BUG-20: The underlying metric is `totalStoriesListened` (played stories),
-            // not the count of generated stories. Renaming the label resolves the
-            // inconsistency with "Histoires Uniques Écoutées" and "Écoutes Moyennes
-            // par Histoire". Hardcoded FR literal here — proper xcstrings entry will
-            // land with localization sweep task #5 (BUG-13..18).
-            // TODO(i18n #5): replace with `journey.storiesListened` xcstrings key.
             JourneyStatCard(
                 icon: "book.closed.fill",
-                title: "Histoires Écoutées",
+                title: String(localized: "journey.storiesListened",
+                              comment: "Journey: stats card label for the count of played stories."),
                 value: "\(summary?.totalStoriesListened ?? 0)",
                 color: .blue,
                 isLarge: false
@@ -581,7 +608,8 @@ struct HeaderStatsSection: View {
 
             JourneyStatCard(
                 icon: "clock.fill",
-                title: String(localized: "journey.listeningTime"),
+                title: String(localized: "journey.listeningTime",
+                              comment: "Journey: Listening time stat"),
                 value: summary?.formattedListeningTime ?? "0m",
                 color: .green,
                 isLarge: false
@@ -589,15 +617,19 @@ struct HeaderStatsSection: View {
 
             JourneyStatCard(
                 icon: "flame.fill",
-                title: String(localized: "journey.currentStreak"),
-                value: String(localized: "journey.currentStreak.value", defaultValue: "\(summary?.currentStreak ?? 0) days"),
+                title: String(localized: "journey.currentStreak",
+                              comment: "Journey: Current streak stat"),
+                value: String(format: String(localized: "journey.currentStreak.value",
+                                             comment: "Journey: Current streak value. %lld is the number of days."),
+                              summary?.currentStreak ?? 0),
                 color: .orange,
                 isLarge: false
             )
 
             JourneyStatCard(
                 icon: "heart.fill",
-                title: String(localized: "journey.favorites"),
+                title: String(localized: "journey.favorites",
+                              comment: "Journey: Favorites stat"),
                 value: "\(summary?.favoriteStoriesCount ?? 0)",
                 color: .red,
                 isLarge: false
@@ -679,6 +711,13 @@ struct ListeningActivityChartAPI: View {
         }
     }
 
+    /// BUG-A11/A25: "Has real data" means any point with a positive minute
+    /// count. A 7-day response full of zero-minute buckets should render the
+    /// empty state instead of an axis-only chart.
+    private var hasMeaningfulData: Bool {
+        dataPoints.contains { $0.minutes > 0 }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
@@ -688,14 +727,15 @@ struct ListeningActivityChartAPI: View {
 
                 Spacer()
 
-                Picker(String(localized: "journey.timeRange"), selection: $selectedTimeRange) {
+                Picker(String(localized: "journey.timeRange",
+                              comment: "Journey: Time range picker label"),
+                       selection: $selectedTimeRange) {
                     ForEach(TimeRange.allCases) { range in
-                        // BUG-15: localized range label instead of English rawValue.
                         Text(range.localizedName).tag(range)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 200)
+                .frame(minWidth: 220, maxWidth: 260)
             }
 
             if isLoading && activityData == nil {
@@ -705,7 +745,7 @@ struct ListeningActivityChartAPI: View {
                     .overlay(
                         ProgressView()
                     )
-            } else if !dataPoints.isEmpty {
+            } else if hasMeaningfulData {
                 Chart(dataPoints) { point in
                     BarMark(
                         x: .value("Date", point.date, unit: .day),
@@ -728,14 +768,18 @@ struct ListeningActivityChartAPI: View {
                     }
                 }
             } else {
-                // Empty state
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.1))
-                    .frame(height: 200)
-                    .overlay(
-                        Text("journey.noListeningData")
-                            .foregroundColor(.secondary)
-                    )
+                // BUG-A11/A25: Use ContentUnavailableView so the empty state
+                // reads as intentional (icon + headline + description) rather
+                // than a broken chart.
+                ContentUnavailableView {
+                    Label("journey.noListeningData", systemImage: "chart.bar.xaxis")
+                } description: {
+                    Text(String(
+                        localized: "journey.noListeningData.description",
+                        defaultValue: "No listening data yet this period. Play a story to get started."
+                    ))
+                }
+                .frame(height: 200)
             }
         }
         .padding()
@@ -1159,36 +1203,45 @@ struct ReadingInsightsSectionAPI: View {
                 if let avgLength = insights.averageStoryLengthMinutes {
                     InsightRow(
                         icon: "clock",
-                        label: String(localized: "journey.insights.averageLength"),
-                        value: String(localized: "journey.insights.averageLength.value", defaultValue: "\(Int(avgLength)) min")
+                        label: String(localized: "journey.insights.averageLength",
+                                      comment: "Journey: Average story length label"),
+                        value: String(format: String(localized: "journey.insights.averageLength.value",
+                                                     comment: "Journey: Average story length value. %lld is the minute count."),
+                                      Int(avgLength))
                     )
                 }
 
                 if let avgListens = insights.averageListensPerStory {
                     InsightRow(
                         icon: "play.circle",
-                        label: String(localized: "journey.insights.averageListens"),
+                        label: String(localized: "journey.insights.averageListens",
+                                      comment: "Journey: Average listens per story label"),
                         value: String(format: "%.1f", avgListens)
                     )
                 }
 
                 InsightRow(
                     icon: "moon.stars",
-                    label: String(localized: "journey.insights.preferredTime"),
+                    label: String(localized: "journey.insights.preferredTime",
+                                  comment: "Journey: Preferred listening time label"),
                     value: insights.formattedPreferredTime
                 )
 
                 if let topStory = insights.mostListenedStory {
                     InsightRow(
                         icon: "star.fill",
-                        label: String(localized: "journey.insights.mostListened"),
-                        value: String(localized: "journey.insights.mostListened.value", defaultValue: "\(topStory.title) (\(topStory.playCount) plays)")
+                        label: String(localized: "journey.insights.mostListened",
+                                      comment: "Journey: Most listened story label"),
+                        value: String(format: String(localized: "journey.insights.mostListened.value",
+                                                     comment: "Journey: Most listened story value. %@ is the story title, %lld is the play count."),
+                                      topStory.title, topStory.playCount)
                     )
                 }
 
                 InsightRow(
                     icon: "books.vertical",
-                    label: String(localized: "journey.insights.uniqueStories"),
+                    label: String(localized: "journey.insights.uniqueStories",
+                                  comment: "Journey: Unique stories listened label"),
                     value: "\(insights.totalUniqueStoriesListened)"
                 )
             }
@@ -1265,11 +1318,15 @@ class RelativeDateFormatter {
         let now = Date()
 
         if calendar.isDateInToday(date) {
-            return String(localized: "journey.date.today")
+            return String(localized: "journey.date.today",
+                          comment: "Journey: Today date label")
         } else if calendar.isDateInYesterday(date) {
-            return String(localized: "journey.date.yesterday")
+            return String(localized: "journey.date.yesterday",
+                          comment: "Journey: Yesterday date label")
         } else if let daysAgo = calendar.dateComponents([.day], from: date, to: now).day, daysAgo < 7 {
-            return String(localized: "journey.date.daysAgo", defaultValue: "\(daysAgo) days ago")
+            return String(format: String(localized: "journey.date.daysAgo",
+                                         comment: "Journey: Days ago date label. %lld is the number of days."),
+                          daysAgo)
         } else {
             return formatter.string(from: date)
         }

@@ -33,9 +33,20 @@ struct HeroCreationView: View {
         NavigationView {
             VStack(spacing: 20) {
                 // Progress indicator
+                // BUG-A30: Announce step count ("Step 1 of 4") instead of
+                // "0 %" which VoiceOver would speak as the raw progress value.
                 ProgressView(value: Double(currentStep), total: Double(totalSteps))
                     .progressViewStyle(LinearProgressViewStyle(tint: .purple))
                     .padding(.horizontal)
+                    .accessibilityLabel(String(
+                        // NOTE: catalog state is `new` — EN fallback kept until the
+                        // key is translated. See Task #86 report.
+                        format: String(localized: "hero.creation.progress.a11y",
+                                       defaultValue: "Step %1$d of %2$d",
+                                       comment: "VoiceOver label describing hero creation progress. %1$d is current step, %2$d is total steps."),
+                        currentStep + 1, totalSteps
+                    ))
+                    .accessibilityValue("")
                 
                 ScrollView {
                     VStack(spacing: 30) {
@@ -45,23 +56,33 @@ struct HeroCreationView: View {
                             .transition(.opacity)
                     }
                     .padding()
+                    .padding(.bottom, 40)
                     .animation(.easeInOut(duration: 0.2), value: currentStep)
                 }
 
                 // Navigation buttons
                 HStack {
                     if currentStep > 0 {
-                        Button(String(localized: "hero.creation.button.back")) {
+                        Button(String(localized: "hero.creation.button.back",
+                                      comment: "Hero creation: Back button")) {
                             currentStep -= 1
                         }
                         .buttonStyle(.bordered)
                         .frame(minWidth: 44, minHeight: 44)
-                        .accessibilityHint(String(localized: "hero.creation.accessibility.back.hint"))
+                        .accessibilityHint(String(localized: "hero.creation.accessibility.back.hint",
+                                                  comment: "Hero creation: Back button accessibility hint"))
                     }
 
                     Spacer()
 
-                    Button(currentStep == totalSteps - 1 ? (heroToEdit != nil ? String(localized: "hero.creation.button.update") : String(localized: "hero.creation.button.create")) : String(localized: "hero.creation.button.next")) {
+                    Button(currentStep == totalSteps - 1
+                           ? (heroToEdit != nil
+                              ? String(localized: "hero.creation.button.update",
+                                       comment: "Hero creation: Update hero button")
+                              : String(localized: "hero.creation.button.create",
+                                       comment: "Hero creation: Create hero button"))
+                           : String(localized: "hero.creation.button.next",
+                                    comment: "Hero creation: Next button")) {
                         if currentStep == totalSteps - 1 {
                             saveHero()
                         } else {
@@ -71,19 +92,30 @@ struct HeroCreationView: View {
                     .buttonStyle(.borderedProminent)
                     .frame(minWidth: 44, minHeight: 44)
                     .disabled(!canProceed)
-                    .accessibilityHint(currentStep == totalSteps - 1 ? String(localized: "hero.creation.accessibility.save.hint") : String(localized: "hero.creation.accessibility.next.hint"))
+                    .accessibilityHint(currentStep == totalSteps - 1
+                                       ? String(localized: "hero.creation.accessibility.save.hint",
+                                                comment: "Hero creation: Save hint")
+                                       : String(localized: "hero.creation.accessibility.next.hint",
+                                                comment: "Hero creation: Next hint"))
                 }
                 .padding()
             }
-            .navigationTitle(heroToEdit != nil ? String(localized: "hero.creation.title.edit") : String(localized: "hero.creation.title.create"))
+            .navigationTitle(heroToEdit != nil
+                             ? String(localized: "hero.creation.title.edit",
+                                      comment: "Hero creation: Edit title")
+                             : String(localized: "hero.creation.title.create",
+                                      comment: "Hero creation: Create title"))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(String(localized: "hero.creation.button.cancel")) {
+                    Button(String(localized: "hero.creation.button.cancel",
+                                  comment: "Hero creation: Cancel button")) {
                         dismiss()
                     }
-                    .accessibilityLabel(String(localized: "hero.creation.button.cancel"))
-                    .accessibilityHint(String(localized: "hero.creation.accessibility.cancel.hint"))
+                    .accessibilityLabel(String(localized: "hero.creation.button.cancel",
+                                               comment: "Hero creation: Cancel button"))
+                    .accessibilityHint(String(localized: "hero.creation.accessibility.cancel.hint",
+                                              comment: "Hero creation: Cancel hint"))
                 }
             }
         }
@@ -127,7 +159,9 @@ struct HeroCreationView: View {
                 // carries the meaningful label.
                 .accessibilityHidden(true)
 
-            Text(String(localized: "hero.creation.header.step", defaultValue: "Step \(currentStep + 1) of \(totalSteps)"))
+            Text(String(format: String(localized: "hero.creation.header.step",
+                                       comment: "Hero creation: Step indicator. %1$lld is current step, %2$lld is total steps."),
+                        currentStep + 1, totalSteps))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -152,7 +186,8 @@ struct HeroCreationView: View {
     @ViewBuilder
     private var nameStep: some View {
         VStack(spacing: 20) {
-            Text(String(localized: "hero.creation.name.question"))
+            Text(String(localized: "hero.creation.name.question",
+                        comment: "Hero creation: Name question"))
                 .font(.title3)
                 .fontWeight(.semibold)
 
@@ -162,23 +197,27 @@ struct HeroCreationView: View {
             // to `AQ Hero`.
             Group {
                 if #available(iOS 18.0, *) {
-                    TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
+                    TextField(String(localized: "hero.creation.name.placeholder",
+                                     comment: "Hero creation: Name placeholder"), text: $heroName)
                         .textFieldStyle(.roundedBorder)
                         .font(.title2)
                         .multilineTextAlignment(.center)
                         .writingToolsBehavior(.disabled)
                 } else {
-                    TextField(String(localized: "hero.creation.name.placeholder"), text: $heroName)
+                    TextField(String(localized: "hero.creation.name.placeholder",
+                                     comment: "Hero creation: Name placeholder"), text: $heroName)
                         .textFieldStyle(.roundedBorder)
                         .font(.title2)
                         .multilineTextAlignment(.center)
                 }
             }
-            .accessibilityLabel(String(localized: "hero.creation.name.question"))
+            .accessibilityLabel(String(localized: "hero.creation.name.question",
+                                       comment: "Hero creation: Name question"))
             .autocorrectionDisabled(true)
             .textInputAutocapitalization(.words)
 
-            Text(String(localized: "hero.creation.name.hint"))
+            Text(String(localized: "hero.creation.name.hint",
+                        comment: "Hero creation: Name hint"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -188,7 +227,9 @@ struct HeroCreationView: View {
     @ViewBuilder
     private var primaryTraitStep: some View {
         VStack(spacing: 20) {
-            Text(String(localized: "hero.creation.primarytrait.question", defaultValue: "What's \(heroName)'s main personality?"))
+            Text(String(format: String(localized: "hero.creation.primarytrait.question",
+                                       comment: "Hero creation: Primary trait question. %@ is the hero name."),
+                        heroName))
                 .font(.title3)
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.center)
@@ -209,12 +250,15 @@ struct HeroCreationView: View {
     @ViewBuilder
     private var secondaryTraitStep: some View {
         VStack(spacing: 20) {
-            Text(String(localized: "hero.creation.secondarytrait.question", defaultValue: "What's \(heroName)'s secondary trait?"))
+            Text(String(format: String(localized: "hero.creation.secondarytrait.question",
+                                       comment: "Hero creation: Secondary trait question. %@ is the hero name."),
+                        heroName))
                 .font(.title3)
                 .fontWeight(.semibold)
                 .multilineTextAlignment(.center)
 
-            Text(String(localized: "hero.creation.secondarytrait.hint"))
+            Text(String(localized: "hero.creation.secondarytrait.hint",
+                        comment: "Hero creation: Secondary trait hint"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -235,51 +279,64 @@ struct HeroCreationView: View {
     @ViewBuilder
     private var customizationStep: some View {
         VStack(spacing: 25) {
-            Text(String(localized: "hero.creation.customization.title"))
+            Text(String(localized: "hero.creation.customization.title",
+                        comment: "Hero creation: Customization title"))
                 .font(.title3)
                 .fontWeight(.semibold)
 
             VStack(alignment: .leading, spacing: 15) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "hero.creation.appearance.question", defaultValue: "How does \(heroName) look?"))
+                    let appearanceQuestion = String(format: String(localized: "hero.creation.appearance.question",
+                                                                   comment: "Hero creation: Appearance question. %@ is the hero name."),
+                                                    heroName)
+                    Text(appearanceQuestion)
                         .font(.headline)
 
                     Group {
                         if #available(iOS 18.0, *) {
-                            TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
+                            TextField(String(localized: "hero.creation.appearance.placeholder",
+                                             comment: "Hero creation: Appearance placeholder"), text: $appearance)
                                 .textFieldStyle(.roundedBorder)
                                 .writingToolsBehavior(.disabled)
                         } else {
-                            TextField(String(localized: "hero.creation.appearance.placeholder"), text: $appearance)
+                            TextField(String(localized: "hero.creation.appearance.placeholder",
+                                             comment: "Hero creation: Appearance placeholder"), text: $appearance)
                                 .textFieldStyle(.roundedBorder)
                         }
                     }
                     // BUG-24: match the visible question above the field.
-                    .accessibilityLabel(String(localized: "hero.creation.appearance.question", defaultValue: "How does \(heroName) look?"))
+                    .accessibilityLabel(appearanceQuestion)
 
-                    Text(String(localized: "hero.creation.appearance.hint"))
+                    Text(String(localized: "hero.creation.appearance.hint",
+                                comment: "Hero creation: Appearance hint"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "hero.creation.specialability.question", defaultValue: "What's \(heroName)'s special ability?"))
+                    let specialAbilityQuestion = String(format: String(localized: "hero.creation.specialability.question",
+                                                                       comment: "Hero creation: Special ability question. %@ is the hero name."),
+                                                        heroName)
+                    Text(specialAbilityQuestion)
                         .font(.headline)
 
                     Group {
                         if #available(iOS 18.0, *) {
-                            TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
+                            TextField(String(localized: "hero.creation.specialability.placeholder",
+                                             comment: "Hero creation: Special ability placeholder"), text: $specialAbility)
                                 .textFieldStyle(.roundedBorder)
                                 .writingToolsBehavior(.disabled)
                         } else {
-                            TextField(String(localized: "hero.creation.specialability.placeholder"), text: $specialAbility)
+                            TextField(String(localized: "hero.creation.specialability.placeholder",
+                                             comment: "Hero creation: Special ability placeholder"), text: $specialAbility)
                                 .textFieldStyle(.roundedBorder)
                         }
                     }
                     // BUG-24: match the visible question above the field.
-                    .accessibilityLabel(String(localized: "hero.creation.specialability.question", defaultValue: "What's \(heroName)'s special ability?"))
+                    .accessibilityLabel(specialAbilityQuestion)
 
-                    Text(String(localized: "hero.creation.specialability.hint"))
+                    Text(String(localized: "hero.creation.specialability.hint",
+                                comment: "Hero creation: Special ability hint"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -301,7 +358,8 @@ struct HeroCreationView: View {
                     // BUG-26: decorative, label is provided by the
                     // adjacent Text.
                     .accessibilityHidden(true)
-                Text(String(localized: "hero.creation.avatar.info"))
+                Text(String(localized: "hero.creation.avatar.info",
+                            comment: "Hero creation: Avatar info"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -400,12 +458,15 @@ struct AvatarPromptView: View {
                     .accessibilityHidden(true)
 
                 VStack(spacing: 12) {
-                    Text(String(localized: "hero.avatar.prompt.title"))
+                    Text(String(localized: "hero.avatar.prompt.title",
+                                comment: "Avatar prompt: Title"))
                         .font(.title)
                         .fontWeight(.bold)
 
                     if let heroName = hero?.name {
-                        Text(String(localized: "hero.avatar.prompt.subtitle", defaultValue: "Create an AI-generated avatar for \(heroName)"))
+                        Text(String(format: String(localized: "hero.avatar.prompt.subtitle",
+                                                   comment: "Avatar prompt: Subtitle. %@ is the hero name."),
+                                    heroName))
                             .font(.body)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -422,7 +483,8 @@ struct AvatarPromptView: View {
                                 // BUG-26: decorative — button carries a
                                 // text label + explicit accessibilityLabel.
                                 .accessibilityHidden(true)
-                            Text(String(localized: "hero.avatar.prompt.button.generate"))
+                            Text(String(localized: "hero.avatar.prompt.button.generate",
+                                        comment: "Avatar prompt: Generate button"))
                         }
                         .frame(maxWidth: .infinity)
                         .frame(minHeight: 44)
@@ -431,13 +493,16 @@ struct AvatarPromptView: View {
                         .foregroundColor(.white)
                         .cornerRadius(12)
                     }
-                    .accessibilityLabel(String(localized: "hero.avatar.prompt.button.generate"))
-                    .accessibilityHint(String(localized: "hero.avatar.prompt.accessibility.hint"))
+                    .accessibilityLabel(String(localized: "hero.avatar.prompt.button.generate",
+                                               comment: "Avatar prompt: Generate button"))
+                    .accessibilityHint(String(localized: "hero.avatar.prompt.accessibility.hint",
+                                              comment: "Avatar prompt: Accessibility hint"))
 
                     Button {
                         onDismiss()
                     } label: {
-                        Text(String(localized: "hero.avatar.prompt.button.later"))
+                        Text(String(localized: "hero.avatar.prompt.button.later",
+                                    comment: "Avatar prompt: Maybe later button"))
                             .frame(maxWidth: .infinity)
                             .frame(minHeight: 44)
                             .padding()
@@ -445,15 +510,18 @@ struct AvatarPromptView: View {
                             .foregroundColor(.primary)
                             .cornerRadius(12)
                     }
-                    .accessibilityLabel(String(localized: "hero.avatar.prompt.accessibility.skip"))
-                    .accessibilityHint(String(localized: "hero.avatar.prompt.accessibility.skip.hint"))
+                    .accessibilityLabel(String(localized: "hero.avatar.prompt.accessibility.skip",
+                                               comment: "Avatar prompt: Skip accessibility label"))
+                    .accessibilityHint(String(localized: "hero.avatar.prompt.accessibility.skip.hint",
+                                              comment: "Avatar prompt: Skip hint"))
                 }
                 .padding(.horizontal, 40)
 
                 Spacer()
             }
             .padding()
-            .navigationTitle(String(localized: "hero.avatar.prompt.ready"))
+            .navigationTitle(String(localized: "hero.avatar.prompt.ready",
+                                    comment: "Avatar prompt: Ready title"))
             .navigationBarTitleDisplayMode(.inline)
             .fullScreenCover(isPresented: $showAvatarSheet) {
                 if let hero = hero {
@@ -481,6 +549,8 @@ struct TraitCard: View {
                 Text(trait.localizedName)
                     .font(.headline)
                     .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
 
                 Text(trait.localizedDescription)
                     .font(.caption)
@@ -514,7 +584,8 @@ struct HeroPreviewCard: View {
 
     var body: some View {
         VStack(spacing: 15) {
-            Text(String(localized: "hero.creation.preview.title"))
+            Text(String(localized: "hero.creation.preview.title",
+                        comment: "Hero creation: Preview title"))
                 .font(.headline)
                 .foregroundColor(.secondary)
 
@@ -533,7 +604,14 @@ struct HeroPreviewCard: View {
                             .font(.title2)
                             .fontWeight(.bold)
 
-                        Text(String(localized: "hero.creation.preview.traits", defaultValue: "\(primaryTrait.rawValue) and \(secondaryTrait.rawValue)"))
+                        Text({
+                            // BUG-15: use format string + localizedName instead of
+                            // interpolating English rawValue into the lookup key.
+                            let format = String(localized: "hero.creation.preview.traits",
+                                                defaultValue: "%@ and %@",
+                                                comment: "Hero creation: Preview traits")
+                            return String(format: format, primaryTrait.localizedName, secondaryTrait.localizedName)
+                        }())
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -542,13 +620,17 @@ struct HeroPreviewCard: View {
                 }
 
                 if !appearance.isEmpty {
-                    Text(String(localized: "hero.creation.preview.appearance", defaultValue: "Appearance: \(appearance)"))
+                    Text(String(format: String(localized: "hero.creation.preview.appearance",
+                                               comment: "Hero creation: Preview appearance. %@ is the appearance description."),
+                                appearance))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
 
                 if !specialAbility.isEmpty {
-                    Text(String(localized: "hero.creation.preview.specialability", defaultValue: "Special Ability: \(specialAbility)"))
+                    Text(String(format: String(localized: "hero.creation.preview.specialability",
+                                               comment: "Hero creation: Preview special ability. %@ is the special ability."),
+                                specialAbility))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

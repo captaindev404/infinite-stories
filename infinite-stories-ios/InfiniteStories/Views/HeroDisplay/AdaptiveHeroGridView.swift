@@ -236,19 +236,22 @@ struct ExpandedHeroCard: View {
                         StatPill(
                             icon: "book.closed.fill",
                             value: "\(heroStories.count)",
-                            label: String(localized: "hero.stats.stories")
+                            label: String(localized: "hero.stats.stories",
+                                          comment: "Label for the number of stories a hero has written.")
                         )
-                        
+
                         StatPill(
                             icon: "clock.fill",
                             value: formatDuration(heroStories),
-                            label: String(localized: "hero.stats.totalTime")
+                            label: String(localized: "hero.stats.totalTime",
+                                          comment: "Label describing the total time spent on all their stories.")
                         )
 
                         StatPill(
                             icon: "star.fill",
                             value: "\(heroStories.filter { $0.isFavorite }.count)",
-                            label: String(localized: "hero.stats.favorites")
+                            label: String(localized: "hero.stats.favorites",
+                                          comment: "Label for a stat that shows how many of a hero's stories are marked as favorites.")
                         )
                     }
 
@@ -256,7 +259,8 @@ struct ExpandedHeroCard: View {
                     if let latestStory = latestStory {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(String(localized: "hero.stats.latestStory"))
+                                Text(String(localized: "hero.stats.latestStory",
+                                            comment: "A label describing the latest story of a hero."))
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white.opacity(0.8))
@@ -364,7 +368,8 @@ struct CompactHeroCard: View {
                     .lineLimit(1)
 
                 // Primary Trait with glass styling
-                Text(hero.primaryTrait.rawValue)
+                // BUG-15: localized trait name instead of English rawValue.
+                Text(hero.primaryTrait.localizedName)
                     .font(.caption2)
                     .foregroundColor(.purple)
                     .padding(.horizontal, 8)
@@ -416,7 +421,14 @@ struct CompactHeroCard: View {
             }
         }, perform: {})
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(hero.name), \(hero.primaryTrait.rawValue), \(heroStoryCount) stories")
+        // BUG-15 / L10N-04: localized name, trait, and plural-aware story count.
+        // Uses LocalizedStringResource so the String Catalog plural variation
+        // for "stories" is applied at resolution time.
+        .accessibilityLabel(Text(LocalizedStringResource(
+            "hero.card.accessibility.label",
+            defaultValue: "\(hero.name), \(hero.primaryTrait.localizedName), \(heroStoryCount) stories",
+            comment: "Accessibility label: hero name, primary trait, story count"
+        )))
         .accessibilityHint("Tap to create a new story")
     }
 }

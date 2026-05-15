@@ -45,10 +45,18 @@ final class Hero: Identifiable {
         self.avatarGenerationId = nil
     }
     
+    /// Localized display of the two traits joined with a locale-appropriate
+    /// connector (e.g. "Courageux et Curieux" in FR, "Brave and Curious" in EN).
+    /// Used in UI chips/headers only — DO NOT pass to the backend or AI prompts.
     var traitsDescription: String {
-        return "\(primaryTrait.rawValue) and \(secondaryTrait.rawValue)"
+        let format = String(localized: "hero.creation.preview.traits",
+                            defaultValue: "%@ and %@",
+                            comment: "Hero traits joined with locale connector")
+        return String(format: format, primaryTrait.localizedName, secondaryTrait.localizedName)
     }
-    
+
+    /// English, AI-prompt oriented. Kept in English because it feeds into story
+    /// generation prompts and must not localize.
     var fullDescription: String {
         var description = "\(name) is a \(primaryTrait.rawValue.lowercased()) and \(secondaryTrait.rawValue.lowercased()) character"
         

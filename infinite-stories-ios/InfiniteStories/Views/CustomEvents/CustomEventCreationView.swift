@@ -216,8 +216,14 @@ struct CustomEventCreationView: View {
 
     private func buildPreviewEvent() -> CustomStoryEvent {
         CustomStoryEvent(
-            title: eventTitle.isEmpty ? String(localized: "customEvent.creation.preview.newEvent") : eventTitle,
-            description: eventDescription.isEmpty ? String(localized: "customEvent.creation.preview.description") : eventDescription,
+            title: eventTitle.isEmpty
+                   ? String(localized: "customEvent.creation.preview.newEvent",
+                            comment: "Custom Event creation: Placeholder title shown in the live preview when no title has been entered.")
+                   : eventTitle,
+            description: eventDescription.isEmpty
+                         ? String(localized: "customEvent.creation.preview.description",
+                                  comment: "Custom Event creation: Placeholder description shown in the live preview when no description has been entered.")
+                         : eventDescription,
             promptSeed: promptSeed.isEmpty ? eventDescription : promptSeed,
             category: selectedCategory,
             ageRange: selectedAgeRange,
@@ -227,7 +233,8 @@ struct CustomEventCreationView: View {
 
     private func saveCustomEvent() {
         guard NetworkMonitor.shared.isConnected else {
-            errorMessage = String(localized: "customEvent.creation.error.noNetwork")
+            errorMessage = String(localized: "customEvent.creation.error.noNetwork",
+                                  comment: "Custom Event creation: Error message shown when saving requires a network connection.")
             showingError = true
             return
         }
@@ -255,7 +262,8 @@ struct CustomEventCreationView: View {
             } catch {
                 await MainActor.run {
                     isSaving = false
-                    errorMessage = String(localized: "customEvent.creation.error.saveFailed") + ": \(error.localizedDescription)"
+                    errorMessage = String(localized: "customEvent.creation.error.saveFailed",
+                                          comment: "Custom Event creation: Error message shown when saving the event fails.") + ": \(error.localizedDescription)"
                     showingError = true
                 }
             }
@@ -272,10 +280,14 @@ struct BasicInfoStepView: View {
 
     private var exampleDescriptions: [String] {
         [
-            String(localized: "customEvent.creation.step1.example1"),
-            String(localized: "customEvent.creation.step1.example2"),
-            String(localized: "customEvent.creation.step1.example3"),
-            String(localized: "customEvent.creation.step1.example4")
+            String(localized: "customEvent.creation.step1.example1",
+                   comment: "Custom Event creation step 1: Example description 1."),
+            String(localized: "customEvent.creation.step1.example2",
+                   comment: "Custom Event creation step 1: Example description 2."),
+            String(localized: "customEvent.creation.step1.example3",
+                   comment: "Custom Event creation step 1: Example description 3."),
+            String(localized: "customEvent.creation.step1.example4",
+                   comment: "Custom Event creation step 1: Example description 4.")
         ]
     }
 
@@ -698,26 +710,35 @@ struct PreviewStepView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         CreationDetailRow(
                             icon: "text.alignleft",
-                            label: String(localized: "customEvent.creation.step4.description"),
+                            label: String(localized: "customEvent.creation.step4.description",
+                                          comment: "Custom Event creation step 4 (review): Description field label."),
                             value: event.description
                         )
 
                         CreationDetailRow(
                             icon: "folder",
-                            label: String(localized: "customEvent.creation.step4.category"),
+                            label: String(localized: "customEvent.creation.step4.category",
+                                          comment: "Custom Event creation step 4 (review): Category field label."),
                             value: event.eventCategory.displayName
                         )
 
                         CreationDetailRow(
                             icon: "person.2",
-                            label: String(localized: "customEvent.creation.step4.ageRange"),
-                            value: event.ageRange ?? String(localized: "customEvent.creation.step4.allAges")
+                            label: String(localized: "customEvent.creation.step4.ageRange",
+                                          comment: "Custom Event creation step 4 (review): Age range field label."),
+                            // Route through the enum's localizedName so the
+                            // review step shows "Tous âges" in FR rather than
+                            // the raw English rawValue. See Task #81.
+                            value: event.eventAgeRange?.localizedName
+                                ?? String(localized: "customEvent.creation.step4.allAges",
+                                          comment: "Custom Event creation step 4 (review): Fallback value shown when no age range is selected.")
                         )
 
                         CreationDetailRow(
                             icon: "waveform",
-                            label: String(localized: "customEvent.creation.step4.tone"),
-                            value: event.storyTone.displayName
+                            label: String(localized: "customEvent.creation.step4.tone",
+                                          comment: "Custom Event creation step 4 (review): Story tone field label."),
+                            value: event.storyTone.localizedName
                         )
 
                         if !event.keywords.isEmpty {
@@ -831,11 +852,16 @@ struct AgeRangeButton: View {
                     .foregroundColor(isSelected ? .orange : .secondary)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(ageRange.rawValue)
+                    // BUG-L10N-82: rawValue is the English API identifier
+                    // ("All Ages"). Use localizedName so the creation picker
+                    // renders "Tous âges" in FR instead of leaking English.
+                    Text(ageRange.localizedName)
                         .font(.subheadline)
                         .fontWeight(isSelected ? .medium : .regular)
 
-                    Text(String(localized: "customEvent.creation.step2.ages \(ageRange.minAge) \(ageRange.maxAge)"))
+                    Text(String(format: String(localized: "customEvent.creation.step2.ages %lld %lld",
+                                               comment: "Custom Event creation step 2: Ages range caption. %1$lld is min age, %2$lld is max age."),
+                                ageRange.minAge, ageRange.maxAge))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -857,7 +883,7 @@ struct ToneChip: View {
 
     var body: some View {
         Button(action: action) {
-            Text(tone.displayName)
+            Text(tone.localizedName)
                 .font(.subheadline)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

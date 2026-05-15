@@ -73,7 +73,7 @@ struct AppConfiguration {
     /// - Release (App Store): production server
     #if DEBUG
         #if targetEnvironment(simulator)
-        static let backendBaseURL = "http://localhost:3000"
+        static let backendBaseURL = "http://localhost:3001"
         #else
         static let backendBaseURL = "https://infinite-stories-web-dev.captaindev.io"
         #endif

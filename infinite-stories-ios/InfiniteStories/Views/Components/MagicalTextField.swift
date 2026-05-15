@@ -93,6 +93,10 @@ struct MagicalTextField: View {
         .modifier(
             SharedTextFieldModifiers(
                 accessibilityLabel: accessibilityLabel ?? placeholder,
+                // BUG-A20: SecureField must never announce its content to
+                // VoiceOver. Force an empty AXValue so the placeholder does
+                // not leak as the spoken value.
+                accessibilityValue: "",
                 textContentType: textContentType,
                 autocorrectionDisabled: autocorrectionDisabled,
                 textInputAutocapitalization: textInputAutocapitalization
@@ -119,6 +123,10 @@ struct MagicalTextField: View {
         .modifier(
             SharedTextFieldModifiers(
                 accessibilityLabel: accessibilityLabel ?? placeholder,
+                // BUG-A20: Explicit AXValue that reflects actual text (empty
+                // when nothing typed) instead of letting SwiftUI fall back to
+                // the placeholder string.
+                accessibilityValue: text,
                 textContentType: textContentType,
                 autocorrectionDisabled: autocorrectionDisabled,
                 textInputAutocapitalization: textInputAutocapitalization
@@ -132,6 +140,7 @@ struct MagicalTextField: View {
 /// `.autocorrectionDisabled` / `.accessibilityLabel` line.
 private struct SharedTextFieldModifiers: ViewModifier {
     let accessibilityLabel: String
+    let accessibilityValue: String
     let textContentType: UITextContentType?
     let autocorrectionDisabled: Bool
     let textInputAutocapitalization: TextInputAutocapitalization?
@@ -139,6 +148,7 @@ private struct SharedTextFieldModifiers: ViewModifier {
     func body(content: Content) -> some View {
         content
             .accessibilityLabel(accessibilityLabel)
+            .accessibilityValue(accessibilityValue)
             .textContentType(textContentType)
             .autocorrectionDisabled(autocorrectionDisabled)
             .textInputAutocapitalization(textInputAutocapitalization)

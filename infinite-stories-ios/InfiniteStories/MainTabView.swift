@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+// BUG-A24: Notification broadcast so child views (like Home's "Voir tout"
+// link) can request a tab switch without plumbing a binding down the stack.
+extension Notification.Name {
+    static let switchToTab = Notification.Name("com.infinitestories.switchToTab")
+}
+
 /// Tab identifiers for the app's main navigation
 enum AppTab: Int, CaseIterable, Identifiable {
     case home = 0
@@ -114,6 +120,15 @@ struct MainTabView: View {
             // Track the last user-selected tab so we can restore it after a
             // forced sign-out (BUG-28).
             authState.pendingRestoreTab = newValue
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .switchToTab)) { note in
+            // BUG-A24: accept tab-switch requests from child views via a
+            // notification payload containing an AppTab rawValue.
+            if let raw = note.object as? Int, let tab = AppTab(rawValue: raw) {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    selectedTab = tab
+                }
+            }
         }
     }
 }

@@ -490,15 +490,19 @@ struct StoryCard: View {
                 // BUG-33: Use the unified "listens" metric + label across card, stats, and VoiceOver.
                 // Single source of truth: story.playCount, always rendered with the localized
                 // "story.card.listens.%lld" key so kids/parents see one consistent number + word.
+                // BUG-A15: removed `fixedSize(horizontal: true)` which was
+                // forcing the card's parent HStack to expand past the screen
+                // width for French strings ("%lld écoutes"), producing the
+                // -27pt/457pt frames reported in the v2 QA sweep.
                 HStack(spacing: 3) {
                     Image(systemName: "play.circle.fill")
                         .font(.system(size: variant == .compact ? 10 : 11))
                     Text("story.card.listens.\(story.playCount)")
                         .font(metadataFont)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 .foregroundColor(.blue)
-                .fixedSize(horizontal: true, vertical: false)
             }
 
             Text(formatSmartDate(story.createdAt))

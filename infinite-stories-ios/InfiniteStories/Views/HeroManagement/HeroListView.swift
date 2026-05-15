@@ -34,7 +34,7 @@ struct HeroListView: View {
 
             Group {
                 if isLoading {
-                    ProgressView(String(localized: "hero.list.loading"))
+                    ProgressView(String(localized: "hero.list.loading", comment: "Hero list: Loading message"))
                         .scaleEffect(1.2)
                 } else if let error = error {
                     ErrorView(error: error, retryAction: {
@@ -47,7 +47,7 @@ struct HeroListView: View {
                 }
             }
         }
-        .navigationTitle(String(localized: "hero.list.title"))
+        .navigationTitle(String(localized: "hero.list.title", comment: "Hero list: Title"))
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showingHeroCreation) {
             HeroCreationView(heroToEdit: nil, onSave: { _ in
@@ -60,19 +60,21 @@ struct HeroListView: View {
             })
         }
         .confirmationDialog(
-            String(localized: "hero.list.delete.title"),
+            String(localized: "hero.list.delete.title", comment: "Hero list: Delete confirmation title"),
             isPresented: $showingDeleteConfirmation,
             titleVisibility: .visible,
             presenting: heroToDelete
         ) { hero in
-            Button(String(localized: "hero.list.delete.button"), role: .destructive) {
+            Button(String(localized: "hero.list.delete.button", comment: "Hero list: Delete button"), role: .destructive) {
                 Task {
                     await deleteHero(hero)
                 }
             }
-            Button(String(localized: "hero.creation.button.cancel"), role: .cancel) { }
+            Button(String(localized: "hero.creation.button.cancel", comment: "Hero creation: Cancel button"), role: .cancel) { }
         } message: { hero in
-            Text(String(localized: "hero.list.delete.message", defaultValue: "This will permanently delete \(hero.name)."))
+            Text(String(format: String(localized: "hero.list.delete.message",
+                                       comment: "Hero list: Delete confirmation message. %@ is the hero's name."),
+                        hero.name))
         }
         .task {
             await loadHeroes()
@@ -87,7 +89,7 @@ struct HeroListView: View {
                     HStack {
                         Image(systemName: "person.crop.circle.badge.plus")
                             .font(.title2)
-                        Text(String(localized: "hero.list.button.create"))
+                        Text(String(localized: "hero.list.button.create", comment: "Hero list: Create button"))
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -103,8 +105,8 @@ struct HeroListView: View {
                     )
                     .cornerRadius(15)
                 }
-                .accessibilityLabel(String(localized: "hero.list.button.create"))
-                .accessibilityHint(String(localized: "hero.list.accessibility.create.hint"))
+                .accessibilityLabel(String(localized: "hero.list.button.create", comment: "Hero list: Create button"))
+                .accessibilityHint(String(localized: "hero.list.accessibility.create.hint", comment: "Hero list: Create hint"))
                 .padding(.horizontal)
 
                 // Hero List
@@ -223,7 +225,7 @@ struct HeroManagementCard: View {
                         .fontWeight(.semibold)
 
                     HStack(spacing: 8) {
-                        Text(hero.primaryTrait.rawValue)
+                        Text(hero.primaryTrait.localizedName)
                             .font(.caption)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -231,7 +233,7 @@ struct HeroManagementCard: View {
                             .foregroundColor(.orange)
                             .cornerRadius(5)
 
-                        Text(hero.secondaryTrait.rawValue)
+                        Text(hero.secondaryTrait.localizedName)
                             .font(.caption)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -280,7 +282,7 @@ struct HeroManagementCard: View {
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.purple)
-                        Text(storyCount == 1 ? String(localized: "hero.list.stat.story.singular") : String(localized: "hero.list.stat.story.plural"))
+                        Text(storyCount == 1 ? String(localized: "hero.list.stat.story.singular", comment: "Hero list: Story count (singular)") : String(localized: "hero.list.stat.story.plural", comment: "Hero list: Story count (plural)"))
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
@@ -294,7 +296,7 @@ struct HeroManagementCard: View {
                 Button(action: onEdit) {
                     HStack {
                         Image(systemName: "pencil")
-                        Text(String(localized: "hero.list.button.edit"))
+                        Text(String(localized: "hero.list.button.edit", comment: "Hero list: Edit button"))
                     }
                     .font(.subheadline)
                     .foregroundColor(.blue)
@@ -302,8 +304,10 @@ struct HeroManagementCard: View {
                     .frame(minHeight: 44)
                     .padding(.vertical, 12)
                 }
-                .accessibilityLabel(String(localized: "hero.list.accessibility.edit", defaultValue: "Edit \(hero.name)"))
-                .accessibilityHint(String(localized: "hero.list.accessibility.edit.hint"))
+                .accessibilityLabel(String(format: String(localized: "hero.list.accessibility.edit",
+                                                          comment: "Hero list: Edit accessibility label. %@ is the hero's name."),
+                                           hero.name))
+                .accessibilityHint(String(localized: "hero.list.accessibility.edit.hint", comment: "Hero list: Edit hint"))
 
                 Divider()
                     .frame(height: 20)
@@ -315,7 +319,7 @@ struct HeroManagementCard: View {
                     }) {
                         HStack {
                             Image(systemName: "wand.and.stars")
-                            Text(String(localized: "hero.list.button.avatar"))
+                            Text(String(localized: "hero.list.button.avatar", comment: "Hero list: Avatar button"))
                         }
                         .font(.subheadline)
                         .foregroundColor(.purple)
@@ -323,8 +327,10 @@ struct HeroManagementCard: View {
                         .frame(minHeight: 44)
                         .padding(.vertical, 12)
                     }
-                    .accessibilityLabel(String(localized: "hero.list.accessibility.avatar", defaultValue: "Generate avatar for \(hero.name)"))
-                    .accessibilityHint(String(localized: "hero.list.accessibility.avatar.hint"))
+                    .accessibilityLabel(String(format: String(localized: "hero.list.accessibility.avatar",
+                                                              comment: "Hero list: Avatar accessibility label. %@ is the hero's name."),
+                                               hero.name))
+                    .accessibilityHint(String(localized: "hero.list.accessibility.avatar.hint", comment: "Hero list: Avatar hint"))
 
                     Divider()
                         .frame(height: 20)
@@ -333,7 +339,7 @@ struct HeroManagementCard: View {
                 Button(action: onDelete) {
                     HStack {
                         Image(systemName: "trash")
-                        Text(String(localized: "hero.list.button.delete"))
+                        Text(String(localized: "hero.list.button.delete", comment: "Hero list: Delete button"))
                     }
                     .font(.subheadline)
                     .foregroundColor(.red)
@@ -341,8 +347,10 @@ struct HeroManagementCard: View {
                     .frame(minHeight: 44)
                     .padding(.vertical, 12)
                 }
-                .accessibilityLabel(String(localized: "hero.list.accessibility.delete", defaultValue: "Delete \(hero.name)"))
-                .accessibilityHint(String(localized: "hero.list.accessibility.delete.hint"))
+                .accessibilityLabel(String(format: String(localized: "hero.list.accessibility.delete",
+                                                          comment: "Hero list: Delete accessibility label. %@ is the hero's name."),
+                                           hero.name))
+                .accessibilityHint(String(localized: "hero.list.accessibility.delete.hint", comment: "Hero list: Delete hint"))
             }
             .background(Color(.systemGray6).opacity(colorScheme == .dark ? 0.3 : 0.5))
         }
@@ -372,11 +380,11 @@ struct EmptyHeroStateView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.purple.opacity(0.5))
 
-            Text(String(localized: "hero.list.empty.title"))
+            Text(String(localized: "hero.list.empty.title", comment: "Hero list: Empty state title"))
                 .font(.title2)
                 .fontWeight(.semibold)
 
-            Text(String(localized: "hero.list.empty.message"))
+            Text(String(localized: "hero.list.empty.message", comment: "Hero list: Empty state message"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

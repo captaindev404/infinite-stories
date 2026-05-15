@@ -39,11 +39,16 @@ struct CustomEventManagementView: View {
 
         var localizedName: String {
             switch self {
-            case .newest: return String(localized: "customEvent.management.sort.newest")
-            case .oldest: return String(localized: "customEvent.management.sort.oldest")
-            case .mostUsed: return String(localized: "customEvent.management.sort.mostUsed")
-            case .alphabetical: return String(localized: "customEvent.management.sort.alphabetical")
-            case .favorites: return String(localized: "customEvent.management.sort.favorites")
+            case .newest: return String(localized: "customEvent.management.sort.newest",
+                                        comment: "Custom Events management: sort option - newest first.")
+            case .oldest: return String(localized: "customEvent.management.sort.oldest",
+                                        comment: "Custom Events management: sort option - oldest first.")
+            case .mostUsed: return String(localized: "customEvent.management.sort.mostUsed",
+                                          comment: "Custom Events management: sort option - most used.")
+            case .alphabetical: return String(localized: "customEvent.management.sort.alphabetical",
+                                              comment: "Custom Events management: sort option - alphabetical.")
+            case .favorites: return String(localized: "customEvent.management.sort.favorites",
+                                           comment: "Custom Events management: sort option - favorites first.")
             }
         }
     }
@@ -151,7 +156,9 @@ struct CustomEventManagementView: View {
                     }
                 }
             } message: {
-                Text(String(localized: "customEvent.management.deleteAlert.message \(selectedEvents.count)"))
+                Text(String(format: String(localized: "customEvent.management.deleteAlert.message %lld",
+                                           comment: "Custom Events management: Delete alert message. %lld is the number of selected events."),
+                            selectedEvents.count))
             }
         }
         .task {
@@ -203,7 +210,8 @@ struct CustomEventManagementView: View {
             HStack(spacing: 12) {
                 // All categories
                 CategoryChip(
-                    title: String(localized: "customEvent.management.filter.all"),
+                    title: String(localized: "customEvent.management.filter.all",
+                                  comment: "Custom Events management: All categories filter chip."),
                     icon: "square.grid.2x2",
                     isSelected: selectedCategory == nil,
                     color: .blue
@@ -228,6 +236,9 @@ struct CustomEventManagementView: View {
             }
             .padding(.horizontal)
         }
+        // BUG-A28: extra trailing scroll margin so the last category chip
+        // ("Émotions" in French) doesn't bleed off the right edge.
+        .contentMargins(.trailing, 24, for: .scrollContent)
         .padding(.vertical, 8)
     }
 
@@ -235,22 +246,27 @@ struct CustomEventManagementView: View {
 
     private var statsBar: some View {
         HStack(spacing: 16) {
-            StatItem(
+            // BUG-L10N-12: the events count used a plain "Events" label, so
+            // French users saw "1 Événements" (plural form with singular
+            // count). Replaced with a plural-variation key so the label
+            // agrees with the number in every locale.
+            PluralStatItem(
                 icon: "square.stack.3d.up",
-                value: "\(filteredEvents.count)",
-                label: String(localized: "customEvent.management.stats.events")
+                count: filteredEvents.count
             )
 
             StatItem(
                 icon: "sparkles",
                 value: "\(filteredEvents.filter { $0.aiEnhanced }.count)",
-                label: String(localized: "customEvent.management.stats.aiEnhanced")
+                label: String(localized: "customEvent.management.stats.aiEnhanced",
+                              comment: "Custom Events management: AI enhanced count label.")
             )
 
             StatItem(
                 icon: "star.fill",
                 value: "\(filteredEvents.filter { $0.isFavorite }.count)",
-                label: String(localized: "customEvent.management.stats.favorites")
+                label: String(localized: "customEvent.management.stats.favorites",
+                              comment: "Custom Events management: Favorites count label.")
             )
 
             Spacer()
@@ -329,7 +345,11 @@ struct CustomEventManagementView: View {
                         }
                     } label: {
                         Label(
-                            event.isFavorite ? String(localized: "customEvent.management.swipe.unfavorite") : String(localized: "customEvent.management.swipe.favorite"),
+                            event.isFavorite
+                            ? String(localized: "customEvent.management.swipe.unfavorite",
+                                     comment: "Custom Events management: Swipe action to remove from favorites.")
+                            : String(localized: "customEvent.management.swipe.favorite",
+                                     comment: "Custom Events management: Swipe action to add to favorites."),
                             systemImage: event.isFavorite ? "star.fill" : "star"
                         )
                     }
@@ -387,7 +407,11 @@ struct CustomEventManagementView: View {
             }
         } label: {
             Label(
-                event.isFavorite ? String(localized: "customEvent.management.context.unfavorite") : String(localized: "customEvent.management.context.favorite"),
+                event.isFavorite
+                ? String(localized: "customEvent.management.context.unfavorite",
+                         comment: "Custom Events management: Context menu action to remove from favorites.")
+                : String(localized: "customEvent.management.context.favorite",
+                         comment: "Custom Events management: Context menu action to add to favorites."),
                 systemImage: event.isFavorite ? "star.slash" : "star"
             )
         }
@@ -618,13 +642,43 @@ struct StatItem: View {
                 Text(value)
                     .font(.caption)
                     .fontWeight(.semibold)
-                // BUG-16: FR label "Événements" was wrapping mid-word in the
-                // stats bar. Keep on a single line and shrink before truncating.
+                // BUG-A07: FR labels "Événements"/"Amélioré" were truncating
+                // ("Événemen…"). Allow two lines and stronger scale-down so
+                // long locales fit into the fixed-width picker layout.
                 Text(label)
                     .font(.caption2)
                     .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+
+/// Stat cell whose label follows the locale's plural rule for the count
+/// it is describing (BUG-L10N-12). The catalog key
+/// `customEvent.management.stats.eventsCount %lld` holds "one" and "other"
+/// variations for each supported locale so French no longer reads
+/// "1 Événements". The full phrase (e.g. "3 événements") is placed in the
+/// prominent caption row and a static section label below disambiguates the
+/// meaning, matching the visual rhythm of the sibling StatItem cells.
+struct PluralStatItem: View {
+    let icon: String
+    let count: Int
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("customEvent.management.stats.eventsCount \(count)")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }

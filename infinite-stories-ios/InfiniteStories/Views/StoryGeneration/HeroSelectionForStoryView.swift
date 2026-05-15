@@ -29,7 +29,7 @@ struct HeroSelectionForStoryView: View {
         NavigationView {
             Group {
                 if isLoading {
-                    ProgressView(String(localized: "hero.selection.loading"))
+                    ProgressView(String(localized: "hero.selection.loading", comment: "Hero Selection: Loading heroes"))
                         .scaleEffect(1.2)
                 } else if let error = loadError {
                     ErrorView(error: error, retryAction: {
@@ -145,15 +145,15 @@ struct HeroSelectionCard: View {
                         .lineLimit(1)
                     
                     HStack(spacing: 6) {
-                        Text(hero.primaryTrait.rawValue)
+                        Text(hero.primaryTrait.localizedName)
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Color.orange.opacity(0.2))
                             .foregroundColor(.orange)
                             .cornerRadius(4)
-                        
-                        Text(hero.secondaryTrait.rawValue)
+
+                        Text(hero.secondaryTrait.localizedName)
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -165,7 +165,12 @@ struct HeroSelectionCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "book.fill")
                             .font(.caption2)
-                        Text(storyCount == 1 ? String(localized: "hero.selection.story.singular") : String(localized: "hero.selection.story.plural", defaultValue: "\(storyCount) stories"))
+                        Text(storyCount == 1
+                             ? String(localized: "hero.selection.story.singular",
+                                      comment: "Hero Selection: One story count")
+                             : String(format: String(localized: "hero.selection.story.plural",
+                                                     comment: "Hero Selection: Multiple stories count. %d is the story count."),
+                                      storyCount))
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)

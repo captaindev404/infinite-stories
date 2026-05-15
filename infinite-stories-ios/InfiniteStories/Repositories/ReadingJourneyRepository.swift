@@ -475,6 +475,7 @@ enum TimeRange: String, CaseIterable, Identifiable, Hashable {
     case week = "Week"
     case month = "Month"
     case year = "Year"
+    case all = "All"
 
     var id: String { rawValue }
 
@@ -484,6 +485,7 @@ enum TimeRange: String, CaseIterable, Identifiable, Hashable {
         case .week: return 7
         case .month: return 30
         case .year: return 365
+        case .all: return 365 * 10
         }
     }
 
@@ -493,6 +495,7 @@ enum TimeRange: String, CaseIterable, Identifiable, Hashable {
         case .week: return "week"
         case .month: return "month"
         case .year: return "year"
+        case .all: return "all"
         }
     }
 
@@ -504,6 +507,7 @@ enum TimeRange: String, CaseIterable, Identifiable, Hashable {
         case .week: return String(localized: "journey.timeRange.week")
         case .month: return String(localized: "journey.timeRange.month")
         case .year: return String(localized: "journey.timeRange.year")
+        case .all: return String(localized: "journey.timeRange.all", defaultValue: "All Time")
         }
     }
 }

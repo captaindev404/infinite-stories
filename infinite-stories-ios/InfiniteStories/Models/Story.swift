@@ -97,11 +97,30 @@ final class Story: Identifiable {
     // Computed properties for event access
     var eventTitle: String {
         if let builtIn = builtInEvent {
-            return builtIn.rawValue
+            // BUG-A16: return localized name so the chip reads "Aventure au
+            // coucher" in French instead of the raw English enum value.
+            return builtIn.localizedName
         } else if let custom = customEvent {
+            // L10N-83: detect placeholder custom events by empty title only.
+            // The repository sets `title = ""` for placeholders built from a
+            // StoryResponse that only carries `customEventId` (the real event
+            // is loaded separately). Never control-flow on a translatable
+            // display string ("Custom Event") — that breaks the instant the
+            // backend localizes titles or a real user names an event that.
+            let trimmed = custom.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.isEmpty {
+                return String(
+                    localized: "story.card.event.custom",
+                    comment: "Default fallback label for a placeholder custom event in the story repository / story card badge."
+                )
+            }
             return custom.title
         }
-        return "Unknown Event"
+        // NOTE: catalog state is `new` — EN fallback kept until the key is
+        // translated. See Task #86 report.
+        return String(localized: "story.card.event.unknown",
+                      defaultValue: "Unknown Event",
+                      comment: "Default value for the title of an event that is not defined in the built-in list.")
     }
     
     var eventPromptSeed: String {
@@ -131,6 +150,54 @@ final class Story: Identifiable {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: createdAt)
+    }
+
+    /// Whitespace-separated word count computed from `content`. Matches the
+    /// previous `AudioPlayerView.wordCount` helper — kept as a computed
+    /// property so formatting helpers (and tests — see Task #88) can access
+    /// it without duplicating the splitting rule.
+    var wordCount: Int {
+        content.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .count
+    }
+
+    // MARK: - Localized display labels
+    //
+    // L10N-07 / Task #84: These were previously private View helpers in
+    // `AudioPlayerView.swift`. They're pure `Story -> String` transformations
+    // with no SwiftUI coupling, so they belong on the model where they can be
+    // unit-tested (Task #88) and shared across layouts (`ViewThatFits`
+    // branches + the alternate compact layout) without duplication.
+
+    /// Localized "Played X time(s)" label using the `audio.player.playCount`
+    /// catalog key with a plural variation so each locale renders
+    /// singular/plural correctly (French "Lu X fois", English "Played X
+    /// time(s)", etc.). BUG-A14/A29 / L10N-07.
+    var localizedPlayCountLabel: String {
+        String.localizedStringWithFormat(
+            NSLocalizedString("audio.player.playCount", comment: "Audio player play count"),
+            playCount
+        )
+    }
+
+    /// Localized "X word(s)" label, plural-aware per locale. Uses the
+    /// whitespace-split `wordCount` computed from `content`. L10N-07.
+    var localizedWordCountLabel: String {
+        String.localizedStringWithFormat(
+            NSLocalizedString("audio.player.wordCount", comment: "Audio player word count"),
+            wordCount
+        )
+    }
+
+    /// Localized "Created %@" label prefixing the already-locale-formatted
+    /// `formattedDate`. The date string is produced by `Story.formattedDate`
+    /// (locale-aware `DateFormatter`). L10N-07.
+    var localizedCreatedAtLabel: String {
+        String(
+            format: NSLocalizedString("audio.player.createdAt", comment: "Audio player created-at label"),
+            formattedDate
+        )
     }
     
     var shortContent: String {

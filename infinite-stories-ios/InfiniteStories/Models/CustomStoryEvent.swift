@@ -25,15 +25,15 @@ enum EventCategory: String, Codable, CaseIterable {
     // goes through Localizable.xcstrings so each locale renders its own term.
     var displayName: String {
         switch self {
-        case .daily: return String(localized: "customEvent.category.daily")
-        case .adventure: return String(localized: "customEvent.category.adventure")
-        case .emotional: return String(localized: "customEvent.category.emotional")
-        case .learning: return String(localized: "customEvent.category.learning")
-        case .celebration: return String(localized: "customEvent.category.celebration")
-        case .challenge: return String(localized: "customEvent.category.challenge")
-        case .imagination: return String(localized: "customEvent.category.imagination")
-        case .custom: return String(localized: "customEvent.category.custom")
-        case .general: return String(localized: "customEvent.category.general")
+        case .daily: return String(localized: "customEvent.category.daily", comment: "Event category label: Daily Life")
+        case .adventure: return String(localized: "customEvent.category.adventure", comment: "Event category label: Adventure")
+        case .emotional: return String(localized: "customEvent.category.emotional", comment: "Event category label: Emotional Growth")
+        case .learning: return String(localized: "customEvent.category.learning", comment: "Event category label: Learning")
+        case .celebration: return String(localized: "customEvent.category.celebration", comment: "Event category label: Celebration")
+        case .challenge: return String(localized: "customEvent.category.challenge", comment: "Event category label: Challenge")
+        case .imagination: return String(localized: "customEvent.category.imagination", comment: "Event category label: Imagination")
+        case .custom: return String(localized: "customEvent.category.custom", comment: "Event category label: Custom")
+        case .general: return String(localized: "customEvent.category.general", comment: "Event category label: General")
         }
     }
 
@@ -66,6 +66,18 @@ enum EventCategory: String, Codable, CaseIterable {
     }
 }
 
+/// ⚠️ **Wire-format contract — DO NOT EDIT rawValue strings.**
+///
+/// The rawValues `"2-4 years"`, `"4-6 years"`, `"6-10 years"`, `"All Ages"`
+/// are persisted to the backend `ageRange` field on `CustomStoryEvent` and
+/// decoded from backend responses. Changing any of them silently corrupts
+/// every existing user's custom-event records on the next sync.
+///
+/// For UI display, call `localizedName` (routes through xcstrings).
+/// For API / analytics / logs, call `apiIdentifier` (an alias for rawValue).
+///
+/// A structural fix that separates display from wire format is tracked under
+/// task #89 and requires a coordinated backend release.
 enum AgeRange: String, Codable, CaseIterable {
     case toddler = "2-4 years"
     case preschool = "4-6 years"
@@ -89,6 +101,27 @@ enum AgeRange: String, Codable, CaseIterable {
         case .all: return 10
         }
     }
+
+    // BUG-L10N-08: the rawValue doubles as an API identifier (e.g. "All Ages")
+    // and was being rendered verbatim in the FR custom-event detail badge.
+    // Use localizedName for any UI display so French users see "Tous âges"
+    // instead of the English rawValue. The rawValue/wire-format contract is
+    // pinned by the `AgeRangeWireFormatTests` suite — see task #89 for the
+    // planned structural split that decouples display from wire format.
+    var localizedName: String {
+        switch self {
+        case .toddler: return String(localized: "customEvent.ageRange.toddler", comment: "Custom event age-range badge: toddler 2-4 years")
+        case .preschool: return String(localized: "customEvent.ageRange.preschool", comment: "Custom event age-range badge: preschool 4-6 years")
+        case .elementary: return String(localized: "customEvent.ageRange.elementary", comment: "Custom event age-range badge: elementary 6-10 years")
+        case .all: return String(localized: "customEvent.ageRange.all", comment: "Custom event age-range badge: all ages")
+        }
+    }
+
+    /// English rawValue used for API payloads, analytics, and logs.
+    /// Do NOT use this for user-facing display — call `localizedName` instead.
+    /// The rawValue is also the wire-format identifier persisted to the backend;
+    /// see the enum-level doc and task #89 for the planned structural split.
+    var apiIdentifier: String { rawValue }
 }
 
 enum StoryTone: String, Codable, CaseIterable {
@@ -101,18 +134,28 @@ enum StoryTone: String, Codable, CaseIterable {
     case balanced = "balanced"
     case cheerful = "cheerful"
 
-    var displayName: String {
+    // BUG-L10N-08 / #87: Prior to this change `displayName` returned the English
+    // rawValue. It was aliased to `localizedName` during the l10n sweep, which
+    // silently broke the "displayName is English" contract and risked FR strings
+    // leaking into logs, analytics, and API payloads. The alias is removed: UI
+    // call sites must use `localizedName` explicitly, non-UI sites must use
+    // `apiIdentifier` (English rawValue, locale-independent).
+    var localizedName: String {
         switch self {
-        case .calming: return "Calming"
-        case .exciting: return "Exciting"
-        case .educational: return "Educational"
-        case .funny: return "Funny"
-        case .inspiring: return "Inspiring"
-        case .mysterious: return "Mysterious"
-        case .balanced: return "Balanced"
-        case .cheerful: return "Cheerful"
+        case .calming: return String(localized: "customEvent.tone.calming", comment: "Custom event mood badge: calming")
+        case .exciting: return String(localized: "customEvent.tone.exciting", comment: "Custom event mood badge: exciting")
+        case .educational: return String(localized: "customEvent.tone.educational", comment: "Custom event mood badge: educational")
+        case .funny: return String(localized: "customEvent.tone.funny", comment: "Custom event mood badge: funny")
+        case .inspiring: return String(localized: "customEvent.tone.inspiring", comment: "Custom event mood badge: inspiring")
+        case .mysterious: return String(localized: "customEvent.tone.mysterious", comment: "Custom event mood badge: mysterious")
+        case .balanced: return String(localized: "customEvent.tone.balanced", comment: "Custom event mood badge: balanced")
+        case .cheerful: return String(localized: "customEvent.tone.cheerful", comment: "Custom event mood badge: cheerful")
         }
     }
+
+    /// English, locale-independent identifier used for API payloads, analytics
+    /// events, and logs. Do NOT show this to users — use `localizedName`.
+    var apiIdentifier: String { rawValue }
 
     var description: String {
         switch self {
@@ -170,12 +213,20 @@ struct CustomStoryEvent: Codable, Identifiable, Hashable {
     }
 
     var formattedUsageCount: String {
+        // BUG-A08: localized usage-count labels so French users no longer see
+        // "Never used" / "Used 5 times" in the event card footer.
         if usageCount == 0 {
-            return "Never used"
+            return String(localized: "customEvent.usage.never",
+                          comment: "Usage label for a custom event that has never been used.")
         } else if usageCount == 1 {
-            return "Used once"
+            return String(localized: "customEvent.usage.once",
+                          comment: "Usage label when a custom event has been used exactly once.")
         } else {
-            return "Used \(usageCount) times"
+            return String(
+                format: String(localized: "customEvent.usage.times",
+                               comment: "Usage label for custom events used multiple times; %d is the count."),
+                usageCount
+            )
         }
     }
 
@@ -187,7 +238,11 @@ struct CustomStoryEvent: Codable, Identifiable, Hashable {
 
     var keywordsDisplay: String {
         if keywords.isEmpty {
-            return "No keywords"
+            // NOTE: catalog state is `new` — EN fallback kept until the key
+            // is translated. See Task #86 report.
+            return String(localized: "customEvent.keywords.none",
+                          defaultValue: "No keywords",
+                          comment: "Default value for the text displayed when a custom story event has no keywords.")
         }
         return keywords.prefix(3).joined(separator: ", ") + (keywords.count > 3 ? "..." : "")
     }

@@ -33,7 +33,8 @@ struct EnhancedEventPickerView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.secondary)
-                        TextField(String(localized: "story.event.search.placeholder"), text: $searchText)
+                        TextField(String(localized: "story.event.search.placeholder",
+                                         comment: "Event Picker: Search placeholder"), text: $searchText)
                             .textFieldStyle(.plain)
                     }
                     .padding()
@@ -87,7 +88,8 @@ struct EnhancedEventPickerView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             CategoryFilterChip(
-                                title: String(localized: "story.event.category.all"),
+                                title: String(localized: "story.event.category.all",
+                                              comment: "Event Picker: All categories filter"),
                                 isSelected: selectedCategory == nil,
                                 action: { selectedCategory = nil }
                             )
@@ -106,7 +108,8 @@ struct EnhancedEventPickerView: View {
 
                     // Loading state
                     if isLoading {
-                        ProgressView(String(localized: "story.event.loading"))
+                        ProgressView(String(localized: "story.event.loading",
+                                            comment: "Event Picker: Loading custom events"))
                             .padding(.vertical, 20)
                     } else if let error = loadError {
                         VStack(spacing: 12) {
@@ -281,7 +284,7 @@ struct EnhancedEventPickerView: View {
             let matchesSearch = searchText.isEmpty ||
                 event.localizedName.localizedCaseInsensitiveContains(searchText) ||
                 event.rawValue.localizedCaseInsensitiveContains(searchText) ||
-                event.promptSeed.localizedCaseInsensitiveContains(searchText)
+                event.localizedDescription.localizedCaseInsensitiveContains(searchText)
 
             return matchesSearch
         }
@@ -353,13 +356,13 @@ struct BuiltInEventCard: View {
                     .frame(width: 40)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    // BUG-15: localized event name (FR users were seeing EN).
+                    // L10N-05: localized event name + localized description
+                    // (promptSeed stays English because it feeds the AI prompt).
                     Text(event.localizedName)
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    // BUG-17: plain sentence-case prose instead of Title Case.
-                    Text(event.promptSeed)
+                    Text(event.localizedDescription)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(2)
@@ -448,9 +451,12 @@ struct CustomEventCard: View {
                     .background(Color(hex: event.colorHex).opacity(0.2))
                     .cornerRadius(6)
 
-                    // Age range badge
-                    if let ageRange = event.ageRange {
-                        Text(ageRange)
+                    // Age range badge — route through AgeRange.localizedName so
+                    // FR users see "Tous âges" instead of the raw English
+                    // rawValue ("All Ages"). See Task #81 for the pending raw/id
+                    // split on AgeRange.
+                    if let ageRange = event.eventAgeRange {
+                        Text(ageRange.localizedName)
                             .font(.caption2)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -459,7 +465,7 @@ struct CustomEventCard: View {
                     }
 
                     // Tone badge
-                    Text(event.storyTone.displayName)
+                    Text(event.storyTone.localizedName)
                         .font(.caption2)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -499,7 +505,8 @@ struct CustomEventCard: View {
             }
         }
         .confirmationDialog(
-            String(localized: "story.event.delete.title"),
+            String(localized: "story.event.delete.title",
+                   comment: "Event Picker: Delete confirmation title"),
             isPresented: $showingDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -508,7 +515,9 @@ struct CustomEventCard: View {
             }
             Button("common.cancel", role: .cancel) {}
         } message: {
-            Text(String(localized: "story.event.delete.message", defaultValue: "Are you sure you want to delete '\(event.title)'? This action cannot be undone."))
+            Text(String(format: String(localized: "story.event.delete.message",
+                                       comment: "Event Picker: Delete confirmation message. %@ is the event title."),
+                        event.title))
         }
     }
 }

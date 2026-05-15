@@ -62,7 +62,7 @@ struct SettingsTabContent: View {
                             ForEach(["system", "light", "dark"], id: \.self) { theme in
                                 HStack {
                                     Image(systemName: settingsThemeIcon(for: theme))
-                                    Text(LocalizedStringKey("settings.theme.\(theme)"))
+                                    Text(settingsThemeLabel(for: theme))
                                 }
                                 .tag(theme)
                             }
@@ -75,7 +75,7 @@ struct SettingsTabContent: View {
                     HStack {
                         Text("settings.currentMode")
                         Spacer()
-                        Text(colorScheme == .dark ? String(localized: "settings.theme.dark") : String(localized: "settings.theme.light"))
+                        Text(settingsThemeLabel(for: colorScheme == .dark ? "dark" : "light"))
                             .foregroundColor(.secondary)
                     }
                 } header: {
@@ -114,7 +114,9 @@ struct SettingsTabContent: View {
 
                 Section {
                     HStack {
-                        Picker(String(localized: "settings.storyLength"), selection: $settings.defaultStoryLength) {
+                        Picker(String(localized: "settings.storyLength",
+                                      comment: "Settings: Story length picker"),
+                               selection: $settings.defaultStoryLength) {
                             Text("settings.storyLength.5").tag(5)
                             Text("settings.storyLength.7").tag(7)
                             Text("settings.storyLength.10").tag(10)
@@ -124,7 +126,9 @@ struct SettingsTabContent: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Picker(String(localized: "settings.voice"), selection: $settings.preferredVoice) {
+                            Picker(String(localized: "settings.voice",
+                                          comment: "Settings: Voice picker"),
+                                   selection: $settings.preferredVoice) {
                                 ForEach(AppSettings.availableVoices, id: \.id) { voice in
                                     Text(voice.name).tag(voice.id)
                                 }
@@ -140,7 +144,9 @@ struct SettingsTabContent: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Picker(String(localized: "settings.language"), selection: $settings.preferredLanguage) {
+                            Picker(String(localized: "settings.language",
+                                          comment: "Settings: Language picker"),
+                                   selection: $settings.preferredLanguage) {
                                 ForEach(AppSettings.releasedLanguages, id: \.id) { language in
                                     HStack {
                                         // BUG-15: localized label so FR users see
@@ -165,17 +171,23 @@ struct SettingsTabContent: View {
 
                 if AppConfiguration.enableStoryIllustrations {
                     Section {
-                        Toggle(String(localized: "settings.autoGenerateIllustrations"), isOn: Binding(
+                        Toggle(String(localized: "settings.autoGenerateIllustrations",
+                                      comment: "Settings: Auto-generate illustrations toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "autoGenerateIllustrations") },
                             set: { UserDefaults.standard.set($0, forKey: "autoGenerateIllustrations") }
                         ))
 
-                        Toggle(String(localized: "settings.continueOnFailures"), isOn: Binding(
+                        Toggle(String(localized: "settings.continueOnFailures",
+                                      comment: "Settings: Continue on illustration failures toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "allowIllustrationFailures") },
                             set: { UserDefaults.standard.set($0, forKey: "allowIllustrationFailures") }
                         ))
 
-                        Toggle(String(localized: "settings.showErrorDetails"), isOn: Binding(
+                        Toggle(String(localized: "settings.showErrorDetails",
+                                      comment: "Settings: Show error details toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "showIllustrationErrors") },
                             set: { UserDefaults.standard.set($0, forKey: "showIllustrationErrors") }
                         ))
@@ -184,7 +196,9 @@ struct SettingsTabContent: View {
                             HStack {
                                 Text("settings.maxRetryAttempts")
                                 Spacer()
-                                Picker(String(localized: "settings.maxRetryAttempts"), selection: Binding(
+                                Picker(String(localized: "settings.maxRetryAttempts",
+                                              comment: "Settings: Max retry attempts picker"),
+                                       selection: Binding(
                                     get: {
                                         let value = UserDefaults.standard.integer(forKey: "maxIllustrationRetries")
                                         return value > 0 ? value : 3
@@ -207,7 +221,9 @@ struct SettingsTabContent: View {
                         HStack {
                             Text("settings.maxIllustrationsPerStory")
                             Spacer()
-                            Picker(String(localized: "settings.maxIllustrationsPerStory"), selection: Binding(
+                            Picker(String(localized: "settings.maxIllustrationsPerStory",
+                                          comment: "Settings: Max illustrations per story picker"),
+                                   selection: Binding(
                                 get: {
                                     let value = UserDefaults.standard.integer(forKey: "maxIllustrationsPerStory")
                                     return value > 0 ? value : 6
@@ -278,14 +294,35 @@ struct SettingsTabContent: View {
                         }
                     }
                 } header: {
-                    Text("Debug Controls")
+                    // NOTE: catalog entry missing for these keys. EN fallback
+                    // kept in place until they are added. See Task #86 report.
+                    Text(String(localized: "settings.debug.header",
+                                defaultValue: "Debug Controls",
+                                comment: "Settings: Debug section header (debug builds only)."))
                 } footer: {
-                    Text("Debug-only controls for testing authentication. Test user: \(debugTestUserEmail)")
-                        .font(.caption)
+                    Text(String(
+                        format: String(localized: "settings.debug.footer",
+                                       defaultValue: "Debug-only controls for testing authentication. Test user: %@",
+                                       comment: "Settings: Debug section footer. %@ is the test user email."),
+                        debugTestUserEmail
+                    ))
+                    .font(.caption)
                 }
                 #endif
 
                 Section {
+                    // BUG-A10: Non-destructive sign out, separate from data-erase.
+                    if authState.isAuthenticated {
+                        Button(action: { showingSignOutConfirmation = true }) {
+                            HStack {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                Text(String(localized: "settings.signOut",
+                                            comment: "Settings: Sign out button label."))
+                            }
+                            .foregroundColor(.primary)
+                        }
+                    }
+
                     Button(action: { showingEraseConfirmation = true }) {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
@@ -341,7 +378,8 @@ struct SettingsTabContent: View {
                         }
                         .frame(minHeight: 44)
                     }
-                    .accessibilityLabel(String(localized: "settings.privacyPolicy"))
+                    .accessibilityLabel(String(localized: "settings.privacyPolicy",
+                                               comment: "Settings: Privacy policy link accessibility label."))
 
                     Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
                         HStack {
@@ -353,12 +391,14 @@ struct SettingsTabContent: View {
                         }
                         .frame(minHeight: 44)
                     }
-                    .accessibilityLabel(String(localized: "settings.termsOfService"))
+                    .accessibilityLabel(String(localized: "settings.termsOfService",
+                                               comment: "Settings: Terms of service link accessibility label."))
                 } header: {
                     Text("settings.appInfo")
                 }
             }
-            .navigationTitle(String(localized: "settings.title"))
+            .navigationTitle(String(localized: "settings.title",
+                                    comment: "Settings: Navigation title"))
             .navigationBarTitleDisplayMode(.large)
             // BUG-10: Force the system nav-bar material to be visible so the
             // large title gets an opaque blur as soon as the Form scrolls
@@ -406,17 +446,21 @@ struct SettingsTabContent: View {
             } message: {
                 Text("settings.restartRequired.message")
             }
-            // BUG-04: Sign-out confirmation. TODO(task #5 FR sweep): migrate
-            // these literals to Localizable.xcstrings (e.g. `settings.signOut.confirm.*`).
-            .alert(Text("Se déconnecter ?"), isPresented: $showingSignOutConfirmation) {
+            .alert(
+                Text(String(localized: "settings.signOut.confirm.title",
+                            comment: "Settings: title of the sign-out confirmation alert")),
+                isPresented: $showingSignOutConfirmation
+            ) {
                 Button(role: .destructive) {
                     authState.signOut()
                 } label: {
-                    Text("Se déconnecter")
+                    Text(String(localized: "settings.signOut.confirm.destructive",
+                                comment: "Settings: destructive confirmation button label in the sign-out alert"))
                 }
                 Button("common.cancel", role: .cancel) { }
             } message: {
-                Text("Voulez-vous vraiment vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos histoires.")
+                Text(String(localized: "settings.signOut.confirm.message",
+                            comment: "Settings: body message of the sign-out confirmation alert"))
             }
         }
     }
@@ -507,6 +551,14 @@ struct SettingsTabContent: View {
             return "circle.lefthalf.filled"
         }
     }
+
+    private func settingsThemeLabel(for theme: String) -> LocalizedStringKey {
+        switch theme {
+        case "light": return "settings.theme.light"
+        case "dark":  return "settings.theme.dark"
+        default:      return "settings.theme.system"
+        }
+    }
 }
 
 // MARK: - Main Settings View (Legacy - for sheet presentation)
@@ -560,7 +612,7 @@ struct SettingsView: View {
                             ForEach(["system", "light", "dark"], id: \.self) { theme in
                                 HStack {
                                     Image(systemName: themeIcon(for: theme))
-                                    Text(LocalizedStringKey("settings.theme.\(theme)"))
+                                    Text(legacyThemeLabel(for: theme))
                                 }
                                 .tag(theme)
                             }
@@ -573,7 +625,7 @@ struct SettingsView: View {
                     HStack {
                         Text("settings.currentMode")
                         Spacer()
-                        Text(colorScheme == .dark ? String(localized: "settings.theme.dark") : String(localized: "settings.theme.light"))
+                        Text(legacyThemeLabel(for: colorScheme == .dark ? "dark" : "light"))
                             .foregroundColor(.secondary)
                     }
                 } header: {
@@ -584,7 +636,9 @@ struct SettingsView: View {
                 }
                     Section {
                         HStack {
-                            Picker(String(localized: "settings.storyLength"), selection: $settings.defaultStoryLength) {
+                            Picker(String(localized: "settings.storyLength",
+                                      comment: "Settings: Story length picker"),
+                               selection: $settings.defaultStoryLength) {
                                 Text("settings.storyLength.5").tag(5)
                                 Text("settings.storyLength.7").tag(7)
                                 Text("settings.storyLength.10").tag(10)
@@ -594,7 +648,9 @@ struct SettingsView: View {
 
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Picker(String(localized: "settings.voice"), selection: $settings.preferredVoice) {
+                                Picker(String(localized: "settings.voice",
+                                          comment: "Settings: Voice picker"),
+                                   selection: $settings.preferredVoice) {
                                     ForEach(AppSettings.availableVoices, id: \.id) { voice in
                                         Text(voice.name).tag(voice.id)
                                     }
@@ -610,7 +666,9 @@ struct SettingsView: View {
 
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Picker(String(localized: "settings.language"), selection: $settings.preferredLanguage) {
+                                Picker(String(localized: "settings.language",
+                                          comment: "Settings: Language picker"),
+                                   selection: $settings.preferredLanguage) {
                                     ForEach(AppSettings.releasedLanguages, id: \.id) { language in
                                         HStack {
                                             // BUG-15: localized language name.
@@ -632,17 +690,23 @@ struct SettingsView: View {
                     }
 
                     Section {
-                        Toggle(String(localized: "settings.autoGenerateIllustrations"), isOn: Binding(
+                        Toggle(String(localized: "settings.autoGenerateIllustrations",
+                                      comment: "Settings: Auto-generate illustrations toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "autoGenerateIllustrations") },
                             set: { UserDefaults.standard.set($0, forKey: "autoGenerateIllustrations") }
                         ))
 
-                        Toggle(String(localized: "settings.continueOnFailures"), isOn: Binding(
+                        Toggle(String(localized: "settings.continueOnFailures",
+                                      comment: "Settings: Continue on illustration failures toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "allowIllustrationFailures") },
                             set: { UserDefaults.standard.set($0, forKey: "allowIllustrationFailures") }
                         ))
 
-                        Toggle(String(localized: "settings.showErrorDetails"), isOn: Binding(
+                        Toggle(String(localized: "settings.showErrorDetails",
+                                      comment: "Settings: Show error details toggle"),
+                               isOn: Binding(
                             get: { UserDefaults.standard.bool(forKey: "showIllustrationErrors") },
                             set: { UserDefaults.standard.set($0, forKey: "showIllustrationErrors") }
                         ))
@@ -651,7 +715,9 @@ struct SettingsView: View {
                             HStack {
                                 Text("settings.maxRetryAttempts")
                                 Spacer()
-                                Picker(String(localized: "settings.maxRetryAttempts"), selection: Binding(
+                                Picker(String(localized: "settings.maxRetryAttempts",
+                                              comment: "Settings: Max retry attempts picker"),
+                                       selection: Binding(
                                     get: {
                                         let value = UserDefaults.standard.integer(forKey: "maxIllustrationRetries")
                                         return value > 0 ? value : 3
@@ -674,7 +740,9 @@ struct SettingsView: View {
                         HStack {
                             Text("settings.maxIllustrationsPerStory")
                             Spacer()
-                            Picker(String(localized: "settings.maxIllustrationsPerStory"), selection: Binding(
+                            Picker(String(localized: "settings.maxIllustrationsPerStory",
+                                          comment: "Settings: Max illustrations per story picker"),
+                                   selection: Binding(
                                 get: {
                                     let value = UserDefaults.standard.integer(forKey: "maxIllustrationsPerStory")
                                     return value > 0 ? value : 6
@@ -748,14 +816,35 @@ struct SettingsView: View {
                         }
                     }
                 } header: {
-                    Text("Debug Controls")
+                    // NOTE: catalog entry missing for these keys. EN fallback
+                    // kept in place until they are added. See Task #86 report.
+                    Text(String(localized: "settings.debug.header",
+                                defaultValue: "Debug Controls",
+                                comment: "Settings: Debug section header (debug builds only)."))
                 } footer: {
-                    Text("Debug-only controls for testing authentication. Test user: \(debugTestUserEmail)")
-                        .font(.caption)
+                    Text(String(
+                        format: String(localized: "settings.debug.footer",
+                                       defaultValue: "Debug-only controls for testing authentication. Test user: %@",
+                                       comment: "Settings: Debug section footer. %@ is the test user email."),
+                        debugTestUserEmail
+                    ))
+                    .font(.caption)
                 }
                 #endif
 
                 Section {
+                    // BUG-A10: Non-destructive sign out, separate from data-erase.
+                    if authState.isAuthenticated {
+                        Button(action: { showingSignOutConfirmation = true }) {
+                            HStack {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                Text(String(localized: "settings.signOut",
+                                            comment: "Settings: Sign out button label."))
+                            }
+                            .foregroundColor(.primary)
+                        }
+                    }
+
                     Button(action: { showingEraseConfirmation = true }) {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
@@ -811,7 +900,8 @@ struct SettingsView: View {
                         }
                         .frame(minHeight: 44)
                     }
-                    .accessibilityLabel(String(localized: "settings.privacyPolicy"))
+                    .accessibilityLabel(String(localized: "settings.privacyPolicy",
+                                               comment: "Settings: Privacy policy link accessibility label."))
 
                     Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
                         HStack {
@@ -823,12 +913,14 @@ struct SettingsView: View {
                         }
                         .frame(minHeight: 44)
                     }
-                    .accessibilityLabel(String(localized: "settings.termsOfService"))
+                    .accessibilityLabel(String(localized: "settings.termsOfService",
+                                               comment: "Settings: Terms of service link accessibility label."))
                 } header: {
                     Text("settings.appInfo")
                 }
             }
-            .navigationTitle(String(localized: "settings.title"))
+            .navigationTitle(String(localized: "settings.title",
+                                    comment: "Settings: Navigation title"))
             .navigationBarTitleDisplayMode(.large)
             // BUG-10: Opaque nav-bar material so the large title doesn't
             // bleed into the Dynamic Island / status bar on scroll.
@@ -837,7 +929,8 @@ struct SettingsView: View {
             .glassNavigation()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(String(localized: "common.done")) {
+                    Button(String(localized: "common.done",
+                                  comment: "Button: Done/Finish")) {
                         dismiss()
                     }
                     .fontWeight(.semibold)
@@ -875,17 +968,21 @@ struct SettingsView: View {
             } message: {
                 Text("settings.deleteAccount.error.message")
             }
-            // BUG-04: Sign-out confirmation. TODO(task #5 FR sweep): migrate
-            // these literals to Localizable.xcstrings (e.g. `settings.signOut.confirm.*`).
-            .alert(Text("Se déconnecter ?"), isPresented: $showingSignOutConfirmation) {
+            .alert(
+                Text(String(localized: "settings.signOut.confirm.title",
+                            comment: "Settings: title of the sign-out confirmation alert")),
+                isPresented: $showingSignOutConfirmation
+            ) {
                 Button(role: .destructive) {
                     authState.signOut()
                 } label: {
-                    Text("Se déconnecter")
+                    Text(String(localized: "settings.signOut.confirm.destructive",
+                                comment: "Settings: destructive confirmation button label in the sign-out alert"))
                 }
                 Button("common.cancel", role: .cancel) { }
             } message: {
-                Text("Voulez-vous vraiment vous déconnecter ? Vous devrez vous reconnecter pour accéder à vos histoires.")
+                Text(String(localized: "settings.signOut.confirm.message",
+                            comment: "Settings: body message of the sign-out confirmation alert"))
             }
         }
     }
@@ -982,6 +1079,14 @@ struct SettingsView: View {
             return "moon.fill"
         default:
             return "circle.lefthalf.filled"
+        }
+    }
+
+    private func legacyThemeLabel(for theme: String) -> LocalizedStringKey {
+        switch theme {
+        case "light": return "settings.theme.light"
+        case "dark":  return "settings.theme.dark"
+        default:      return "settings.theme.system"
         }
     }
 }
