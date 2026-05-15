@@ -246,67 +246,69 @@ struct SettingsTabContent: View {
                 }
 
                 #if DEBUG
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Auth Status: \(authState.isAuthenticated ? "✓ Signed In" : "✗ Not Signed In")")
-                            .font(.caption)
-                            .foregroundColor(authState.isAuthenticated ? .green : .orange)
+                if !UserDefaults.standard.bool(forKey: "InfStoriesScreenshotMode") {
+                    Section {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Auth Status: \(authState.isAuthenticated ? "✓ Signed In" : "✗ Not Signed In")")
+                                .font(.caption)
+                                .foregroundColor(authState.isAuthenticated ? .green : .orange)
 
-                        if let userId = authState.userId {
-                            Text("User ID: \(userId)")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
+                            if let userId = authState.userId {
+                                Text("User ID: \(userId)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                    }
-                    .padding(.vertical, 4)
+                        .padding(.vertical, 4)
 
-                    Button(action: {
-                        print("Debug sign-in not implemented - use auth flow instead")
-                    }) {
-                        HStack {
-                            Image(systemName: "person.circle.fill")
-                            Text("Sign In as Test User")
-                        }
-                        .foregroundColor(.blue)
-                    }
-                    .disabled(authState.isAuthenticated)
-
-                    Button(action: {
-                        print("Debug sign-up not implemented - use auth flow instead")
-                    }) {
-                        HStack {
-                            Image(systemName: "person.badge.plus.fill")
-                            Text("Create Random Test User")
-                        }
-                        .foregroundColor(.purple)
-                    }
-
-                    if authState.isAuthenticated {
-                        // BUG-04: Require confirmation before sign-out to prevent accidental taps.
                         Button(action: {
-                            showingSignOutConfirmation = true
+                            print("Debug sign-in not implemented - use auth flow instead")
                         }) {
                             HStack {
-                                Image(systemName: "rectangle.portrait.and.arrow.right")
-                                Text("Sign Out")
+                                Image(systemName: "person.circle.fill")
+                                Text("Sign In as Test User")
                             }
-                            .foregroundColor(.orange)
+                            .foregroundColor(.blue)
                         }
+                        .disabled(authState.isAuthenticated)
+
+                        Button(action: {
+                            print("Debug sign-up not implemented - use auth flow instead")
+                        }) {
+                            HStack {
+                                Image(systemName: "person.badge.plus.fill")
+                                Text("Create Random Test User")
+                            }
+                            .foregroundColor(.purple)
+                        }
+
+                        if authState.isAuthenticated {
+                            // BUG-04: Require confirmation before sign-out to prevent accidental taps.
+                            Button(action: {
+                                showingSignOutConfirmation = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    Text("Sign Out")
+                                }
+                                .foregroundColor(.orange)
+                            }
+                        }
+                    } header: {
+                        // NOTE: catalog entry missing for these keys. EN fallback
+                        // kept in place until they are added. See Task #86 report.
+                        Text(String(localized: "settings.debug.header",
+                                    defaultValue: "Debug Controls",
+                                    comment: "Settings: Debug section header (debug builds only)."))
+                    } footer: {
+                        Text(String(
+                            format: String(localized: "settings.debug.footer",
+                                           defaultValue: "Debug-only controls for testing authentication. Test user: %@",
+                                           comment: "Settings: Debug section footer. %@ is the test user email."),
+                            debugTestUserEmail
+                        ))
+                        .font(.caption)
                     }
-                } header: {
-                    // NOTE: catalog entry missing for these keys. EN fallback
-                    // kept in place until they are added. See Task #86 report.
-                    Text(String(localized: "settings.debug.header",
-                                defaultValue: "Debug Controls",
-                                comment: "Settings: Debug section header (debug builds only)."))
-                } footer: {
-                    Text(String(
-                        format: String(localized: "settings.debug.footer",
-                                       defaultValue: "Debug-only controls for testing authentication. Test user: %@",
-                                       comment: "Settings: Debug section footer. %@ is the test user email."),
-                        debugTestUserEmail
-                    ))
-                    .font(.caption)
                 }
                 #endif
 
@@ -764,71 +766,73 @@ struct SettingsView: View {
                     }
 
                 #if DEBUG
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Auth Status: \(authState.isAuthenticated ? "✓ Signed In" : "✗ Not Signed In")")
-                            .font(.caption)
-                            .foregroundColor(authState.isAuthenticated ? .green : .orange)
+                if !UserDefaults.standard.bool(forKey: "InfStoriesScreenshotMode") {
+                    Section {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Auth Status: \(authState.isAuthenticated ? "✓ Signed In" : "✗ Not Signed In")")
+                                .font(.caption)
+                                .foregroundColor(authState.isAuthenticated ? .green : .orange)
 
-                        if let userId = authState.userId {
-                            Text("User ID: \(userId)")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
+                            if let userId = authState.userId {
+                                Text("User ID: \(userId)")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                    }
-                    .padding(.vertical, 4)
+                        .padding(.vertical, 4)
 
-                    Button(action: {
-                        // Debug sign-in would need to call backend API endpoint first
-                        // Then call authState.signIn(token:userId:) with the response
-                        print("Debug sign-in not implemented - use auth flow instead")
-                    }) {
-                        HStack {
-                            Image(systemName: "person.circle.fill")
-                            Text("Sign In as Test User")
-                        }
-                        .foregroundColor(.blue)
-                    }
-                    .disabled(authState.isAuthenticated)
-
-                    Button(action: {
-                        // Debug sign-up would need to call backend API endpoint first
-                        // Then call authState.signIn(token:userId:) with the response
-                        print("Debug sign-up not implemented - use auth flow instead")
-                    }) {
-                        HStack {
-                            Image(systemName: "person.badge.plus.fill")
-                            Text("Create Random Test User")
-                        }
-                        .foregroundColor(.purple)
-                    }
-
-                    if authState.isAuthenticated {
-                        // BUG-04: Require confirmation before sign-out to prevent accidental taps.
                         Button(action: {
-                            showingSignOutConfirmation = true
+                            // Debug sign-in would need to call backend API endpoint first
+                            // Then call authState.signIn(token:userId:) with the response
+                            print("Debug sign-in not implemented - use auth flow instead")
                         }) {
                             HStack {
-                                Image(systemName: "rectangle.portrait.and.arrow.right")
-                                Text("Sign Out")
+                                Image(systemName: "person.circle.fill")
+                                Text("Sign In as Test User")
                             }
-                            .foregroundColor(.orange)
+                            .foregroundColor(.blue)
                         }
+                        .disabled(authState.isAuthenticated)
+
+                        Button(action: {
+                            // Debug sign-up would need to call backend API endpoint first
+                            // Then call authState.signIn(token:userId:) with the response
+                            print("Debug sign-up not implemented - use auth flow instead")
+                        }) {
+                            HStack {
+                                Image(systemName: "person.badge.plus.fill")
+                                Text("Create Random Test User")
+                            }
+                            .foregroundColor(.purple)
+                        }
+
+                        if authState.isAuthenticated {
+                            // BUG-04: Require confirmation before sign-out to prevent accidental taps.
+                            Button(action: {
+                                showingSignOutConfirmation = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    Text("Sign Out")
+                                }
+                                .foregroundColor(.orange)
+                            }
+                        }
+                    } header: {
+                        // NOTE: catalog entry missing for these keys. EN fallback
+                        // kept in place until they are added. See Task #86 report.
+                        Text(String(localized: "settings.debug.header",
+                                    defaultValue: "Debug Controls",
+                                    comment: "Settings: Debug section header (debug builds only)."))
+                    } footer: {
+                        Text(String(
+                            format: String(localized: "settings.debug.footer",
+                                           defaultValue: "Debug-only controls for testing authentication. Test user: %@",
+                                           comment: "Settings: Debug section footer. %@ is the test user email."),
+                            debugTestUserEmail
+                        ))
+                        .font(.caption)
                     }
-                } header: {
-                    // NOTE: catalog entry missing for these keys. EN fallback
-                    // kept in place until they are added. See Task #86 report.
-                    Text(String(localized: "settings.debug.header",
-                                defaultValue: "Debug Controls",
-                                comment: "Settings: Debug section header (debug builds only)."))
-                } footer: {
-                    Text(String(
-                        format: String(localized: "settings.debug.footer",
-                                       defaultValue: "Debug-only controls for testing authentication. Test user: %@",
-                                       comment: "Settings: Debug section footer. %@ is the test user email."),
-                        debugTestUserEmail
-                    ))
-                    .font(.caption)
                 }
                 #endif
 
