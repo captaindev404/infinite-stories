@@ -30,5 +30,5 @@
 
 ## 5. App Store Connect Preparation
 
-- [ ] 5.1 Document demo account credentials and step-by-step testing instructions for App Store Review Notes
-- [ ] 5.2 Verify all screenshots reflect final UI (no "coming soon" text, legal links visible in Settings)
+- [x] 5.1 Document demo account credentials and step-by-step testing instructions for App Store Review Notes (see `docs/REVIEW_NOTES.md`; fill placeholders before submission)
+- [ ] 5.2 Verify all screenshots reflect final UI (no "coming soon" text, legal links visible in Settings) — **BLOCKED**: existing set was generated from a single shared account, causing locale cross-contamination (FR content in EN screenshots). Requires screenshot pipeline rework with per-locale accounts. See `docs/SCREENSHOT_VERIFICATION.md`.
