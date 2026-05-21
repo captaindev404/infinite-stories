@@ -1,0 +1,407 @@
+{
+  "name": "TikTok UGC Script & Assets Generator (Simplified)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-tiktok-script",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Receive Briefing",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "tiktok-script-generator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate and structure the briefing input\nconst input = $input.first().json;\n\nconst briefing = {\n  product_name: input.body?.product_name || 'InfiniteStories',\n  target_audience: input.body?.target_audience || 'Parents avec enfants de 2-10 ans',\n  key_benefits: input.body?.key_benefits || [\n    'Histoires personnalisees generees par IA',\n    'Votre enfant devient le heros',\n    'Illustrations synchronisees avec audio',\n    'Multi-langues',\n    'Contenu securise pour enfants'\n  ],\n  tone: input.body?.tone || 'chaleureux, authentique, relatable',\n  duration_seconds: input.body?.duration_seconds || 30,\n  language: input.body?.language || 'fr',\n  hook_type: input.body?.hook_type || 'problem-solution',\n  cta: input.body?.cta || 'Telecharge InfiniteStories maintenant!',\n  custom_instructions: input.body?.custom_instructions || '',\n  generate_images: input.body?.generate_images !== false,\n  generate_audio: input.body?.generate_audio === true\n};\n\nreturn [{ json: briefing }];"
+      },
+      "id": "validate-input",
+      "name": "Validate & Structure Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Tu es un expert en creation de scripts publicitaires UGC (User Generated Content) pour TikTok specialise dans les apps pour parents.\n\nTon objectif: Creer des scripts qui semblent etre filmes par un vrai parent partageant sa decouverte avec ses amis.\n\nStructure obligatoire:\n1. HOOK (0-3s): Question ou affirmation qui arrete le scroll\n2. PROBLEME (3-8s): Identifier le pain point du parent\n3. DECOUVERTE (8-15s): Presenter l'app comme une solution trouvee\n4. DEMO/BENEFICES (15-25s): Montrer ce qui rend l'app geniale\n5. CTA (25-30s): Inciter au telechargement\n\nStyle UGC:\n- Parler comme a un ami, pas comme une pub\n- Utiliser \"je\", \"mon enfant\", \"vous savez quoi\"\n- Inclure des hesitations naturelles (\"euh\", \"genre\", \"vraiment\")\n- Emotions authentiques\n- Pas de jargon marketing\n\nFormat JSON requis:\n{\n  \"hook\": \"Phrase d'accroche 3 sec max\",\n  \"scenes\": [\n    {\n      \"id\": 1,\n      \"timestamp\": \"0:00-0:03\",\n      \"voiceover\": \"Texte exact a dire\",\n      \"visual\": \"Description precise de ce qu'on filme\",\n      \"emotion\": \"emotion/energie du moment\",\n      \"camera\": \"type de plan (selfie, POV, produit)\"\n    }\n  ],\n  \"cta\": \"Call to action\",\n  \"captions\": [\"Textes a afficher sur la video\"],\n  \"hashtags\": [\"sans le #\"],\n  \"music_mood\": \"Description de l'ambiance musicale\",\n  \"filming_tips\": [\"Conseils pour le tournage\"]\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Cree un script UGC TikTok pour:\n\n**Produit:** {{ $json.product_name }}\n**Audience:** {{ $json.target_audience }}\n**Benefices cles:** \n{{ $json.key_benefits.map((b, i) => `${i+1}. ${b}`).join('\\n') }}\n**Ton:** {{ $json.tone }}\n**Duree:** {{ $json.duration_seconds }} secondes\n**Langue:** {{ $json.language }}\n**Type de hook:** {{ $json.hook_type }}\n**CTA:** {{ $json.cta }}\n\n**Instructions speciales:** {{ $json.custom_instructions || 'Aucune' }}\n\n---\n\nGenere un script UGC complet et authentique. Le spectateur doit croire que c'est un vrai parent qui partage son experience."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.85,
+          "maxTokens": 2500,
+          "responseFormat": "json_object"
+        }
+      },
+      "id": "generate-script",
+      "name": "GPT-4o - Generate UGC Script",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [690, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the script\nconst response = $input.first().json;\nconst briefing = $('Validate & Structure Input').first().json;\n\nlet script;\ntry {\n  const content = response.message?.content || response.content || response;\n  script = typeof content === 'string' ? JSON.parse(content) : content;\n} catch (e) {\n  throw new Error('Failed to parse script: ' + e.message);\n}\n\n// Generate full voiceover text for TTS\nconst fullVoiceover = script.scenes\n  .map(s => s.voiceover)\n  .join(' ');\n\nreturn [{\n  json: {\n    script,\n    briefing,\n    fullVoiceover,\n    scenesForImages: briefing.generate_images ? script.scenes : []\n  }\n}];"
+      },
+      "id": "parse-script",
+      "name": "Parse Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "should-generate-images",
+              "leftValue": "={{ $json.briefing.generate_images }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-generate-images",
+      "name": "Generate Images?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "scenesForImages",
+        "options": {}
+      },
+      "id": "split-scenes",
+      "name": "Split Scenes",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Tu es un directeur artistique specialise en contenu UGC pour TikTok.\n\nTransforme la description de scene en un prompt DALL-E optimise pour generer une image style UGC/lifestyle.\n\nRegles:\n- Photo realiste, lumiere naturelle\n- Format vertical (pour 9:16)\n- Pas de texte ni logo\n- Ambiance chaleureuse, authentique\n- Adapte aux familles avec enfants\n\nReponds UNIQUEMENT avec le prompt en anglais, 1-2 phrases max."
+            },
+            {
+              "role": "user",
+              "content": "=Scene: {{ $json.visual }}\nEmotion: {{ $json.emotion }}\nCamera: {{ $json.camera }}\nContexte: App d'histoires pour enfants \"InfiniteStories\""
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 200
+        }
+      },
+      "id": "generate-image-prompt",
+      "name": "Generate Image Prompt",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1570, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generate",
+        "prompt": "={{ $json.message.content }}",
+        "options": {
+          "model": "dall-e-3",
+          "size": "1024x1792",
+          "quality": "standard",
+          "style": "natural"
+        }
+      },
+      "id": "generate-image",
+      "name": "DALL-E 3 - Generate Image",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1790, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect image result\nconst scene = $('Split Scenes').first().json;\nconst imageResult = $input.first().json;\nconst prompt = $('Generate Image Prompt').first().json.message?.content;\n\nreturn [{\n  json: {\n    scene_id: scene.id,\n    timestamp: scene.timestamp,\n    image_url: imageResult.data?.[0]?.url || imageResult.url,\n    image_prompt: prompt,\n    voiceover: scene.voiceover\n  }\n}];"
+      },
+      "id": "collect-image",
+      "name": "Collect Image Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2010, 200]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "images",
+        "options": {}
+      },
+      "id": "aggregate-images",
+      "name": "Aggregate Images",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [2230, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compile response with images\nconst scriptData = $('Parse Script').first().json;\nconst images = $input.first().json.images || [];\n\nreturn [{\n  json: {\n    success: true,\n    script: scriptData.script,\n    generated_images: images,\n    voiceover_text: scriptData.fullVoiceover,\n    metadata: {\n      product: scriptData.briefing.product_name,\n      language: scriptData.briefing.language,\n      duration_seconds: scriptData.briefing.duration_seconds,\n      images_generated: images.length,\n      generated_at: new Date().toISOString()\n    },\n    tiktok_post: {\n      caption: scriptData.script.hook + '\\n\\n' + scriptData.script.hashtags.map(h => '#' + h).join(' '),\n      captions_overlay: scriptData.script.captions,\n      music_mood: scriptData.script.music_mood\n    },\n    filming_guide: scriptData.script.filming_tips\n  }\n}];"
+      },
+      "id": "compile-with-images",
+      "name": "Compile Response (With Images)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2450, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compile response without images\nconst scriptData = $('Parse Script').first().json;\n\nreturn [{\n  json: {\n    success: true,\n    script: scriptData.script,\n    generated_images: [],\n    voiceover_text: scriptData.fullVoiceover,\n    metadata: {\n      product: scriptData.briefing.product_name,\n      language: scriptData.briefing.language,\n      duration_seconds: scriptData.briefing.duration_seconds,\n      images_generated: 0,\n      generated_at: new Date().toISOString()\n    },\n    tiktok_post: {\n      caption: scriptData.script.hook + '\\n\\n' + scriptData.script.hashtags.map(h => '#' + h).join(' '),\n      captions_overlay: scriptData.script.captions,\n      music_mood: scriptData.script.music_mood\n    },\n    filming_guide: scriptData.script.filming_tips\n  }\n}];"
+      },
+      "id": "compile-without-images",
+      "name": "Compile Response (Script Only)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 400]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "Merge Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [2670, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2890, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Receive Briefing": {
+      "main": [
+        [
+          {
+            "node": "Validate & Structure Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Structure Input": {
+      "main": [
+        [
+          {
+            "node": "GPT-4o - Generate UGC Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o - Generate UGC Script": {
+      "main": [
+        [
+          {
+            "node": "Parse Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Script": {
+      "main": [
+        [
+          {
+            "node": "Generate Images?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Images?": {
+      "main": [
+        [
+          {
+            "node": "Split Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Compile Response (Script Only)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Scenes": {
+      "main": [
+        [
+          {
+            "node": "Generate Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "DALL-E 3 - Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DALL-E 3 - Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Collect Image Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Image Data": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Images": {
+      "main": [
+        [
+          {
+            "node": "Compile Response (With Images)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile Response (With Images)": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile Response (Script Only)": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "infinite-stories-tiktok-script"
+  },
+  "tags": [
+    {
+      "name": "marketing",
+      "id": "1"
+    },
+    {
+      "name": "tiktok",
+      "id": "2"
+    },
+    {
+      "name": "content-generation",
+      "id": "3"
+    }
+  ]
+}
