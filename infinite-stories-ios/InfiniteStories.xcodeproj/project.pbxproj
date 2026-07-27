@@ -47,6 +47,17 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				InfiniteStories/Info.plist,
+				.claude/settings.local.json,
+				.idea/.gitignore,
+				.idea/InfiniteStories.iml,
+				.idea/material_theme_project_new.xml,
+				.idea/modules.xml,
+				.idea/vcs.xml,
+				.idea/workspace.xml,
+				ContentView_Enhanced.txt,
+				DesignGuide_HomeScreen.txt,
+				ImprovedContentView_README.txt,
+				Views/HeroDisplay/README_HeroDisplay.md,
 			);
 			target = CE3AA1B82E71C97D00236398 /* InfiniteStories */;
 		};
@@ -626,7 +637,7 @@
 				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 98395466N2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -662,7 +673,7 @@
 				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 98395466N2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -698,7 +709,7 @@
 				CODE_SIGN_ENTITLEMENTS = InfiniteStories/InfiniteStories/InfiniteStories.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 98395466N2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -730,7 +741,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -749,7 +760,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -768,7 +779,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
@@ -786,7 +797,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				MARKETING_VERSION = 1.0;
@@ -803,7 +814,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				MARKETING_VERSION = 1.0;
@@ -820,7 +831,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = InfiniteStories/InfiniteStories/Info.plist;
 				MARKETING_VERSION = 1.0;

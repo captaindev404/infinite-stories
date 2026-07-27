@@ -83,6 +83,30 @@ struct AppConfiguration {
     static let backendBaseURL = "https://infinite-stories-web.captaindev.io"
     #endif
 
+    // MARK: - Legal URLs
+
+    /// Locale segment for the marketing site. The site only ships `en` and `fr`;
+    /// anything else falls back to English.
+    private static var legalLocaleSegment: String {
+        let code = Locale.current.language.languageCode?.identifier ?? "en"
+        return code == "fr" ? "fr" : "en"
+    }
+
+    /// Privacy policy, served by the backend under `/{locale}/privacy`.
+    static var privacyPolicyURL: URL {
+        URL(string: "\(backendBaseURL)/\(legalLocaleSegment)/privacy")!
+    }
+
+    /// Terms of service, served by the backend under `/{locale}/terms`.
+    static var termsOfServiceURL: URL {
+        URL(string: "\(backendBaseURL)/\(legalLocaleSegment)/terms")!
+    }
+
+    /// Support page, served by the backend under `/{locale}/support`.
+    static var supportURL: URL {
+        URL(string: "\(backendBaseURL)/\(legalLocaleSegment)/support")!
+    }
+
     // MARK: - Debug Settings
 
     #if DEBUG

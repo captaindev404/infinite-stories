@@ -6,9 +6,9 @@ Paste the relevant section into the **Review Notes** field in App Store Connect 
 
 ## Demo Account
 
-- **Email:** `[DEMO_EMAIL]`
-- **Password:** `[DEMO_PASSWORD]`
-- **Backend environment:** Production (`https://api.infinitestories.app`)
+- **Email:** `appreview@captaindev.io`
+- **Password:** `Rev!ewDemo2026`
+- **Backend environment:** Production (`https://infinite-stories-web.captaindev.io`)
 - **Notes for reviewer:** Account is pre-seeded with one hero and at least one generated story so reviewers can exercise all flows without waiting for AI generation. Do not delete this account between submissions — re-seed if needed.
 
 > ⚠️ Before submitting: log in with these credentials on a clean device, confirm the seeded hero/story are present, and that the account is **not** scheduled for deletion.
@@ -57,7 +57,7 @@ Each flow should take 2–4 minutes. Run them in order on the demo account.
 2. Tap **Delete Account** (red).
 3. Read the first confirmation alert, then tap **Continue**.
 4. On the second confirmation, tap **Delete My Account** (destructive).
-5. **Expected:** The backend returns 204, local data is erased, and the app navigates back to the authentication screen. The demo email can no longer sign in.
+5. **Expected:** The backend returns 200 (`DELETE /api/v1/user/account`), local data is erased, and the app navigates back to the authentication screen. The demo email can no longer sign in.
 
 > ⚠️ **Reviewer:** Please **do not run flow 5** against the production demo account unless you intend to re-create it. A dedicated single-use deletion-test account is provided below if you wish to verify the flow end-to-end.
 

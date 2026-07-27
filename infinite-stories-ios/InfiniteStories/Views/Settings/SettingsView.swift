@@ -370,7 +370,7 @@ struct SettingsTabContent: View {
                     }
                     .padding(.vertical, 8)
 
-                    Link(destination: URL(string: "https://www.infinitestories.app/privacy")!) {
+                    Link(destination: AppConfiguration.privacyPolicyURL) {
                         HStack {
                             Image(systemName: "hand.raised.fill")
                             Text("settings.privacyPolicy")
@@ -383,7 +383,7 @@ struct SettingsTabContent: View {
                     .accessibilityLabel(String(localized: "settings.privacyPolicy",
                                                comment: "Settings: Privacy policy link accessibility label."))
 
-                    Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
+                    Link(destination: AppConfiguration.termsOfServiceURL) {
                         HStack {
                             Image(systemName: "doc.text.fill")
                             Text("settings.termsOfService")
@@ -894,7 +894,7 @@ struct SettingsView: View {
                     }
                     .padding(.vertical, 8)
 
-                    Link(destination: URL(string: "https://www.infinitestories.app/privacy")!) {
+                    Link(destination: AppConfiguration.privacyPolicyURL) {
                         HStack {
                             Image(systemName: "hand.raised.fill")
                             Text("settings.privacyPolicy")
@@ -907,7 +907,7 @@ struct SettingsView: View {
                     .accessibilityLabel(String(localized: "settings.privacyPolicy",
                                                comment: "Settings: Privacy policy link accessibility label."))
 
-                    Link(destination: URL(string: "https://www.infinitestories.app/terms")!) {
+                    Link(destination: AppConfiguration.termsOfServiceURL) {
                         HStack {
                             Image(systemName: "doc.text.fill")
                             Text("settings.termsOfService")
