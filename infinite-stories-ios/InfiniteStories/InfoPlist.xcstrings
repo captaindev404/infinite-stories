@@ -1,162 +1,90 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "CFBundleDisplayName" : {
-      "comment" : "App name displayed on home screen",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geschichten"
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleDisplayName": {
+      "comment": "App name displayed on home screen",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Infinite Stories"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Infinite Stories"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Historias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Histoires Infinies"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Storie"
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Histoires Infinies"
           }
         }
       }
     },
-    "CFBundleName" : {
-      "comment" : "Bundle name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "InfiniteStories"
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "InfiniteStories"
           }
         }
       }
     },
-    "NSCameraUsageDescription" : {
-      "comment" : "Camera permission: Used for avatar creation",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Kamera wird verwendet, um ein Foto für den Avatar deines Helden aufzunehmen."
+    "NSCameraUsageDescription": {
+      "comment": "Camera permission: Used for avatar creation",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The camera is used to take a photo for your hero's avatar."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The camera is used to take a photo for your hero's avatar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La cámara se usa para tomar una foto para el avatar de tu héroe."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L'appareil photo est utilisé pour prendre une photo pour l'avatar de votre héros."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fotocamera viene utilizzata per scattare una foto per l'avatar del tuo eroe."
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'appareil photo est utilisé pour prendre une photo pour l'avatar de votre héros."
           }
         }
       }
     },
-    "NSMicrophoneUsageDescription" : {
-      "comment" : "Microphone permission: Reserved for future voice features",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Mikrofon kann für zukünftige Sprachfunktionen verwendet werden."
+    "NSMicrophoneUsageDescription": {
+      "comment": "Microphone permission: Reserved for future voice features",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The microphone may be used for future voice features."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The microphone may be used for future voice features."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El micrófono puede usarse para futuras funciones de voz."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le microphone peut être utilisé pour de futures fonctionnalités vocales."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il microfono potrebbe essere utilizzato per future funzionalità vocali."
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le microphone peut être utilisé pour de futures fonctionnalités vocales."
           }
         }
       }
     },
-    "NSPhotoLibraryUsageDescription" : {
-      "comment" : "Photo library permission: Used for avatar selection",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähle ein Foto aus deiner Bibliothek für den Avatar deines Helden."
+    "NSPhotoLibraryUsageDescription": {
+      "comment": "Photo library permission: Used for avatar selection",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a photo from your library for your hero's avatar."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select a photo from your library for your hero's avatar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecciona una foto de tu biblioteca para el avatar de tu héroe."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionnez une photo de votre bibliothèque pour l'avatar de votre héros."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleziona una foto dalla tua libreria per l'avatar del tuo eroe."
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une photo de votre bibliothèque pour l'avatar de votre héros."
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

@@ -20,10 +20,7 @@ final class LocalizationManager: ObservableObject {
     enum UILanguage: String, CaseIterable, Identifiable {
         case system = "system"
         case english = "en"
-        case spanish = "es"
         case french = "fr"
-        case german = "de"
-        case italian = "it"
 
         var id: String { rawValue }
 
@@ -32,10 +29,7 @@ final class LocalizationManager: ObservableObject {
             switch self {
             case .system: return String(localized: "settings.language.systemDefault")
             case .english: return "English"
-            case .spanish: return "Español"
             case .french: return "Français"
-            case .german: return "Deutsch"
-            case .italian: return "Italiano"
             }
         }
 
@@ -44,10 +38,7 @@ final class LocalizationManager: ObservableObject {
             switch self {
             case .system: return "System"
             case .english: return "English"
-            case .spanish: return "Español"
             case .french: return "Français"
-            case .german: return "Deutsch"
-            case .italian: return "Italiano"
             }
         }
     }
@@ -55,7 +46,6 @@ final class LocalizationManager: ObservableObject {
     // MARK: - Released UI Languages (v1.0)
 
     /// UI languages enabled for the current release.
-    /// Spanish (es), German (de), Italian (it) translations are preserved and can be enabled in future versions.
     static let releasedUILanguages: [UILanguage] = [.system, .english, .french]
 
     /// Current language override setting

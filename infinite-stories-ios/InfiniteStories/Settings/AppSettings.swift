@@ -76,22 +76,17 @@ final class AppSettings {
 
     // MARK: - Static Language Definitions
 
-    /// Available languages for story generation
-    /// Note: All 5 languages are fully translated in the codebase (String Catalogs, PromptLocalizer, backend).
-    /// For phased release, we limit visible languages via `releasedLanguages`.
-    /// To enable a language: add its name to `releasedLanguageNames` below.
+    /// Available languages for story generation.
+    /// The app ships English and French only — the bundle carries no other
+    /// localizations, so nothing else may be offered here.
     static let availableLanguages: [(id: String, name: String, nativeName: String)] = [
         ("English", "English", "English"),
-        ("Spanish", "Spanish", "Espanol"),
-        ("French", "French", "Francais"),
-        ("German", "German", "Deutsch"),
-        ("Italian", "Italian", "Italiano")
+        ("French", "French", "Francais")
     ]
 
     // MARK: - Released Languages (v1.0)
 
     /// Language codes enabled for the current release.
-    /// Spanish (es), German (de), Italian (it) translations are preserved and can be enabled in future versions.
     static let releasedLanguageCodes: Set<String> = ["en", "fr"]
 
     /// Language names enabled for the current release.
@@ -104,17 +99,11 @@ final class AppSettings {
 
     // MARK: - Helper Methods
 
-    /// Map system language code to a released language.
-    /// For v1.0, only English and French are released. Spanish, German, and Italian
-    /// users are mapped to English. When those languages are enabled, add their
-    /// codes to `releasedLanguageCodes` and update this method.
+    /// Map system language code to a released language. Anything the app does
+    /// not ship a localization for falls back to English.
     static func languageCodeToSupported(_ code: String) -> String {
         switch code {
         case "fr": return "French"
-        case "en": return "English"
-        // Unreleased languages map to English for v1.0
-        // Translations are preserved in codebase for future release
-        case "es", "de", "it": return "English"
         default: return "English"
         }
     }
@@ -154,9 +143,6 @@ final class AppSettings {
         switch languageId {
         case "English": return String(localized: "settings.language.english")
         case "French":  return String(localized: "settings.language.french")
-        case "Spanish": return String(localized: "settings.language.spanish")
-        case "German":  return String(localized: "settings.language.german")
-        case "Italian": return String(localized: "settings.language.italian")
         default:
             return availableLanguages.first { $0.id == languageId }?.name ?? languageId
         }
