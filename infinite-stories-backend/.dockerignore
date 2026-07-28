@@ -49,5 +49,6 @@ Dockerfile
 docker-compose*.yml
 .dockerignore
 
-# Development files
-prisma/migrations
+# prisma/migrations must stay in the build context: the container runs
+# `prisma migrate deploy` on start, and without the directory Prisma reports
+# "No migration found" and exits 0, silently leaving the database unmigrated.
