@@ -1,6 +1,6 @@
 # App Store Review Notes — InfiniteStories
 
-Paste the relevant section into the **Review Notes** field in App Store Connect when submitting a new version. Replace placeholders in `[BRACKETS]` before submission. Confirm the demo account is active and that the backend environment it points to is reachable.
+This is the source of truth for the **App Review Information** section in App Store Connect. It is already applied to version 1.0.1 via `asc`. Before each submission, confirm the demo account still signs in and that the backend it points to is reachable.
 
 ---
 
@@ -15,7 +15,7 @@ Paste the relevant section into the **Review Notes** field in App Store Connect 
 
 ## Supported Languages (v1.0.x)
 
-This release supports **English and French** only. Spanish, German, and Italian are scheduled for a future release. Set the device language to English or French to evaluate localized UI; other languages fall back to English.
+This release ships **English and French** only — the bundle contains no other localizations. Set the device language to English or French to evaluate the localized UI; every other language falls back to English.
 
 ## App Overview
 
@@ -59,15 +59,14 @@ Each flow should take 2–4 minutes. Run them in order on the demo account.
 4. On the second confirmation, tap **Delete My Account** (destructive).
 5. **Expected:** The backend returns 200 (`DELETE /api/v1/user/account`), local data is erased, and the app navigates back to the authentication screen. The demo email can no longer sign in.
 
-> ⚠️ **Reviewer:** Please **do not run flow 5** against the production demo account unless you intend to re-create it. A dedicated single-use deletion-test account is provided below if you wish to verify the flow end-to-end.
+> ⚠️ **Reviewer:** Running flow 5 against the demo account deletes it permanently. If you want to verify deletion end-to-end, please create a throwaway account first (Sign Up on the authentication screen, any email and an 8+ character password), then delete that one instead.
 
-- **Deletion-test email:** `[DELETION_TEST_EMAIL]`
-- **Deletion-test password:** `[DELETION_TEST_PASSWORD]`
+The flow has been verified end-to-end against production: `DELETE /api/v1/user/account` returns 200 `{"deleted": true}`, the session immediately returns 401, and the email can no longer sign in.
 
 ### 6. Privacy Policy & Terms of Service
 1. Open the **Settings** tab → scroll to the **About** section.
-2. Tap **Privacy Policy** → opens `https://www.infinitestories.app/privacy` in Safari.
-3. Return to the app, tap **Terms of Service** → opens `https://www.infinitestories.app/terms` in Safari.
+2. Tap **Privacy Policy** → opens `https://infinite-stories-web.captaindev.io/en/privacy` (or `/fr/privacy` on a French device) in Safari.
+3. Return to the app, tap **Terms of Service** → opens `https://infinite-stories-web.captaindev.io/en/terms` (or `/fr/terms`) in Safari.
 4. **Expected:** Both pages load with the current published policy/terms.
 
 ## Content Safety
@@ -82,5 +81,5 @@ All story content is generated through a multi-language child-safety content fil
 
 ## Contact
 
-- **Submission contact:** `[CONTACT_NAME]` — `[CONTACT_EMAIL]`
-- **Backend status / outage contact:** `[OPS_CONTACT_EMAIL]`
+- **Submission contact:** Emmanuel Ernest — emmanuel@captaindev.io — +33 6 37 75 06 08
+- **Backend status / outage contact:** emmanuel@captaindev.io
